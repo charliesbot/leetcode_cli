@@ -1,25 +1,30 @@
 mod commands;
-
-use clap::Parser;
-use commands::Commands;
+mod tools;
+use anyhow::{Ok, Result};
+use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
     #[command(subcommand)]
-    command: Option<Commands>,
+    command: Commands,
 }
 
-fn main() {
+#[derive(Subcommand)]
+pub enum Commands {
+    Init(commands::init::InitArgs),
+    // Fetch(commands::fetch::FetchArgs),
+    // AddLanguage(commands::add_language::AddLanguageArgs),
+}
+
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match &cli.command {
-        Some(Commands::Fetch(args)) => {
-            commands::fetch::execute(args);
+        Commands::Init(args) => {
+            commands::init::run(args)?;
         }
-        Some(Commands::Init(args)) => {
-            commands::init::execute(args);
-        }
-        None => println!("Please use a valid subcommand. Use --help for more information."),
     }
+
+    Ok(())
 }
