@@ -11,7 +11,12 @@ fn copy_file(from: &PathBuf, to: &PathBuf) -> io::Result<()> {
         Ok(_) => Ok(()),
         Err(e) => match e.kind() {
             ErrorKind::NotFound => {
-                eprintln!("Source file not found: {} {}", from.display(), e);
+                eprintln!(
+                    "Source file not found: FROM {} TO {} ERROR {}",
+                    from.display(),
+                    to.display(),
+                    e
+                );
                 Err(e)
             }
             _ => {
@@ -26,14 +31,6 @@ pub fn copy_file_from_templates(filename: &str, new_file_path: &Path) -> io::Res
     let templates_directory: PathBuf = Path::new(CLI_DIRECTORY).join("templates");
     let from = templates_directory.join(filename);
     let to = new_file_path.join(filename);
-
-    if !from.exists() {
-        eprintln!("Source file not found hehe: {}", from.display());
-        return Err(io::Error::new(
-            ErrorKind::NotFound,
-            format!("Source file not found hehe: {}", from.display()),
-        ));
-    }
 
     copy_file(&from, &to)
 }

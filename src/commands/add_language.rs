@@ -9,7 +9,7 @@ use std::path::Path;
 #[derive(Args)]
 pub struct AddLanguageArgs {
     pub language: SupportedLanguage,
-    #[arg(default_value = ".")]
+    #[arg(short, long, default_value = ".")]
     pub path: String,
 }
 
@@ -22,18 +22,17 @@ pub fn run(args: &AddLanguageArgs) -> Result<()> {
         ));
     }
 
-    let language_directory = workspace_path.join(args.language.to_string());
-
-    fs::create_dir_all(&language_directory)
+    // Create folder for the language
+    fs::create_dir_all(&workspace_path.join(args.language.to_string()))
         .with_context(|| format!("Failed to create directory at {}", args.path))?;
 
     // Copy BUILD file for the language
     let build_file_path = format!("{}/BUILD", args.language);
-    copy_file_from_templates(&build_file_path, &language_directory)
+    copy_file_from_templates(&build_file_path, &workspace_path)
         .with_context(|| format!("Failed to copy BUILD file for {}", args.language))?;
 
     // Copy additional language-specific files
-    // copy_additional_files(&args.language, &language_directory)?;
+    copy_additional_files(&args.language, &workspace_path)?;
 
     Ok(())
 }
