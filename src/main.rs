@@ -13,8 +13,8 @@ struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     Init(commands::init::InitArgs),
+    AddLanguage(commands::add_language::AddLanguageArgs),
     // Fetch(commands::fetch::FetchArgs),
-    // AddLanguage(commands::add_language::AddLanguageArgs),
 }
 
 fn main() -> Result<()> {
@@ -23,6 +23,9 @@ fn main() -> Result<()> {
     match &cli.command {
         Commands::Init(args) => {
             commands::init::run(args)?;
+        }
+        Commands::AddLanguage(args) => {
+            commands::add_language::run(args)?;
         }
     }
 

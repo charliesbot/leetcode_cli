@@ -1,3 +1,4 @@
+# LeetCode CLI Workspace
 # This file is managed by the LeetCode CLI. Do not edit manually.
 
 workspace(name = "leetcode")
