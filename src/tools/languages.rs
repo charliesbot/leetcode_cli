@@ -1,7 +1,8 @@
-use clap::ValueEnum;
 use core::fmt;
+use strum_macros::EnumIter;
 
-#[derive(Debug, Clone, ValueEnum)]
+#[non_exhaustive]
+#[derive(Debug, EnumIter)]
 pub enum SupportedLanguage {
     Python,
     TypeScript,

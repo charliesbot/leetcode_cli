@@ -1,26 +1,8 @@
-load("@npm//@bazel/typescript:index.bzl", "ts_project", "ts_config")
-load("//tools:index.bzl", "jest_test")
+load("@npm//@bazel/typescript:index.bzl", "ts_project")
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_test")
 
-exports_files(["tsconfig.json"])
+package(default_visibility = ["//visibility:public"])
 
-ts_config(
-    name = "tsconfig",
-    src = "tsconfig.json",
-)
+exports_files(["tsconfig.json", "package.json", "package-lock.json"])
 
-ts_project(
-    name = "ts_exercises",
-    srcs = glob(
-        ["**/**/*.ts"],
-        exclude = ["**/**/*.test.ts"]
-    ),
-    visibility = ["//visibility:public"],
-    tsconfig = ":tsconfig.json"
-)
-
-jest_test(
-    name = "ts_tests",
-    srcs = glob(["**/**/*.ts"]),
-    config_file = "jest.ts.config.js",
-    deps = [":tsconfig.json"],
-)
+# Exercise targets will be added here by the 'exercise' command
