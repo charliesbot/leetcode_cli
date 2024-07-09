@@ -1,6 +1,6 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::Args;
-use std::{fs, path::Path};
+use std::path::Path;
 use strum::IntoEnumIterator;
 
 use crate::tools::{file::FileUtils, languages::SupportedLanguage};
@@ -18,11 +18,12 @@ pub fn run(args: &InitArgs) -> Result<()> {
     let file_utils = FileUtils::new(workspace_path);
 
     // Create the workspace directory
-    file_utils.create_project_directory();
+    file_utils.create_project_directory()?;
 
     // Copy root files
     file_utils.copy_file_to_root("WORKSPACE")?;
     file_utils.copy_file_to_root("BUILD")?;
+    file_utils.copy_file_to_root("README.md")?;
 
     for lang in SupportedLanguage::iter() {
         copy_language_related_files(&lang, &file_utils)?;
