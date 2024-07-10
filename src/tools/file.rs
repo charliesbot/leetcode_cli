@@ -6,7 +6,9 @@ use std::{
 
 use anyhow::Context;
 
-use super::languages::SupportedLanguage;
+use crate::graphql::graphql::Question;
+
+use super::{get_file_extension::get_file_extension, languages::SupportedLanguage};
 
 pub struct FileUtils {
     templates_directory: PathBuf,
@@ -30,6 +32,36 @@ impl FileUtils {
             templates_directory,
             target_directory: target_directory.as_ref().to_path_buf(),
         }
+    }
+
+    pub fn create_exercise(question: &Question, language: &SupportedLanguage) -> io::Result<()> {
+        let title_slug = question.titleSlug.replace("-", "_");
+        // Create file name
+        let file_name = format!(
+            "{}_{}.{}",
+            question.questionId,
+            title_slug,
+            get_file_extension(&language.to_string())
+        );
+        // let file_path = PathBuf::from(&file_name);
+
+        // Write to file
+        // let mut file = File::create(file_path)?;
+        // writeln!(
+        //     file,
+        //     "// LeetCode {} - {}",
+        //     question.question_frontend_id, question.title
+        // )?;
+        // writeln!(file, "// Difficulty: {}", question.difficulty)?;
+        // writeln!(file, "// {}", question.content.lines().next().unwrap_or(""))?;
+        // writeln!(file)?;
+        // file.write_all(snippet.code.as_bytes())?;
+        // writeln!(file)?;
+        // writeln!(file, "// Sample test case:")?;
+        // writeln!(file, "// {}", question.sample_test_case)?;
+        //
+        // println!("Created file: {}", file_name);
+        Ok(())
     }
 
     pub fn copy_file(&self, from: impl AsRef<Path>, to: impl AsRef<Path>) -> io::Result<()> {
