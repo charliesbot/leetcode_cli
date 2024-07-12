@@ -3,6 +3,4 @@ load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_test")
 
 package(default_visibility = ["//visibility:public"])
 
-exports_files(["tsconfig.json", "package.json", "package-lock.json"])
-
 # Exercise targets will be added here by the 'exercise' command

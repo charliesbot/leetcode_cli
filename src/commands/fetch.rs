@@ -1,33 +1,32 @@
-use crate::graphql::graphql;
 use anyhow::Result;
 use clap::Args;
-use std::fs::File;
-use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+
+use crate::graphql::graphql;
+use crate::tools::file::FileUtils;
+use crate::tools::languages::SupportedLanguage;
 
 #[derive(Args)]
 pub struct FetchArgs {
     /// The LeetCode problem ID or slug
     pub problem_identifier: String,
     /// The programming language to use
-    pub language: String,
+    pub language: SupportedLanguage,
+    /// The path to save the problem (defaults to current directory)
+    #[arg(short, long, default_value = ".")]
+    pub path: PathBuf,
 }
 
 pub async fn run(args: &FetchArgs) -> Result<()> {
     let question = graphql::fetch_question(&args.problem_identifier).await?;
+    let workspace_path = Path::new(&args.path);
+    let language = &args.language;
+    let file_utils = FileUtils::new(workspace_path);
 
-    let snippet = question
-        .codeSnippets
-        .iter()
-        .find(|s| s.langSlug.to_lowercase() == args.language.to_lowercase())
-        .ok_or_else(|| anyhow::anyhow!("Language not supported for this problem"))?;
+    let exercise_name = file_utils.create_exercise(&question, language)?;
 
-    println!(
-        "Code snippet for problem '{}' in {}:",
-        question.title, args.language
-    );
-    println!("{}", snippet.code);
-    println!("{}", question.titleSlug.replace("-", "_"));
+    println!("Created exercise file: {}", exercise_name);
+    println!("Created test file: {}", test_file_path.display());
 
     // TODO
     // 1. Create file

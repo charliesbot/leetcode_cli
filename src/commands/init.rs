@@ -58,6 +58,30 @@ fn copy_language_related_files(language: &SupportedLanguage, file_utils: &FileUt
         SupportedLanguage::Cpp => {
             // TODO
         }
+        SupportedLanguage::Java => {
+            // TODO
+        }
+        SupportedLanguage::JavaScript => {
+            // TODO
+        }
+        SupportedLanguage::Go => {
+            // TODO
+        }
+        SupportedLanguage::Swift => {
+            // TODO
+        }
+        SupportedLanguage::Kotlin => {
+            // TODO
+        }
+        SupportedLanguage::Scala => {
+            // TODO
+        }
+        SupportedLanguage::Ruby => {
+            // TODO
+        }
+        SupportedLanguage::Php => {
+            // TODO
+        }
     }
     Ok(())
 }
