@@ -12,11 +12,7 @@ use crate::tools::fill_exercise_template::fill_exercise_template;
 
 use super::fill_test_template::fill_test_template;
 use super::get_code_snippet_by_lang::get_code_snippet_by_lang;
-use super::get_file_extension;
-use super::{
-    add_leading_zeros::add_leading_zeros, get_file_extension::get_file_extension,
-    languages::SupportedLanguage,
-};
+use super::{get_file_extension::get_file_extension, languages::SupportedLanguage};
 
 pub struct FileUtils {
     templates_directory: PathBuf,
@@ -60,17 +56,12 @@ impl FileUtils {
 
     pub fn create_exercise(
         &self,
+        title: &str,
         question: &Question,
         language: &SupportedLanguage,
     ) -> Result<String> {
-        let title_slug = question.titleSlug.replace("-", "_");
         let file_extension = get_file_extension(&language);
-        let file_name = format!(
-            "{}_{}.{}",
-            add_leading_zeros(&question.questionId),
-            title_slug,
-            file_extension
-        );
+        let file_name = format!("{}.{}", title, file_extension);
 
         let snippet = get_code_snippet_by_lang(question, language)?;
 
@@ -90,15 +81,14 @@ impl FileUtils {
         Ok(file_name)
     }
 
-    pub fn create_test(&self, question: &Question, language: &SupportedLanguage) -> Result<String> {
-        let title_slug = question.titleSlug.replace("-", "_");
+    pub fn create_test(
+        &self,
+        title: &str,
+        question: &Question,
+        language: &SupportedLanguage,
+    ) -> Result<String> {
         let file_extension = get_file_extension(&language);
-        let file_name = format!(
-            "{}_{}_test.{}",
-            add_leading_zeros(&question.questionId),
-            title_slug,
-            file_extension
-        );
+        let file_name = format!("{}_test.{}", title, file_extension);
 
         let test_template_name = format!("{}.{}", "test_template", file_extension);
         let test_template_path = self
@@ -106,8 +96,7 @@ impl FileUtils {
             .join(language.to_string())
             .join(test_template_name);
         let test_template_content = self.read_file(&test_template_path)?;
-        let full_exercise_content =
-            fill_test_template(&test_template_content, &question, &file_name)?;
+        let full_exercise_content = fill_test_template(&test_template_content, &question, &title)?;
         let new_file_path = self
             .target_directory
             .join(language.to_string())
