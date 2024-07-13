@@ -31,9 +31,16 @@ pub async fn run(args: &FetchArgs) -> Result<()> {
     );
     let exercise_name = file_utils.create_exercise(&title_slug, &question, language)?;
     let test_name = file_utils.create_test(&title_slug, &question, language)?;
+    file_utils.update_build_file(&exercise_name, &test_name, &language)?;
 
     println!("Created exercise file: {}", exercise_name);
     println!("Created test file: {}", test_name);
+
+    println!(
+        "Run `bazel test //{}:{}`",
+        &language.to_string(),
+        &test_name
+    );
 
     Ok(())
 }

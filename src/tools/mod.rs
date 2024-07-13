@@ -1,5 +1,6 @@
 pub mod add_leading_zeros;
 pub mod file;
+pub mod fill_build_template;
 pub mod fill_exercise_template;
 pub mod fill_test_template;
 pub mod get_code_snippet_by_lang;

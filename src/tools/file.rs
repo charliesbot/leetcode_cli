@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::Read;
 use std::{
     fs::{self},
@@ -8,6 +8,7 @@ use std::{
 };
 
 use crate::graphql::graphql::Question;
+use crate::tools::fill_build_template::fill_build_template;
 use crate::tools::fill_exercise_template::fill_exercise_template;
 
 use super::fill_test_template::fill_test_template;
@@ -61,7 +62,7 @@ impl FileUtils {
         language: &SupportedLanguage,
     ) -> Result<String> {
         let file_extension = get_file_extension(&language);
-        let file_name = format!("{}.{}", title, file_extension);
+        let file_name_with_extension = format!("{}.{}", title, file_extension);
 
         let snippet = get_code_snippet_by_lang(question, language)?;
 
@@ -72,13 +73,13 @@ impl FileUtils {
             .join(exercise_template_name);
         let exercise_template_content = self.read_file(&exercise_template_path)?;
         let full_exercise_content =
-            fill_exercise_template(&exercise_template_content, question, snippet)?;
+            fill_exercise_template(&exercise_template_content, question, snippet);
         let new_file_path = self
             .target_directory
             .join(language.to_string())
-            .join(file_name.clone());
+            .join(file_name_with_extension.clone());
         self.write_file(&new_file_path, &full_exercise_content)?;
-        Ok(file_name)
+        Ok(title.to_string())
     }
 
     pub fn create_test(
@@ -88,7 +89,8 @@ impl FileUtils {
         language: &SupportedLanguage,
     ) -> Result<String> {
         let file_extension = get_file_extension(&language);
-        let file_name = format!("{}_test.{}", title, file_extension);
+        let file_name = format!("{}_test", title);
+        let file_name_with_extension = format!("{}.{}", file_name, file_extension);
 
         let test_template_name = format!("{}.{}", "test_template", file_extension);
         let test_template_path = self
@@ -96,13 +98,42 @@ impl FileUtils {
             .join(language.to_string())
             .join(test_template_name);
         let test_template_content = self.read_file(&test_template_path)?;
-        let full_exercise_content = fill_test_template(&test_template_content, &question, &title)?;
+        let full_exercise_content = fill_test_template(&test_template_content, &question, &title);
         let new_file_path = self
             .target_directory
             .join(language.to_string())
-            .join(file_name.clone());
+            .join(file_name_with_extension.clone());
         self.write_file(&new_file_path, &full_exercise_content)?;
         Ok(file_name)
+    }
+
+    pub fn update_build_file(
+        &self,
+        exercise_name: &str,
+        test_name: &str,
+        language: &SupportedLanguage,
+    ) -> Result<()> {
+        let build_template_path = self
+            .templates_directory
+            .join(language.to_string())
+            .join("build_entry_template.txt");
+        let content = self.read_file(&build_template_path)?;
+        let build_entry = fill_build_template(&content, &exercise_name, &test_name, &language);
+
+        let build_file_path = self
+            .target_directory
+            .join(language.to_string())
+            .join("BUILD");
+        let mut file = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open(build_file_path)
+            .with_context(|| "Failed to open BUILD file")?;
+
+        writeln!(file, "\n{}", build_entry).with_context(|| "Failed to write to BUILD file")?;
+
+        println!("Updated BUILD file with new entry");
+        Ok(())
     }
 
     pub fn copy_file(&self, from: impl AsRef<Path>, to: impl AsRef<Path>) -> io::Result<()> {
