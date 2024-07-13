@@ -2,32 +2,41 @@ use html_escape::decode_html_entities;
 use textwrap::fill;
 
 fn remove_html_tags(html: &str) -> String {
-    html.replace("<strong>", "")
-        .replace("</strong>", "")
-        .replace("<em>", "")
-        .replace("</em>", "")
-        .replace("</p>", "")
-        .replace("<p>", "")
-        .replace("<b>", "")
-        .replace("</b>", "")
-        .replace("<pre>", "")
-        .replace("</pre>", "")
-        .replace("<ul>", "")
-        .replace("</ul>", "")
-        .replace("<li>", "")
-        .replace("</li>", "")
-        .replace("<code>", "")
-        .replace("</code>", "")
-        .replace("<i>", "")
-        .replace("</i>", "")
-        .replace("<sub>", "")
-        .replace("</sub>", "")
-        .replace("</sup>", "")
-        .replace("<sup>", "^")
-        .replace("<strong class=\"example\">", "")
-        .replace("<font face=\"monospace\">", "")
-        .replace("</font>", "")
+    let tags = vec![
+        ("<strong>", ""),
+        ("</strong>", ""),
+        ("<em>", ""),
+        ("</em>", ""),
+        ("<p>", ""),
+        ("</p>", ""),
+        ("<b>", ""),
+        ("</b>", ""),
+        ("<pre>", ""),
+        ("</pre>", ""),
+        ("<ul>", ""),
+        ("</ul>", ""),
+        ("<li>", ""),
+        ("</li>", ""),
+        ("<code>", ""),
+        ("</code>", ""),
+        ("<i>", ""),
+        ("</i>", ""),
+        ("<sub>", ""),
+        ("</sub>", ""),
+        ("</sup>", ""),
+        ("<sup>", "^"),
+        ("<strong class=\"example\">", ""),
+        ("<font face=\"monospace\">", ""),
+        ("</font>", ""),
+    ];
+
+    let mut result = html.to_string();
+    for (tag, replacement) in tags {
+        result = result.replace(tag, replacement);
+    }
+    result
 }
+
 pub fn sanitize_text(content: &str) -> String {
     // Step 1: Decode HTML entities
     let decoded = decode_html_entities(content);
