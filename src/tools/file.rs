@@ -141,7 +141,7 @@ impl FileUtils {
             .open(build_file_path)
             .with_context(|| "Failed to open BUILD file")?;
 
-        writeln!(file, "\n{}", build_entry).with_context(|| "Failed to write to BUILD file")?;
+        writeln!(file, "{}", build_entry).with_context(|| "Failed to write to BUILD file")?;
 
         println!("Updated BUILD file with new entry");
         Ok(())
