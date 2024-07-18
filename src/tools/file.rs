@@ -72,8 +72,13 @@ impl FileUtils {
             .join(language.to_string())
             .join(exercise_template_name);
         let exercise_template_content = self.read_file(&exercise_template_path)?;
-        let full_exercise_content =
-            fill_exercise_template(&exercise_template_content, question, snippet);
+        let full_exercise_content = fill_exercise_template(
+            &exercise_template_content,
+            question,
+            snippet,
+            &title,
+            &language,
+        );
         let new_file_path = self
             .target_directory
             .join(language.to_string())
@@ -82,12 +87,16 @@ impl FileUtils {
         Ok(title.to_string())
     }
 
-    pub fn create_test(
+    pub fn maybe_create_test(
         &self,
         title: &str,
         question: &Question,
         language: &SupportedLanguage,
-    ) -> Result<String> {
+    ) -> Result<Option<String>> {
+        if *language == SupportedLanguage::Rust {
+            return Ok(None::<String>);
+        }
+
         let file_extension = get_file_extension(&language);
         let file_name = format!("{}_test", title);
         let file_name_with_extension = format!("{}.{}", file_name, file_extension);
@@ -98,13 +107,15 @@ impl FileUtils {
             .join(language.to_string())
             .join(test_template_name);
         let test_template_content = self.read_file(&test_template_path)?;
-        let full_exercise_content = fill_test_template(&test_template_content, &question, &title);
+        let full_exercise_content =
+            fill_test_template(&test_template_content, &question, &title, &language);
+
         let new_file_path = self
             .target_directory
             .join(language.to_string())
             .join(file_name_with_extension.clone());
         self.write_file(&new_file_path, &full_exercise_content)?;
-        Ok(file_name)
+        Ok(Some(file_name))
     }
 
     pub fn update_build_file(

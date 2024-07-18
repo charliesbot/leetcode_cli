@@ -3,7 +3,7 @@ use core::fmt;
 use strum_macros::EnumIter;
 
 #[non_exhaustive]
-#[derive(Debug, Clone, ValueEnum, EnumIter)]
+#[derive(Debug, Clone, ValueEnum, EnumIter, PartialEq)]
 pub enum SupportedLanguage {
     #[value(name = "python")]
     Python,
@@ -15,7 +15,7 @@ pub enum SupportedLanguage {
     JavaScript,
     #[value(name = "typescript", alias = "ts")]
     TypeScript,
-    #[value(name = "rust")]
+    #[value(name = "rust", alias = "rs")]
     Rust,
     #[value(name = "go")]
     Go,
