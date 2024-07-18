@@ -1,0 +1,9 @@
+rust_binary(
+    name = "__EXERCISE_NAME__",
+    srcs = ["__EXERCISE_FILE__"],
+)
+ 
+rust_test(
+    name = "__TEST_NAME__",
+    srcs = ["__TEST_FILE__"],
+)
