@@ -33,5 +33,3 @@ npm_install(
 )
 #### END TYPESCRIPT RULES
 
-# Language-specific rules will be added here by the CLI.
-
