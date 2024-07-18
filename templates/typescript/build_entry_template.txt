@@ -1,5 +1,5 @@
 ts_project(
-    name = "__PROJECT_NAME__",
+    name = "__EXERCISE_NAME__",
     srcs = ["__EXERCISE_FILE__", "__TEST_FILE__"],
     tsconfig = "//:tsconfig.json",
     deps = ["@npm//@types/node"],
@@ -7,6 +7,6 @@ ts_project(
 
 nodejs_test(
     name = "__TEST_NAME__",
-    data = [":__PROJECT_NAME__"],
+    data = [":__EXERCISE_NAME__"],
     entry_point = "__TEST_FILE__",
 )
