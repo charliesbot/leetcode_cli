@@ -33,3 +33,18 @@ npm_install(
 )
 #### END TYPESCRIPT RULES
 
+#### BEGIN RUST RULES
+http_archive(
+    name = "rules_rust",
+    sha256 = "35cwdTOaqqu4y+aXgIUU2C2PAKMz4+uyJ7/UMIGCmFs=",
+    urls = ["https://github.com/bazelbuild/rules_rust/releases/download/0.47.1/rules_rust-v0.47.1.tar.gz"],
+)
+
+load("@rules_rust//rust:repositories.bzl", "rules_rust_dependencies", "rust_register_toolchains")
+
+rules_rust_dependencies()
+
+rust_register_toolchains(
+    edition = "2021",
+)
+#### END RUST RULES

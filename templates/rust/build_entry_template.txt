@@ -1,0 +1,4 @@
+rust_test(
+    name = "__EXERCISE_NAME__",
+    srcs = ["__EXERCISE_FILE__"],
+)

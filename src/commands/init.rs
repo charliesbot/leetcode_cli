@@ -53,7 +53,9 @@ fn copy_language_related_files(language: &SupportedLanguage, file_utils: &FileUt
             // TODO
         }
         SupportedLanguage::Rust => {
-            // TODO
+            file_utils.create_language_directory(language)?;
+
+            file_utils.copy_file_to_lang("rust/BUILD")?;
         }
         SupportedLanguage::Cpp => {
             // TODO
