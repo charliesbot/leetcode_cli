@@ -1,6 +1,6 @@
-# LeetCode CLI
+# LeetKick 🚀
 
-A modern TypeScript CLI tool for scaffolding LeetCode exercises with language-specific testing setups. Organize your coding practice in a structured way across multiple programming languages.
+A modern TypeScript CLI tool for scaffolding LeetCode exercises with language-specific testing setups. Kick-start your coding practice in a structured way across multiple programming languages!
 
 ## ✨ Features
 
@@ -21,8 +21,8 @@ A modern TypeScript CLI tool for scaffolding LeetCode exercises with language-sp
 ### Install
 
 ```bash
-git clone https://github.com/charliesbot/leetcode_cli.git
-cd leetcode_cli
+git clone https://github.com/charliesbot/leetkick.git
+cd leetkick
 npm install
 npm run build
 ```
@@ -31,7 +31,7 @@ npm run build
 
 ```bash
 npm link
-# Now you can use `leetcode` command globally
+# Now you can use `leetkick` command globally
 ```
 
 ## 🚀 Quick Start
@@ -43,19 +43,19 @@ npm link
 node build/src/index.js fetch two-sum --language typescript
 
 # Or if globally installed:
-leetcode fetch two-sum --language typescript
+leetkick fetch two-sum --language typescript
 ```
 
 This will:
 - Create a `typescript/` workspace with proper configuration
 - Fetch problem details from LeetCode
-- Generate `two_sum/solution.ts` with the problem description and starter code
-- Generate `two_sum/solution.test.ts` with basic test setup
+- Generate `0001_two_sum/two_sum.ts` with the problem description and starter code
+- Generate `0001_two_sum/two_sum.test.ts` with basic test setup
 
 ### 2. Start Coding
 
 ```bash
-cd typescript/two_sum
+cd typescript/0001_two_sum
 # Edit two_sum.ts to implement your solution
 ```
 
@@ -65,34 +65,45 @@ cd typescript/two_sum
 cd typescript
 npm test  # Runs all tests
 # or
-npm test two_sum/two_sum.test.ts  # Run specific test
+npm test 0001_two_sum/two_sum.test.ts  # Run specific test
 ```
 
 ## 📖 Usage
 
 ### Commands
 
-#### `fetch <problem-slug> --language <lang>`
+#### `fetch <problem-slug> --language <lang> [--force]`
 
 Fetch a LeetCode problem and create exercise files.
 
 ```bash
-leetcode fetch binary-search --language typescript
-leetcode fetch valid-parentheses --language python
-leetcode fetch reverse-linked-list --language java
+leetkick fetch binary-search --language typescript
+leetkick fetch valid-parentheses --language python
+leetkick fetch reverse-linked-list --language java
+
+# Overwrite existing exercise
+leetkick fetch two-sum --language typescript --force
 ```
 
 **Options:**
 - `<problem-slug>`: LeetCode problem slug (e.g., "two-sum", "binary-search")
 - `--language, -l`: Programming language (see supported languages below)
+- `--force, -f`: Overwrite existing exercise if it already exists
+
+**Duplicate Handling:**
+If you try to fetch a problem you've already solved, the CLI will:
+- ❌ **Warn you** that the exercise already exists
+- 💡 **Show options** for what to do next
+- 🛡️ **Protect your work** by not overwriting without permission
+- ⚡ **Allow override** with the `--force` flag if you want to start fresh
 
 #### `init <language>`
 
 Initialize a language workspace manually.
 
 ```bash
-leetcode init typescript
-leetcode init python
+leetkick init typescript
+leetkick init python
 ```
 
 #### `help [command]`
@@ -100,8 +111,8 @@ leetcode init python
 Show help information.
 
 ```bash
-leetcode help
-leetcode help fetch
+leetkick help
+leetkick help fetch
 ```
 
 ### Supported Languages
@@ -123,10 +134,10 @@ your-project/
 │   ├── package.json          # TypeScript workspace config
 │   ├── tsconfig.json         # TypeScript compiler config
 │   ├── .prettierrc.json      # Code formatting rules
-│   ├── two_sum/
+│   ├── 0001_two_sum/
 │   │   ├── two_sum.ts        # Your solution
 │   │   └── two_sum.test.ts   # Test cases
-│   ├── binary_search/
+│   ├── 0704_binary_search/
 │   │   ├── binary_search.ts
 │   │   └── binary_search.test.ts
 │   └── ...
@@ -139,10 +150,10 @@ your-project/
 
 ```bash
 # 1. Fetch a problem
-leetcode fetch two-sum --language typescript
+leetkick fetch two-sum --language typescript
 
 # 2. Navigate to the generated code
-cd typescript/two_sum
+cd typescript/0001_two_sum
 ```
 
 **Generated `two_sum.ts`:**
@@ -191,6 +202,15 @@ npm test
 npm run build     # or npm run compile
 ```
 
+### Testing
+
+```bash
+npm test              # Run all tests (unit + integration)
+npm run test:unit     # Run only unit tests
+npm run test:integration  # Run only integration tests
+npm run test:watch    # Run tests in watch mode
+```
+
 ### Code Quality
 
 ```bash
@@ -234,9 +254,116 @@ npm run clean     # Clean build artifacts
 5. Run linting: `npm run lint`
 6. Submit a pull request
 
-### Adding Language Templates
+### Adding New Language Support
 
-The easiest way to contribute is by adding new language templates! Check the `templates/typescript/` directory for examples and create similar structures for other languages.
+The easiest way to contribute is by adding new language templates! The CLI automatically discovers new languages from the `templates/` directory.
+
+#### Step-by-Step Guide
+
+1. **Create the language directory:**
+   ```bash
+   mkdir templates/python
+   ```
+
+2. **Add configuration files** (language workspace setup):
+   ```bash
+   # Example for Python
+   templates/python/
+   ├── requirements.txt          # Dependencies
+   ├── pytest.ini              # Test configuration  
+   ├── .gitignore              # Language-specific ignores
+   └── pyproject.toml          # Modern Python config (optional)
+   ```
+
+3. **Create template files** with placeholders:
+
+   **`templates/python/exercise_template.py`:**
+   ```python
+   """
+   [__PROBLEM_ID__] __PROBLEM_TITLE__
+   
+   __PROBLEM_DESC__
+   
+   Difficulty: __PROBLEM_DIFFICULTY__
+   """
+   
+   __PROBLEM_DEFAULT_CODE__
+   ```
+
+   **`templates/python/test_template.py`:**
+   ```python
+   import pytest
+   from __EXERCISE_FILE_NAME__ import __PROBLEM_NAME_FORMATTED__
+   
+   def test___PROBLEM_NAME_FORMATTED__():
+       # TODO: Add test cases based on problem examples
+       assert 1 == 1
+   ```
+
+4. **Update file operations** (if needed) in `src/utils/file-operations.ts`:
+   ```typescript
+   // Add to getLanguageSlug() if LeetCode uses different slug
+   python: 'python3',
+   
+   // Add to getFileExtension()
+   python: 'py',
+   
+   // Add to getTestFileName() for language conventions
+   python: `test_${problemName}.${ext}`,
+   ```
+
+5. **Test your new language:**
+   ```bash
+   npm run compile
+   node build/src/index.js fetch two-sum --language python
+   # Or if globally linked:
+   leetkick fetch two-sum --language python
+   ```
+
+#### Template Placeholders Reference
+
+| Placeholder | Description | Example |
+|-------------|-------------|---------|
+| `__PROBLEM_ID__` | LeetCode problem number | `1` |
+| `__PROBLEM_TITLE__` | Problem title | `Two Sum` |
+| `__PROBLEM_DESC__` | Problem description (HTML cleaned) | `Given an array...` |
+| `__PROBLEM_DIFFICULTY__` | Difficulty level | `Easy` |
+| `__PROBLEM_DEFAULT_CODE__` | Starter code from LeetCode | `function twoSum(...)` |
+| `__PROBLEM_NAME_FORMATTED__` | Function name (camelCase) | `twoSum` |
+| `__EXERCISE_FILE_NAME__` | Generated file name | `two_sum.py` |
+
+#### Language-Specific Conventions
+
+**File Naming:**
+- TypeScript: `problem_name.ts`, `problem_name.test.ts`
+- Python: `problem_name.py`, `test_problem_name.py`
+- Java: `ProblemName.java`, `ProblemNameTest.java`
+- Go: `problem_name.go`, `problem_name_test.go`
+
+**Example: Complete Python Template**
+
+```bash
+templates/python/
+├── requirements.txt
+├── pytest.ini
+├── exercise_template.py
+└── test_template.py
+```
+
+**`requirements.txt`:**
+```
+pytest>=7.0.0
+```
+
+**`pytest.ini`:**
+```ini
+[tool:pytest]
+testpaths = .
+python_files = test_*.py
+python_functions = test_*
+```
+
+Once you create the templates, the CLI will automatically discover Python as an available language!
 
 ## 📝 License
 

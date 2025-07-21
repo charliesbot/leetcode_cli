@@ -12,7 +12,8 @@ export const fetchCommand = new Command('fetch')
   .description('Fetch a LeetCode problem and create exercise files')
   .argument('<problem-slug>', 'LeetCode problem slug (e.g., "two-sum")')
   .option('-l, --language <language>', 'Programming language')
-  .action(async (problemSlug: string, options: { language?: string }) => {
+  .option('-f, --force', 'Overwrite existing exercise if it exists')
+  .action(async (problemSlug: string, options: { language?: string; force?: boolean }) => {
     try {
       console.log(`Fetching problem: ${problemSlug}...`);
 
@@ -38,15 +39,32 @@ export const fetchCommand = new Command('fetch')
         await initializeLanguage(options.language);
       }
 
+      // Check if exercise already exists
+      const paddedId = problem.questionFrontendId.padStart(4, '0');
+      const problemName = `${paddedId}_${problem.titleSlug.replace('-', '_')}`;
+      const problemDir = join(languageDir, problemName);
+      
+      if (existsSync(problemDir)) {
+        if (!options.force) {
+          console.log(`❌ Exercise already exists: ${problemDir}`);
+          console.log('The exercise directory already contains files.');
+          console.log('Options:');
+          console.log('  • Use --force to overwrite existing files');
+          console.log('  • Choose a different language');
+          console.log('  • Remove the existing directory manually');
+          throw new Error(`Exercise '${problemName}' already exists in ${options.language}`);
+        } else {
+          console.log(`⚠️  Overwriting existing exercise: ${problemName}`);
+        }
+      }
+
       // Create problem files
       await createProblemFiles(problem, options.language);
 
       console.log(
         `✓ Created ${options.language} exercise for: ${problem.title}`
       );
-      console.log(
-        `📁 Location: ${languageDir}/${problem.titleSlug.replace('-', '_')}`
-      );
+      console.log(`📁 Location: ${languageDir}/${problemName}`);
     } catch (error) {
       console.error('Error:', error instanceof Error ? error.message : error);
       throw error;

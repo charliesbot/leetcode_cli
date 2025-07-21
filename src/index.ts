@@ -7,7 +7,7 @@ import { initCommand } from './commands/init.js';
 const program = new Command();
 
 program
-  .name('leetcode')
+  .name('leetkick')
   .description('CLI tool for scaffolding LeetCode exercises')
   .version('0.1.0');
 

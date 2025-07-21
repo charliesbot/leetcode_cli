@@ -1,17 +1,20 @@
 {
-  "name": "leetcode-cli",
+  "name": "leetkick",
   "version": "0.1.0",
   "description": "A CLI tool for scaffolding LeetCode exercises with language-specific testing setups",
   "type": "module",
   "main": "build/src/index.js",
   "bin": {
-    "leetcode": "build/src/index.js"
+    "leetkick": "build/src/index.js"
   },
   "scripts": {
     "build": "npm run compile",
     "dev": "tsx src/index.ts",
     "start": "node build/src/index.js",
-    "test": "node --test **/*.test.ts",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "node --test test/*.test.ts",
+    "test:integration": "node --test test/cli-integration.test.ts",
+    "test:watch": "node --test --watch test/*.test.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "gts lint",
     "clean": "gts clean",

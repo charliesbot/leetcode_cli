@@ -11,11 +11,12 @@ export async function createProblemFiles(
   language: string
 ): Promise<void> {
   const templateDir = join(TEMPLATES_DIR, language);
-  const problemName = problem.titleSlug.replace('-', '_');
+  const paddedId = problem.questionFrontendId.padStart(4, '0');
+  const problemName = `${paddedId}_${problem.titleSlug.replace('-', '_')}`;
   const languageDir = join(process.cwd(), language);
   const problemDir = join(languageDir, problemName);
 
-  // Create problem directory
+  // Create problem directory (this will work even if it exists)
   await mkdir(problemDir, { recursive: true });
 
   // Find the code snippet for this language
@@ -26,6 +27,13 @@ export async function createProblemFiles(
   const defaultCode =
     codeSnippet?.code || `// TODO: Implement solution for ${problem.title}`;
 
+  // Use the base name (without padding) for file names
+  const baseProblemName = problem.titleSlug.replace('-', '_');
+
+  // Extract function name from the code snippet
+  const functionName =
+    extractFunctionName(defaultCode) || formatProblemName(problem.title);
+
   // Template replacements
   const replacements = {
     __PROBLEM_ID__: problem.questionFrontendId,
@@ -33,8 +41,8 @@ export async function createProblemFiles(
     __PROBLEM_DESC__: cleanDescription(problem.content),
     __PROBLEM_DIFFICULTY__: problem.difficulty,
     __PROBLEM_DEFAULT_CODE__: defaultCode,
-    __PROBLEM_NAME_FORMATTED__: formatProblemName(problem.title),
-    __EXERCISE_FILE_NAME__: getExerciseFileName(problemName, language),
+    __PROBLEM_NAME_FORMATTED__: functionName,
+    __EXERCISE_FILE_NAME__: getExerciseFileName(baseProblemName, language),
   };
 
   // Create exercise file
@@ -44,7 +52,7 @@ export async function createProblemFiles(
   );
   const exerciseContent = replaceTemplateVars(exerciseTemplate, replacements);
   await writeFile(
-    join(problemDir, getExerciseFileName(problemName, language)),
+    join(problemDir, getExerciseFileName(baseProblemName, language)),
     exerciseContent
   );
 
@@ -55,7 +63,7 @@ export async function createProblemFiles(
   );
   const testContent = replaceTemplateVars(testTemplate, replacements);
   await writeFile(
-    join(problemDir, getTestFileName(problemName, language)),
+    join(problemDir, getTestFileName(baseProblemName, language)),
     testContent
   );
 }
@@ -137,4 +145,20 @@ function getTestFileName(problemName: string, language: string): string {
     rust: `${problemName}_test.${ext}`,
   };
   return testNameMap[language] || `${problemName}.test.${ext}`;
+}
+
+function extractFunctionName(code: string): string | null {
+  // Extract function name from TypeScript/JavaScript code
+  const functionMatch = code.match(/function\s+(\w+)\s*\(/);
+  if (functionMatch) {
+    return functionMatch[1];
+  }
+
+  // Extract function name from arrow function or method
+  const arrowMatch = code.match(/(\w+)\s*[=:]\s*\(/);
+  if (arrowMatch) {
+    return arrowMatch[1];
+  }
+
+  return null;
 }
