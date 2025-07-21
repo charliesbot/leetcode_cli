@@ -1,0 +1,4 @@
+build/
+dist/
+templates/
+typescript/

@@ -1,0 +1,43 @@
+{
+  "name": "leetcode-cli",
+  "version": "0.1.0",
+  "description": "A CLI tool for scaffolding LeetCode exercises with language-specific testing setups",
+  "type": "module",
+  "main": "build/src/index.js",
+  "bin": {
+    "leetcode": "build/src/index.js"
+  },
+  "scripts": {
+    "build": "npm run compile",
+    "dev": "tsx src/index.ts",
+    "start": "node build/src/index.js",
+    "test": "node --test **/*.test.ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
+  },
+  "dependencies": {
+    "commander": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "typescript": "^5.6.3",
+    "tsx": "^4.0.0",
+    "prettier": "^3.0.0",
+    "gts": "^6.0.2"
+  },
+  "keywords": [
+    "leetcode",
+    "cli",
+    "coding",
+    "interview",
+    "practice"
+  ],
+  "author": "Charlie",
+  "license": "MIT"
+}
