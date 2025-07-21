@@ -42,5 +42,13 @@
     "practice"
   ],
   "author": "Charlie",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charliesbot/leetkick.git"
+  },
+  "homepage": "https://github.com/charliesbot/leetkick#readme",
+  "bugs": {
+    "url": "https://github.com/charliesbot/leetkick/issues"
+  }
 }

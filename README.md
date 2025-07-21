@@ -13,12 +13,26 @@ A modern TypeScript CLI tool for scaffolding LeetCode exercises with language-sp
 
 ## 🛠️ Installation
 
-### Prerequisites
+### Quick Install (Recommended)
+
+```bash
+# Install globally from npm
+npm install -g leetkick
+
+# Start using immediately
+leetkick fetch two-sum --language typescript
+```
+
+### Building from Source
+
+If you want to contribute or modify the tool:
+
+#### Prerequisites
 
 - Node.js 18+ (for ES2022 features and built-in fetch)
 - npm or yarn
 
-### Install
+#### Steps
 
 ```bash
 git clone https://github.com/charliesbot/leetkick.git
@@ -27,11 +41,11 @@ npm install
 npm run build
 ```
 
-### Global Installation (Optional)
+#### Local Development Setup
 
 ```bash
 npm link
-# Now you can use `leetkick` command globally
+# Now you can use `leetkick` command globally during development
 ```
 
 ## 🚀 Quick Start
@@ -40,9 +54,6 @@ npm link
 
 ```bash
 # Fetch the classic "Two Sum" problem for TypeScript
-node build/src/index.js fetch two-sum --language typescript
-
-# Or if globally installed:
 leetkick fetch two-sum --language typescript
 ```
 
@@ -194,26 +205,26 @@ npm test
 # 5. Success! 🎉
 ```
 
-## 🔧 Development
+## 🔧 Development & Contributing
 
-### Building the CLI
+### Building from Source
+
+After cloning the repository:
 
 ```bash
 npm run build     # or npm run compile
 ```
 
-### Testing
+### Development Workflow
 
 ```bash
+# Testing
 npm test              # Run all tests (unit + integration)
 npm run test:unit     # Run only unit tests
 npm run test:integration  # Run only integration tests
 npm run test:watch    # Run tests in watch mode
-```
 
-### Code Quality
-
-```bash
+# Code Quality
 npm run lint      # Check code style
 npm run fix       # Auto-fix style issues
 npm run clean     # Clean build artifacts
@@ -315,8 +326,7 @@ The easiest way to contribute is by adding new language templates! The CLI autom
 5. **Test your new language:**
    ```bash
    npm run compile
-   node build/src/index.js fetch two-sum --language python
-   # Or if globally linked:
+   npm link  # For local development
    leetkick fetch two-sum --language python
    ```
 
