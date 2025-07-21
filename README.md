@@ -128,12 +128,10 @@ leetkick help fetch
 
 ### Supported Languages
 
-Currently supported:
-- ✅ **TypeScript** - Vitest, Node.js built-in testing, modern ES2022
-- 🚧 **Python** - Coming soon (pytest)
-- 🚧 **Java** - Coming soon (JUnit + Maven)
-- 🚧 **Go** - Coming soon (built-in testing)
-- 🚧 **Rust** - Coming soon (Cargo)
+- ✅ **TypeScript** - Ready to use with Node.js built-in testing
+- 🚧 **Python, Java, Go, Rust** - Coming soon!
+
+> **Note**: Currently only TypeScript is fully supported. Other languages are planned for future releases.
 
 ## 📁 Project Structure
 
@@ -157,223 +155,167 @@ your-project/
 └── ...
 ```
 
-## 🎯 Example Workflow
+## 🎯 What You Get
 
-```bash
-# 1. Fetch a problem
-leetkick fetch two-sum --language typescript
+After fetching a problem, you'll have a complete setup:
 
-# 2. Navigate to the generated code
-cd typescript/0001_two_sum
-```
-
-**Generated `two_sum.ts`:**
+**Generated solution file (`two_sum.ts`):**
 ```typescript
 /*
  * [1] Two Sum
- *
- * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
- *
- * You may assume that each input would have exactly one solution, and you may not use the same element twice.
- *
+ * Given an array of integers nums and an integer target...
  * Difficulty: Easy
  */
-
 export function twoSum(nums: number[], target: number): number[] {
-    
+    // Your solution here
 };
 ```
 
-**Generated `two_sum.test.ts`:**
+**Generated test file (`two_sum.test.ts`):**
 ```typescript
 import test from 'node:test';
 import assert from 'node:assert';
 import { twoSum } from './two_sum.ts';
 
 test('twoSum', () => {
-  // TODO: Add test cases based on problem examples
+  // TODO: Add test cases
   assert.equal(1, 1);
 });
 ```
 
-```bash
-# 3. Implement your solution and add test cases
-# 4. Run tests
-cd ..
-npm test
+Then just:
+1. Implement your solution
+2. Add test cases  
+3. Run `npm test` to verify
+4. Success! 🎉
 
-# 5. Success! 🎉
-```
+---
 
-## 🔧 Development & Contributing
+## 🔧 Development
 
 ### Building from Source
 
-After cloning the repository:
-
 ```bash
-npm run build     # or npm run compile
+git clone https://github.com/charliesbot/leetkick.git
+cd leetkick
+npm install
+npm run build
+npm link  # For global development access
 ```
 
-### Development Workflow
+### Development Commands
 
 ```bash
-# Testing
-npm test              # Run all tests (unit + integration)
-npm run test:unit     # Run only unit tests
-npm run test:integration  # Run only integration tests
-npm run test:watch    # Run tests in watch mode
-
-# Code Quality
-npm run lint      # Check code style
-npm run fix       # Auto-fix style issues
-npm run clean     # Clean build artifacts
+npm test              # Run all tests
+npm run lint          # Check code style
+npm run fix           # Auto-fix style issues
 ```
 
-### Adding New Language Support
-
-1. Create a new template directory: `templates/<language>/`
-2. Add required files:
-   - Configuration files (e.g., `package.json`, `pom.xml`)
-   - `exercise_template.*` - Template for solution files
-   - `test_template.*` - Template for test files
-3. The CLI will automatically discover the new language!
-
-**Template Placeholders:**
-- `__PROBLEM_ID__` - LeetCode problem ID (e.g., "1")
-- `__PROBLEM_TITLE__` - Problem title (e.g., "Two Sum")
-- `__PROBLEM_DESC__` - Problem description
-- `__PROBLEM_DIFFICULTY__` - Difficulty level
-- `__PROBLEM_DEFAULT_CODE__` - Starter code from LeetCode
-- `__PROBLEM_NAME_FORMATTED__` - Camelcase function name
-- `__EXERCISE_FILE_NAME__` - Generated file name
-
-## 🏗️ Architecture
-
-- **CLI Framework**: Commander.js
-- **Language**: TypeScript with Google TypeScript Style (gts)
-- **API**: LeetCode GraphQL API
-- **Template System**: File-based with placeholder replacement
-- **Testing**: Node.js built-in testing (for TypeScript templates)
+---
 
 ## 🤝 Contributing
 
+Want to help make LeetKick better? We'd love your contributions!
+
+### Quick Contribution
+
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/new-language`
-3. Make your changes following Google TypeScript Style
-4. Run tests: `npm test`
-5. Run linting: `npm run lint`
-6. Submit a pull request
+2. Create a feature branch: `git checkout -b feature/awesome-feature`
+3. Make your changes following the existing code style
+4. Run tests: `npm test` and linting: `npm run lint`
+5. Submit a pull request
 
 ### Adding New Language Support
 
-The easiest way to contribute is by adding new language templates! The CLI automatically discovers new languages from the `templates/` directory.
+The easiest way to contribute is adding new language templates! 
 
-#### Step-by-Step Guide
+**Quick Setup:**
+1. Create `templates/<language>/` directory
+2. Add `exercise_template.*` and `test_template.*` files
+3. Include any config files (package.json, requirements.txt, etc.)
+4. The CLI automatically discovers new languages!
 
-1. **Create the language directory:**
-   ```bash
-   mkdir templates/python
-   ```
+<details>
+<summary>📖 <strong>Detailed Guide: Adding Language Support</strong></summary>
 
-2. **Add configuration files** (language workspace setup):
-   ```bash
-   # Example for Python
-   templates/python/
-   ├── requirements.txt          # Dependencies
-   ├── pytest.ini              # Test configuration  
-   ├── .gitignore              # Language-specific ignores
-   └── pyproject.toml          # Modern Python config (optional)
-   ```
+#### Template Structure
 
-3. **Create template files** with placeholders:
+```bash
+templates/python/
+├── requirements.txt          # Dependencies
+├── pytest.ini              # Test configuration  
+├── exercise_template.py     # Solution template
+└── test_template.py         # Test template
+```
 
-   **`templates/python/exercise_template.py`:**
-   ```python
-   """
-   [__PROBLEM_ID__] __PROBLEM_TITLE__
-   
-   __PROBLEM_DESC__
-   
-   Difficulty: __PROBLEM_DIFFICULTY__
-   """
-   
-   __PROBLEM_DEFAULT_CODE__
-   ```
+#### Template Files
 
-   **`templates/python/test_template.py`:**
-   ```python
-   import pytest
-   from __EXERCISE_FILE_NAME__ import __PROBLEM_NAME_FORMATTED__
-   
-   def test___PROBLEM_NAME_FORMATTED__():
-       # TODO: Add test cases based on problem examples
-       assert 1 == 1
-   ```
+**`exercise_template.py`:**
+```python
+"""
+[__PROBLEM_ID__] __PROBLEM_TITLE__
 
-4. **Update file operations** (if needed) in `src/utils/file-operations.ts`:
-   ```typescript
-   // Add to getLanguageSlug() if LeetCode uses different slug
-   python: 'python3',
-   
-   // Add to getFileExtension()
-   python: 'py',
-   
-   // Add to getTestFileName() for language conventions
-   python: `test_${problemName}.${ext}`,
-   ```
+__PROBLEM_DESC__
 
-5. **Test your new language:**
-   ```bash
-   npm run compile
-   npm link  # For local development
-   leetkick fetch two-sum --language python
-   ```
+Difficulty: __PROBLEM_DIFFICULTY__
+"""
 
-#### Template Placeholders Reference
+__PROBLEM_DEFAULT_CODE__
+```
+
+**`test_template.py`:**
+```python
+import pytest
+from __EXERCISE_FILE_NAME__ import __PROBLEM_NAME_FORMATTED__
+
+def test___PROBLEM_NAME_FORMATTED__():
+    # TODO: Add test cases
+    assert 1 == 1
+```
+
+#### Template Placeholders
 
 | Placeholder | Description | Example |
 |-------------|-------------|---------|
 | `__PROBLEM_ID__` | LeetCode problem number | `1` |
 | `__PROBLEM_TITLE__` | Problem title | `Two Sum` |
-| `__PROBLEM_DESC__` | Problem description (HTML cleaned) | `Given an array...` |
+| `__PROBLEM_DESC__` | Problem description | `Given an array...` |
 | `__PROBLEM_DIFFICULTY__` | Difficulty level | `Easy` |
-| `__PROBLEM_DEFAULT_CODE__` | Starter code from LeetCode | `function twoSum(...)` |
+| `__PROBLEM_DEFAULT_CODE__` | LeetCode starter code | `function twoSum(...)` |
 | `__PROBLEM_NAME_FORMATTED__` | Function name (camelCase) | `twoSum` |
 | `__EXERCISE_FILE_NAME__` | Generated file name | `two_sum.py` |
 
-#### Language-Specific Conventions
+#### Code Updates (if needed)
 
-**File Naming:**
-- TypeScript: `problem_name.ts`, `problem_name.test.ts`
-- Python: `problem_name.py`, `test_problem_name.py`
-- Java: `ProblemName.java`, `ProblemNameTest.java`
-- Go: `problem_name.go`, `problem_name_test.go`
+Update `src/utils/file-operations.ts` for language-specific conventions:
 
-**Example: Complete Python Template**
+```typescript
+// Add file extension
+python: 'py',
+
+// Add test file naming convention  
+python: `test_${problemName}.${ext}`,
+
+// Add LeetCode language slug (if different)
+python: 'python3',
+```
+
+#### Testing Your Language
 
 ```bash
-templates/python/
-├── requirements.txt
-├── pytest.ini
-├── exercise_template.py
-└── test_template.py
+npm run compile
+npm link
+leetkick fetch two-sum --language python
 ```
 
-**`requirements.txt`:**
-```
-pytest>=7.0.0
-```
+</details>
 
-**`pytest.ini`:**
-```ini
-[tool:pytest]
-testpaths = .
-python_files = test_*.py
-python_functions = test_*
-```
+### Architecture
 
-Once you create the templates, the CLI will automatically discover Python as an available language!
+- **CLI Framework**: Commander.js
+- **Language**: TypeScript with Google TypeScript Style
+- **API**: LeetCode GraphQL API  
+- **Template System**: File-based with placeholder replacement
 
 ## 📝 License
 
