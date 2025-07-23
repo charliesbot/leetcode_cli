@@ -19,7 +19,12 @@ A modern TypeScript CLI tool for scaffolding LeetCode exercises with language-sp
 # Install globally from npm
 npm install -g leetkick
 
-# Start using immediately
+# Initialize a workspace and add TypeScript support
+mkdir my-leetcode-practice && cd my-leetcode-practice
+leetkick init
+leetkick add typescript
+
+# Start fetching problems
 leetkick fetch two-sum --language typescript
 ```
 
@@ -50,7 +55,20 @@ npm link
 
 ## 🚀 Quick Start
 
-### 1. Fetch Your First Problem
+### 1. Initialize Your Workspace
+
+```bash
+mkdir my-leetcode-practice && cd my-leetcode-practice
+leetkick init  # Creates empty workspace
+```
+
+### 2. Add Language Support
+
+```bash
+leetkick add typescript  # Add TypeScript workspace
+```
+
+### 3. Fetch Your First Problem
 
 ```bash
 # Fetch the classic "Two Sum" problem for TypeScript
@@ -58,19 +76,18 @@ leetkick fetch two-sum --language typescript
 ```
 
 This will:
-- Create a `typescript/` workspace with proper configuration
 - Fetch problem details from LeetCode
 - Generate `0001_two_sum/two_sum.ts` with the problem description and starter code
 - Generate `0001_two_sum/two_sum.test.ts` with basic test setup
 
-### 2. Start Coding
+### 4. Start Coding
 
 ```bash
 cd typescript/0001_two_sum
 # Edit two_sum.ts to implement your solution
 ```
 
-### 3. Run Tests
+### 5. Run Tests
 
 ```bash
 cd typescript
@@ -82,6 +99,23 @@ npm test 0001_two_sum/two_sum.test.ts  # Run specific test
 ## 📖 Usage
 
 ### Commands
+
+#### `init`
+
+Initialize an empty leetkick workspace.
+
+```bash
+leetkick init
+```
+
+#### `add <language>`
+
+Add a language workspace to an existing leetkick workspace.
+
+```bash
+leetkick add typescript
+leetkick add python
+```
 
 #### `fetch <problem-slug> --language <lang> [--force]`
 
@@ -108,14 +142,6 @@ If you try to fetch a problem you've already solved, the CLI will:
 - 🛡️ **Protect your work** by not overwriting without permission
 - ⚡ **Allow override** with the `--force` flag if you want to start fresh
 
-#### `init <language>`
-
-Initialize a language workspace manually.
-
-```bash
-leetkick init typescript
-leetkick init python
-```
 
 #### `help [command]`
 
@@ -139,6 +165,9 @@ After using the CLI, your project will look like this:
 
 ```
 your-project/
+├── .leetkick.json            # Workspace configuration
+├── README.md                 # Workspace documentation
+├── .gitignore                # Git ignore rules
 ├── typescript/
 │   ├── package.json          # TypeScript workspace config
 │   ├── tsconfig.json         # TypeScript compiler config

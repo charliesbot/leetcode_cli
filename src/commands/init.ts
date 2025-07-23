@@ -1,32 +1,26 @@
 import { Command } from 'commander';
 import {
-  getAvailableLanguages,
-  initializeLanguage,
-} from '../utils/templates.js';
-import { existsSync } from 'fs';
-import { join } from 'path';
+  isWorkspaceInitialized,
+  createWorkspace,
+  findWorkspaceRoot,
+} from '../utils/workspace.js';
 
 export const initCommand = new Command('init')
-  .description('Initialize a language workspace')
-  .argument('<language>', 'Programming language to initialize')
-  .action(async (language: string) => {
+  .description('Initialize an empty leetkick workspace')
+  .action(async () => {
     try {
-      const availableLanguages = await getAvailableLanguages();
-
-      if (!availableLanguages.includes(language)) {
-        console.log('Available languages:', availableLanguages.join(', '));
-        throw new Error(`Language '${language}' not supported.`);
-      }
-
-      const languageDir = join(process.cwd(), language);
-      if (existsSync(languageDir)) {
-        console.log(`${language} workspace already exists at: ${languageDir}`);
+      const workspaceRoot = findWorkspaceRoot();
+      const currentDir = process.cwd();
+      
+      if (workspaceRoot || isWorkspaceInitialized(currentDir)) {
+        console.log('Workspace already exists');
         return;
       }
 
-      console.log(`Initializing ${language} workspace...`);
-      await initializeLanguage(language);
-      console.log(`✓ Created ${language} workspace at: ${languageDir}`);
+      console.log('Creating leetkick workspace...');
+      createWorkspace(currentDir);
+      console.log('✓ Workspace initialized');
+      console.log('\nUse "leetkick add <language>" to add language workspaces');
     } catch (error) {
       console.error('Error:', error instanceof Error ? error.message : error);
       throw error;

@@ -27,8 +27,8 @@ export async function createProblemFiles(
   const defaultCode =
     codeSnippet?.code || `// TODO: Implement solution for ${problem.title}`;
 
-  // Use the base name (without padding) for file names
-  const baseProblemName = problem.titleSlug.replace('-', '_');
+  // Use the padded ID + base name for file names
+  const baseProblemName = `${paddedId}_${problem.titleSlug.replace('-', '_')}`;
 
   // Extract function name from the code snippet
   const functionName =
