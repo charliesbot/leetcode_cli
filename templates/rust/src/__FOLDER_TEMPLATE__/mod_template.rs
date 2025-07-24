@@ -1,0 +1,2 @@
+pub mod __EXERCISE_FILE_NAME__;
+pub mod __EXERCISE_TEST_FILE_NAME__;
