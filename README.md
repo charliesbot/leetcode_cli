@@ -67,6 +67,7 @@ leetkick fetch two-sum --language typescript
 # 4. Start coding!
 cd typescript/0001_two_sum
 # Edit 0001_two_sum.ts with your solution
+# Edit 0001_two_sum.test.ts to add real test cases
 
 # 5. Test your solution  
 leetkick test two-sum --language typescript
@@ -177,8 +178,8 @@ test('twoSum', () => {
 ```
 
 Then just:
-1. Implement your solution
-2. Add test cases  
+1. Implement your solution in the `.ts` file
+2. Add real test cases in the `.test.ts` file
 3. Run `leetkick test two-sum --language typescript` to verify
 4. Success!
 
