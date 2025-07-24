@@ -4,7 +4,7 @@ import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const TEMPLATES_DIR = join(__dirname, '../../../templates');
+const TEMPLATES_DIR = join(__dirname, '../../templates');
 
 export async function getAvailableLanguages(): Promise<string[]> {
   try {

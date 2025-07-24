@@ -64,15 +64,6 @@ coverage/
 # Optional eslint cache
 .eslintcache
 
-# Generated language workspaces (user-specific, not part of the CLI)
-# These are created when users run the CLI
-typescript/
-python/
-java/
-go/
-rust/
-cpp/
-javascript/
 
 # Temporary files
 tmp/
