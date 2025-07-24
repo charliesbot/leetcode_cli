@@ -1,4 +1,4 @@
-import { readdir, copyFile, mkdir } from 'fs/promises';
+import { readdir, copyFile, mkdir, stat } from 'fs/promises';
 import { join, dirname } from 'path';
 import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
@@ -27,7 +27,10 @@ export async function initializeLanguage(language: string): Promise<void> {
 
   // Create language directory
   await mkdir(targetDir, { recursive: true });
+  await createFiles(targetDir, templateDir);
+}
 
+async function createFiles(path: string, templateDir: string) {
   // Copy all non-template files (config files)
   const templateFiles = await readdir(templateDir);
 
@@ -38,11 +41,23 @@ export async function initializeLanguage(language: string): Promise<void> {
     }
 
     const sourcePath = join(templateDir, file);
-    
+
     // Special handling for gitignore file to avoid conflicts in the CLI repo
     const targetFileName = file === 'gitignore' ? '.gitignore' : file;
-    const targetPath = join(targetDir, targetFileName);
+    const targetPath = join(path, targetFileName);
 
-    await copyFile(sourcePath, targetPath);
+    if (file.startsWith('__')) {
+      continue;
+    }
+
+    const fileInfo = await stat(sourcePath);
+
+    if (fileInfo.isDirectory()) {
+      await mkdir(targetPath, { recursive: true });
+
+      createFiles(join(targetPath), join(templateDir, file));
+    } else {
+      await copyFile(sourcePath, targetPath);
+    }
   }
 }
