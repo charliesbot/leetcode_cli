@@ -29,10 +29,23 @@ leetkick test two-sum --language typescript     # Run tests instantly
 
 **Prerequisites:** Node.js 18+
 
+### Option 1: Install from npm (Recommended)
+
 ```bash
-# Install (build from source for now, npm package coming soon!)
+npm install -g leetkick
+
+# Verify installation
+leetkick --help
+```
+
+### Option 2: Build from source
+
+```bash
 git clone https://github.com/charliesbot/leetkick.git
-cd leetkick && npm install && npm run compile && npm link
+cd leetkick
+npm install
+npm run compile
+npm link
 
 # Verify installation
 leetkick --help
