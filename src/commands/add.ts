@@ -16,10 +16,10 @@ export const addCommand = new Command('add')
   .action(async (language: string) => {
     try {
       const workspaceRoot = findWorkspaceRoot();
-      const currentDir = process.cwd();
       
-      if (!workspaceRoot && !isWorkspaceInitialized(currentDir)) {
+      if (!workspaceRoot) {
         console.log('No leetkick workspace found. Run "leetkick init" first.');
+        console.log('Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.');
         return;
       }
 
@@ -30,15 +30,24 @@ export const addCommand = new Command('add')
         throw new Error(`Language '${language}' not supported.`);
       }
 
-      const languageDir = join(currentDir, language);
+      const languageDir = join(workspaceRoot, language);
       if (existsSync(languageDir)) {
         console.log(`${language} workspace already exists at: ${languageDir}`);
         return;
       }
 
       console.log(`Adding ${language} workspace...`);
-      await initializeLanguage(language);
-      console.log(`✓ Created ${language} workspace at: ${languageDir}`);
+      
+      // Change to workspace root to create language directory there
+      const originalCwd = process.cwd();
+      process.chdir(workspaceRoot);
+      
+      try {
+        await initializeLanguage(language);
+        console.log(`✓ Created ${language} workspace at: ${languageDir}`);
+      } finally {
+        process.chdir(originalCwd);
+      }
     } catch (error) {
       console.error('Error:', error instanceof Error ? error.message : error);
       throw error;

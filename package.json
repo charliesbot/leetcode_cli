@@ -19,7 +19,7 @@
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",
-    "postcompile": "chmod +x build/src/index.js",
+    "postcompile": "chmod +x build/src/index.js && cp -r templates build/",
     "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",

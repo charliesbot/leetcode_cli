@@ -1,165 +1,115 @@
-# LeetKick 🚀
+# LeetKick
 
-A modern TypeScript CLI tool for scaffolding LeetCode exercises with language-specific testing setups. Kick-start your coding practice in a structured way across multiple programming languages!
+A modern CLI tool for scaffolding LeetCode exercises with language-specific testing setups. Fetch problems, auto-generate boilerplate, and start coding immediately!
 
-## ✨ Features
-
-- 🚀 **Fetch problems directly from LeetCode** via GraphQL API
-- 🔧 **Auto-scaffolding** with language-specific templates
-- 📁 **Clean organization** by programming language
-- ⚡ **Instant testing** with pre-configured test frameworks
-- 🎯 **Extensible** - easily add new language support
-- 📝 **Google TypeScript Style** compliant codebase
-
-## 🛠️ Installation
-
-### Quick Install (Recommended)
+## Quick Demo
 
 ```bash
-# Install globally from npm
-npm install -g leetkick
-
-# Initialize a workspace and add TypeScript support
-mkdir my-leetcode-practice && cd my-leetcode-practice
-leetkick init
+# Setup once
+leetkick init my-practice && cd my-practice
 leetkick add typescript
 
-# Start fetching problems
-leetkick fetch two-sum --language typescript
+# Use daily 
+leetkick fetch two-sum --language typescript    # Auto-generates solution + test files
+leetkick test two-sum --language typescript     # Run tests instantly
 ```
 
-### Building from Source
+**What you get:** Ready-to-code TypeScript files with problem description, starter code, and test setup. No configuration needed!
 
-If you want to contribute or modify the tool:
+## Features
 
-#### Prerequisites
+- **Fetch problems directly from LeetCode** - no copy/paste needed
+- **Auto-scaffolding** - solution + test files generated instantly  
+- **Clean organization** - problems organized by language and number
+- **Zero-config testing** - just run `leetkick test` from anywhere
+- **Smart problem matching** - run tests by number, slug, or name
+- **Extensible** - easily add new language support
 
-- Node.js 18+ (for ES2022 features and built-in fetch)
-- npm or yarn
+## Installation
 
-#### Steps
+**Prerequisites:** Node.js 18+
 
 ```bash
+# Install (build from source for now, npm package coming soon!)
 git clone https://github.com/charliesbot/leetkick.git
-cd leetkick
-npm install
-npm run build
+cd leetkick && npm install && npm run compile && npm link
+
+# Verify installation
+leetkick --help
 ```
 
-#### Local Development Setup
+## Getting Started
 
 ```bash
-npm link
-# Now you can use `leetkick` command globally during development
-```
-
-## 🚀 Quick Start
-
-### 1. Initialize Your Workspace
-
-```bash
-mkdir my-leetcode-practice && cd my-leetcode-practice
-leetkick init  # Creates empty workspace
-```
-
-### 2. Add Language Support
-
-```bash
-leetkick add typescript  # Add TypeScript workspace
-```
-
-### 3. Fetch Your First Problem
-
-```bash
-# Fetch the classic "Two Sum" problem for TypeScript
-leetkick fetch two-sum --language typescript
-```
-
-This will:
-- Fetch problem details from LeetCode
-- Generate `0001_two_sum/two_sum.ts` with the problem description and starter code
-- Generate `0001_two_sum/two_sum.test.ts` with basic test setup
-
-### 4. Start Coding
-
-```bash
-cd typescript/0001_two_sum
-# Edit two_sum.ts to implement your solution
-```
-
-### 5. Run Tests
-
-```bash
-cd typescript
-npm test  # Runs all tests
-# or
-npm test 0001_two_sum/two_sum.test.ts  # Run specific test
-```
-
-## 📖 Usage
-
-### Commands
-
-#### `init`
-
-Initialize an empty leetkick workspace.
-
-```bash
+# 1. Create workspace
+mkdir my-practice && cd my-practice
 leetkick init
-```
 
-#### `add <language>`
-
-Add a language workspace to an existing leetkick workspace.
-
-```bash
+# 2. Add language support
 leetkick add typescript
-leetkick add python
+
+# 3. Fetch your first problem
+leetkick fetch two-sum --language typescript
+
+# 4. Start coding!
+cd typescript/0001_two_sum
+# Edit 0001_two_sum.ts with your solution
+
+# 5. Test your solution  
+leetkick test two-sum --language typescript
 ```
 
-#### `fetch <problem-slug> --language <lang> [--force]`
+**That's it!** Your solution and test files are auto-generated with problem description and starter code.
 
-Fetch a LeetCode problem and create exercise files.
+## Command Reference
 
+| Command | Purpose | Example |
+|---------|---------|---------|
+| `init [dir]` | Create workspace | `leetkick init my-practice` |
+| `add <lang>` | Add language support | `leetkick add typescript` |
+| `fetch <problem> -l <lang>` | Get LeetCode problem | `leetkick fetch two-sum -l typescript` |
+| `test <problem> -l <lang>` | Run tests | `leetkick test 1 -l typescript` |
+| `help [cmd]` | Show help | `leetkick help fetch` |
+
+### Key Features
+
+**Smart Problem Matching**
 ```bash
-leetkick fetch binary-search --language typescript
-leetkick fetch valid-parentheses --language python
-leetkick fetch reverse-linked-list --language java
-
-# Overwrite existing exercise
-leetkick fetch two-sum --language typescript --force
+leetkick test 1 -l typescript           # By number
+leetkick test two-sum -l typescript     # By slug  
+leetkick test 0001_two_sum -l typescript # By exact name
 ```
 
-**Options:**
-- `<problem-slug>`: LeetCode problem slug (e.g., "two-sum", "binary-search")
-- `--language, -l`: Programming language (see supported languages below)
-- `--force, -f`: Overwrite existing exercise if it already exists
+**Works Anywhere**
+Run commands from any directory in your workspace - no need to navigate to specific folders.
 
-**Duplicate Handling:**
-If you try to fetch a problem you've already solved, the CLI will:
-- ❌ **Warn you** that the exercise already exists
-- 💡 **Show options** for what to do next
-- 🛡️ **Protect your work** by not overwriting without permission
-- ⚡ **Allow override** with the `--force` flag if you want to start fresh
+**Safe Overwrites**  
+CLI warns before overwriting existing solutions. Use `--force` to override.
 
+<details>
+<summary><strong>Detailed Command Options</strong></summary>
 
-#### `help [command]`
+#### `fetch` options
+- `--language, -l`: Programming language (required)
+- `--force, -f`: Overwrite existing exercise
 
-Show help information.
+#### `test` options  
+- `--language, -l`: Programming language (required)
+- Finds problems flexibly by number, slug, or exact directory name
 
-```bash
-leetkick help
-leetkick help fetch
-```
+#### `init` options
+- `[directory]`: Optional directory name (creates if doesn't exist)
+
+</details>
 
 ### Supported Languages
 
-- ✅ **TypeScript** - Ready to use with Node.js built-in testing
-- 🚧 **Python, Java, Go, Rust** - Coming soon!
+- **TypeScript** - Ready to use with Node.js built-in testing
+- **Python, Java, Go, Rust** - Coming soon!
 
 > **Note**: Currently only TypeScript is fully supported. Other languages are planned for future releases.
 
-## 📁 Project Structure
+## Project Structure
 
 After using the CLI, your project will look like this:
 
@@ -172,6 +122,7 @@ your-project/
 │   ├── package.json          # TypeScript workspace config
 │   ├── tsconfig.json         # TypeScript compiler config
 │   ├── .prettierrc.json      # Code formatting rules
+│   ├── .gitignore            # Git ignore rules
 │   ├── 0001_two_sum/
 │   │   ├── two_sum.ts        # Your solution
 │   │   └── two_sum.test.ts   # Test cases
@@ -184,7 +135,7 @@ your-project/
 └── ...
 ```
 
-## 🎯 What You Get
+## What You Get
 
 After fetching a problem, you'll have a complete setup:
 
@@ -215,12 +166,12 @@ test('twoSum', () => {
 Then just:
 1. Implement your solution
 2. Add test cases  
-3. Run `npm test` to verify
-4. Success! 🎉
+3. Run `leetkick test two-sum --language typescript` to verify
+4. Success!
 
 ---
 
-## 🔧 Development
+## Development
 
 ### Building from Source
 
@@ -235,6 +186,7 @@ npm link  # For global development access
 ### Development Commands
 
 ```bash
+npm run compile       # Build TypeScript to JavaScript
 npm test              # Run all tests
 npm run lint          # Check code style
 npm run fix           # Auto-fix style issues
@@ -242,7 +194,7 @@ npm run fix           # Auto-fix style issues
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Want to help make LeetKick better? We'd love your contributions!
 
@@ -265,7 +217,7 @@ The easiest way to contribute is adding new language templates!
 4. The CLI automatically discovers new languages!
 
 <details>
-<summary>📖 <strong>Detailed Guide: Adding Language Support</strong></summary>
+<summary><strong>Detailed Guide: Adding Language Support</strong></summary>
 
 #### Template Structure
 
@@ -346,11 +298,11 @@ leetkick fetch two-sum --language python
 - **API**: LeetCode GraphQL API  
 - **Template System**: File-based with placeholder replacement
 
-## 📝 License
+## License
 
 MIT
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Inspired by the original [charliesbot/leetcode_cli](https://github.com/charliesbot/leetcode_cli) Rust implementation
 - Built with [Google TypeScript Style (gts)](https://github.com/google/gts)
@@ -358,4 +310,4 @@ MIT
 
 ---
 
-**Happy Coding!** 🚀 Start practicing with organized, testable LeetCode solutions.
+**Happy Coding!** Start practicing with organized, testable LeetCode solutions.
