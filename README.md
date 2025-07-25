@@ -167,13 +167,12 @@ export function twoSum(nums: number[], target: number): number[] {
 
 **Generated test file (`two_sum.test.ts`):**
 ```typescript
-import test from 'node:test';
-import assert from 'node:assert';
+import { test, expect } from 'vitest';
 import { twoSum } from './two_sum.ts';
 
 test('twoSum', () => {
   // TODO: Add test cases
-  assert.equal(1, 1);
+  expect(1).toBe(1);
 });
 ```
 
@@ -201,7 +200,7 @@ npm link  # For global development access
 
 ```bash
 npm run compile       # Build TypeScript to JavaScript
-npm test              # Run all tests
+npm run test          # Run all tests
 npm run lint          # Check code style
 npm run fix           # Auto-fix style issues
 ```
