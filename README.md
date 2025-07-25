@@ -118,7 +118,7 @@ CLI warns before overwriting existing solutions. Use `--force` to override.
 
 ### Supported Languages
 
-- **TypeScript** - Ready to use with Node.js built-in testing
+- **TypeScript** - Ready to use with Vitest testing framework
 - **Python, Java, Go, Rust** - Coming soon!
 
 > **Note**: Currently only TypeScript is fully supported. Other languages are planned for future releases.

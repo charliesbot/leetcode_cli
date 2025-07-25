@@ -43,6 +43,7 @@ export async function createProblemFiles(
     __PROBLEM_DEFAULT_CODE__: defaultCode,
     __PROBLEM_NAME_FORMATTED__: functionName,
     __EXERCISE_FILE_NAME__: getExerciseFileName(baseProblemName, language),
+    __EXERCISE_FILE_NAME_NO_EXT__: baseProblemName,
   };
 
   // Create exercise file

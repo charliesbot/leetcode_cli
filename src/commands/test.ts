@@ -91,9 +91,12 @@ async function runTests(languageDir: string, problemDir: string, language: strin
 
     switch (language) {
       case 'typescript':
+        command = 'npx';
+        args = ['vitest', 'run', `${problemDir}`];
+        break;
       case 'javascript':
         command = 'node';
-        args = ['--test', `${problemDir}/*.test.ts`, `${problemDir}/*.test.js`];
+        args = ['--test', `${problemDir}/*.test.js`];
         break;
       case 'python':
         command = 'python';
@@ -123,8 +126,7 @@ async function runTests(languageDir: string, problemDir: string, language: strin
 
     const child = spawn(command, args, {
       cwd: languageDir,
-      stdio: 'inherit',
-      shell: true
+      stdio: 'inherit'
     });
 
     child.on('close', (code) => {
@@ -132,7 +134,8 @@ async function runTests(languageDir: string, problemDir: string, language: strin
         console.log('✓ Tests passed!');
         resolve();
       } else {
-        reject(new Error(`Tests failed with exit code ${code}`));
+        // For test failures, just exit gracefully without throwing errors
+        process.exit(code || 1);
       }
     });
 
