@@ -12,9 +12,13 @@ leetkick add typescript
 # Use daily 
 leetkick fetch two-sum --language typescript    # Auto-generates solution + test files
 leetkick test two-sum --language typescript     # Run tests instantly
+
+# Or use C++
+leetkick fetch two-sum --language cpp          # Auto-generates C++ solution + test files
+leetkick test two-sum --language cpp           # Compile and run tests instantly
 ```
 
-**What you get:** Ready-to-code TypeScript files with problem description, starter code, and test setup. No configuration needed!
+**What you get:** Ready-to-code files with problem description, starter code, and test setup. No configuration needed!
 
 ## Features
 
@@ -60,17 +64,20 @@ leetkick init
 
 # 2. Add language support
 leetkick add typescript
+# OR: leetkick add cpp
 
 # 3. Fetch your first problem
 leetkick fetch two-sum --language typescript
+# OR: leetkick fetch two-sum --language cpp
 
 # 4. Start coding!
-cd typescript/0001_two_sum
-# Edit 0001_two_sum.ts with your solution
-# Edit 0001_two_sum.test.ts to add real test cases
+cd typescript/0001_two_sum  # OR: cd cpp/0001_two_sum
+# Edit 0001_two_sum.ts with your solution (OR: 0001_two_sum.cpp)
+# Edit 0001_two_sum.test.ts to add real test cases (OR: 0001_two_sum.test.cpp)
 
 # 5. Test your solution  
 leetkick test two-sum --language typescript
+# OR: leetkick test two-sum --language cpp
 ```
 
 **That's it!** Your solution and test files are auto-generated with problem description and starter code.
@@ -119,9 +126,15 @@ CLI warns before overwriting existing solutions. Use `--force` to override.
 ### Supported Languages
 
 - **TypeScript** - Ready to use with Vitest testing framework
+- **C++** - Ready to use with Catch2 testing framework (bundled)
 - **Python, Java, Go, Rust** - Coming soon!
 
-> **Note**: Currently only TypeScript is fully supported. Other languages are planned for future releases.
+#### Prerequisites
+
+**C++ Requirements:**
+- **macOS**: Xcode command line tools (`xcode-select --install`)
+- **Linux**: Build essentials (`sudo apt install build-essential` or equivalent)
+- Any C++17-compatible compiler (g++, clang++)
 
 ## Project Structure
 
@@ -143,6 +156,18 @@ your-project/
 │   ├── 0704_binary_search/
 │   │   ├── binary_search.ts
 │   │   └── binary_search.test.ts
+│   └── ...
+├── cpp/
+│   ├── catch_amalgamated.hpp # Catch2 testing framework (bundled)
+│   ├── .clang-format         # Code formatting rules
+│   ├── .gitignore            # Git ignore rules
+│   ├── README.md             # C++ workspace documentation
+│   ├── 0001_two_sum/
+│   │   ├── 0001_two_sum.cpp      # Your solution
+│   │   └── 0001_two_sum.test.cpp # Test cases
+│   ├── 0704_binary_search/
+│   │   ├── 0704_binary_search.cpp
+│   │   └── 0704_binary_search.test.cpp
 │   └── ...
 ├── python/                   # Future: Python workspace
 ├── java/                     # Future: Java workspace
@@ -176,10 +201,41 @@ test('twoSum', () => {
 });
 ```
 
+**Generated C++ solution file (`0001_two_sum.cpp`):**
+```cpp
+/*
+ * [1] Two Sum
+ * Given an array of integers nums and an integer target...
+ * Difficulty: Easy
+ */
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        // Your solution here
+        return {};
+    }
+};
+```
+
+**Generated C++ test file (`0001_two_sum.test.cpp`):**
+```cpp
+#define CATCH_CONFIG_MAIN
+#include "../catch_amalgamated.hpp"
+#include "0001_two_sum.cpp"
+
+TEST_CASE("twoSum", "[0001_two_sum]") {
+    // TODO: Add test cases
+    REQUIRE(1 == 1);
+}
+```
+
 Then just:
-1. Implement your solution in the `.ts` file
-2. Add real test cases in the `.test.ts` file
-3. Run `leetkick test two-sum --language typescript` to verify
+1. Implement your solution in the solution file
+2. Add real test cases in the test file
+3. Run `leetkick test two-sum --language <language>` to verify
 4. Success!
 
 ---
