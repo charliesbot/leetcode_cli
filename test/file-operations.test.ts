@@ -42,6 +42,13 @@ test('file operations test suite', async (t) => {
     assert.strictEqual(functionMatch?.[1], 'twoSum');
   });
 
+  await t.test('should extract function name from C++ code', () => {
+    const code = 'vector<int> twoSum(vector<int>& nums, int target) {\n    return {};\n}';
+    // Test the C++ method regex pattern - need to handle templates like vector<int>
+    const cppMethodMatch = code.match(/[\w<>]+\s+(\w+)\s*\([^)]*\)\s*\{/);
+    assert.strictEqual(cppMethodMatch?.[1], 'twoSum');
+  });
+
   await t.test('should format problem name to camelCase', () => {
     const title = 'Two Sum';
     const formatted = title
@@ -118,6 +125,7 @@ test('file operations test suite', async (t) => {
       javascript: `${problemName}.test.js`,
       python: `test_${problemName}.py`,
       java: `${problemName.charAt(0).toUpperCase() + problemName.slice(1)}Test.java`,
+      cpp: `${problemName}.test.cpp`,
       go: `${problemName}_test.go`,
       rust: `${problemName}_test.rs`,
     };
@@ -125,6 +133,7 @@ test('file operations test suite', async (t) => {
     assert.strictEqual(testNameMap.typescript, 'two_sum.test.ts');
     assert.strictEqual(testNameMap.python, 'test_two_sum.py');
     assert.strictEqual(testNameMap.java, 'Two_sumTest.java');
+    assert.strictEqual(testNameMap.cpp, 'two_sum.test.cpp');
     assert.strictEqual(testNameMap.go, 'two_sum_test.go');
   });
 

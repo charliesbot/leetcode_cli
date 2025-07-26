@@ -35,6 +35,13 @@ test('templates test suite', async (t) => {
   });
 
   await t.test('should discover available languages from templates directory', async () => {
+    // Add cpp to the mock setup
+    await fs.mkdir(join(mockTemplatesDir, 'cpp'), {recursive: true});
+    await fs.writeFile(
+      join(mockTemplatesDir, 'cpp', 'exercise_template.cpp'),
+      '__PROBLEM_DEFAULT_CODE__'
+    );
+    
     const entries = await fs.readdir(mockTemplatesDir, {withFileTypes: true});
     const languages = entries
       .filter((entry) => entry.isDirectory())
@@ -42,7 +49,8 @@ test('templates test suite', async (t) => {
 
     assert(languages.includes('typescript'));
     assert(languages.includes('python'));
-    assert.strictEqual(languages.length, 2);
+    assert(languages.includes('cpp'));
+    assert.strictEqual(languages.length, 3);
   });
 
   await t.test('should identify template files vs config files', async () => {

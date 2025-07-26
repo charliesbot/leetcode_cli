@@ -142,6 +142,7 @@ function getTestFileName(problemName: string, language: string): string {
     javascript: `${problemName}.test.${ext}`,
     python: `test_${problemName}.${ext}`,
     java: `${problemName.charAt(0).toUpperCase() + problemName.slice(1)}Test.${ext}`,
+    cpp: `${problemName}.test.${ext}`,
     go: `${problemName}_test.${ext}`,
     rust: `${problemName}_test.${ext}`,
   };
@@ -149,6 +150,12 @@ function getTestFileName(problemName: string, language: string): string {
 }
 
 function extractFunctionName(code: string): string | null {
+  // Extract function name from C++ code (class method) - handle templates like vector<int>
+  const cppMethodMatch = code.match(/[\w<>]+\s+(\w+)\s*\([^)]*\)\s*\{/);
+  if (cppMethodMatch) {
+    return cppMethodMatch[1];
+  }
+
   // Extract function name from TypeScript/JavaScript code
   const functionMatch = code.match(/function\s+(\w+)\s*\(/);
   if (functionMatch) {

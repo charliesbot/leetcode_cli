@@ -1,0 +1,15 @@
+# Compiled binaries
+*.o
+*.exe
+test_runner
+a.out
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

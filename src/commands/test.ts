@@ -115,9 +115,9 @@ async function runTests(languageDir: string, problemDir: string, language: strin
         args = ['test', '--manifest-path', `${problemDir}/Cargo.toml`];
         break;
       case 'cpp':
-        // Assuming we'll have a Makefile or CMake setup
-        command = 'make';
-        args = ['test', `-C`, problemDir];
+        // Compile and run C++ test directly with include path for shared headers
+        command = 'sh';
+        args = ['-c', `cd "${problemDir}" && g++ -I.. -std=c++17 *.test.cpp -o test_runner && ./test_runner`];
         break;
       default:
         reject(new Error(`Testing not implemented for language: ${language}`));
