@@ -71,9 +71,9 @@ leetkick fetch two-sum --language typescript
 # OR: leetkick fetch two-sum --language cpp
 
 # 4. Start coding!
-cd typescript/0001_two_sum  # OR: cd cpp/0001_two_sum
-# Edit 0001_two_sum.ts with your solution (OR: 0001_two_sum.cpp)
-# Edit 0001_two_sum.test.ts to add real test cases (OR: 0001_two_sum.test.cpp)
+cd typescript/problem_0001  # OR: cd cpp/problem_0001
+# Edit TwoSum.ts with your solution (OR: two_sum.cpp)
+# Edit TwoSum.test.ts to add real test cases (OR: two_sum.test.cpp)
 
 # 5. Test your solution  
 leetkick test two-sum --language typescript
@@ -151,24 +151,24 @@ your-project/
 │   ├── tsconfig.json         # TypeScript compiler config
 │   ├── .prettierrc.json      # Code formatting rules
 │   ├── .gitignore            # Git ignore rules
-│   ├── 0001_two_sum/
-│   │   ├── two_sum.ts        # Your solution
-│   │   └── two_sum.test.ts   # Test cases
-│   ├── 0704_binary_search/
-│   │   ├── binary_search.ts
-│   │   └── binary_search.test.ts
+│   ├── problem_0001/
+│   │   ├── TwoSum.ts         # Your solution
+│   │   └── TwoSum.test.ts    # Test cases
+│   ├── problem_0704/
+│   │   ├── BinarySearch.ts
+│   │   └── BinarySearch.test.ts
 │   └── ...
 ├── cpp/
 │   ├── catch_amalgamated.hpp # Catch2 testing framework (bundled)
 │   ├── .clang-format         # Code formatting rules
 │   ├── .gitignore            # Git ignore rules
 │   ├── README.md             # C++ workspace documentation
-│   ├── 0001_two_sum/
-│   │   ├── 0001_two_sum.cpp      # Your solution
-│   │   └── 0001_two_sum.test.cpp # Test cases
-│   ├── 0704_binary_search/
-│   │   ├── 0704_binary_search.cpp
-│   │   └── 0704_binary_search.test.cpp
+│   ├── problem_0001/
+│   │   ├── two_sum.cpp       # Your solution
+│   │   └── two_sum.test.cpp  # Test cases
+│   ├── problem_0704/
+│   │   ├── binary_search.cpp
+│   │   └── binary_search.test.cpp
 │   └── ...
 ├── python/                   # Future: Python workspace
 ├── java/                     # Future: Java workspace
@@ -179,7 +179,7 @@ your-project/
 
 After fetching a problem, you'll have a complete setup:
 
-**Generated solution file (`two_sum.ts`):**
+**Generated solution file (`TwoSum.ts`):**
 ```typescript
 /*
  * [1] Two Sum
@@ -191,10 +191,10 @@ export function twoSum(nums: number[], target: number): number[] {
 };
 ```
 
-**Generated test file (`two_sum.test.ts`):**
+**Generated test file (`TwoSum.test.ts`):**
 ```typescript
 import { test, expect } from 'vitest';
-import { twoSum } from './two_sum.ts';
+import { twoSum } from './TwoSum.ts';
 
 test('twoSum', () => {
   // TODO: Add test cases
@@ -202,7 +202,7 @@ test('twoSum', () => {
 });
 ```
 
-**Generated C++ solution file (`0001_two_sum.cpp`):**
+**Generated C++ solution file (`two_sum.cpp`):**
 ```cpp
 /*
  * [1] Two Sum
@@ -221,13 +221,13 @@ public:
 };
 ```
 
-**Generated C++ test file (`0001_two_sum.test.cpp`):**
+**Generated C++ test file (`two_sum.test.cpp`):**
 ```cpp
 #define CATCH_CONFIG_MAIN
 #include "../catch_amalgamated.hpp"
-#include "0001_two_sum.cpp"
+#include "two_sum.cpp"
 
-TEST_CASE("twoSum", "[0001_two_sum]") {
+TEST_CASE("twoSum", "[two_sum]") {
     // TODO: Add test cases
     REQUIRE(1 == 1);
 }

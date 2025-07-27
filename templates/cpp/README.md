@@ -30,8 +30,8 @@ sudo yum groupinstall "Development Tools"
 leetkick test two-sum --language cpp
 
 # Or manually compile and run
-cd 0001_two_sum
-g++ -std=c++17 0001_two_sum.test.cpp -o test_runner && ./test_runner
+cd problem_0001
+g++ -std=c++17 two_sum.test.cpp -o test_runner && ./test_runner
 ```
 
 ## Code Style
