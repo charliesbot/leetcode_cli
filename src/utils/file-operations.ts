@@ -12,9 +12,9 @@ export async function createProblemFiles(
 ): Promise<void> {
   const templateDir = join(TEMPLATES_DIR, language);
   const paddedId = problem.questionFrontendId.padStart(4, '0');
-  const problemName = `${paddedId}_${problem.titleSlug.replace('-', '_')}`;
+  const problemDirName = `problem_${paddedId}`;
   const languageDir = join(process.cwd(), language);
-  const problemDir = join(languageDir, problemName);
+  const problemDir = join(languageDir, problemDirName);
 
   // Create problem directory (this will work even if it exists)
   await mkdir(problemDir, { recursive: true });
@@ -27,12 +27,13 @@ export async function createProblemFiles(
   const defaultCode =
     codeSnippet?.code || `// TODO: Implement solution for ${problem.title}`;
 
-  // Use the padded ID + base name for file names
-  const baseProblemName = `${paddedId}_${problem.titleSlug.replace('-', '_')}`;
+  // Generate clean names based on language conventions
+  const className = formatClassName(problem.title);
+  const snakeCaseName = formatSnakeCase(problem.title);
+  const camelCaseName = formatProblemName(problem.title);
 
   // Extract function name from the code snippet
-  const functionName =
-    extractFunctionName(defaultCode) || formatProblemName(problem.title);
+  const functionName = extractFunctionName(defaultCode) || camelCaseName;
 
   // Template replacements
   const replacements = {
@@ -42,8 +43,18 @@ export async function createProblemFiles(
     __PROBLEM_DIFFICULTY__: problem.difficulty,
     __PROBLEM_DEFAULT_CODE__: defaultCode,
     __PROBLEM_NAME_FORMATTED__: functionName,
-    __EXERCISE_FILE_NAME__: getExerciseFileName(baseProblemName, language),
-    __EXERCISE_FILE_NAME_NO_EXT__: baseProblemName,
+    __CLASS_NAME__: className,
+    __SNAKE_CASE_NAME__: snakeCaseName,
+    __EXERCISE_FILE_NAME__: getExerciseFileName(
+      className,
+      snakeCaseName,
+      language
+    ),
+    __EXERCISE_FILE_NAME_NO_EXT__: getExerciseFileNameNoExt(
+      className,
+      snakeCaseName,
+      language
+    ),
   };
 
   // Create exercise file
@@ -53,7 +64,7 @@ export async function createProblemFiles(
   );
   const exerciseContent = replaceTemplateVars(exerciseTemplate, replacements);
   await writeFile(
-    join(problemDir, getExerciseFileName(baseProblemName, language)),
+    join(problemDir, getExerciseFileName(className, snakeCaseName, language)),
     exerciseContent
   );
 
@@ -64,7 +75,7 @@ export async function createProblemFiles(
   );
   const testContent = replaceTemplateVars(testTemplate, replacements);
   await writeFile(
-    join(problemDir, getTestFileName(baseProblemName, language)),
+    join(problemDir, getTestFileName(className, snakeCaseName, language)),
     testContent
   );
 }
@@ -104,6 +115,24 @@ function formatProblemName(title: string): string {
     .join('');
 }
 
+function formatClassName(title: string): string {
+  // Convert "Two Sum" to "TwoSum" for class names
+  return title
+    .replace(/[^a-zA-Z0-9\s]/g, '')
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join('');
+}
+
+function formatSnakeCase(title: string): string {
+  // Convert "Two Sum" to "two_sum" for C++ files
+  return title
+    .replace(/[^a-zA-Z0-9\s]/g, '')
+    .toLowerCase()
+    .split(/\s+/)
+    .join('_');
+}
+
 function getLanguageSlug(language: string): string {
   const slugMap: Record<string, string> = {
     typescript: 'typescript',
@@ -130,23 +159,73 @@ function getFileExtension(language: string): string {
   return extMap[language] || 'txt';
 }
 
-function getExerciseFileName(problemName: string, language: string): string {
+function getExerciseFileName(
+  className: string,
+  snakeCaseName: string,
+  language: string
+): string {
   const ext = getFileExtension(language);
-  return `${problemName}.${ext}`;
+  switch (language) {
+    case 'typescript':
+    case 'javascript':
+      return `${className}.${ext}`;
+    case 'cpp':
+    case 'c':
+      return `${snakeCaseName}.${ext}`;
+    case 'kotlin':
+    case 'java':
+      return `${className}.${ext}`;
+    default:
+      return `${className}.${ext}`;
+  }
 }
 
-function getTestFileName(problemName: string, language: string): string {
+function getExerciseFileNameNoExt(
+  className: string,
+  snakeCaseName: string,
+  language: string
+): string {
+  switch (language) {
+    case 'typescript':
+    case 'javascript':
+      return className;
+    case 'cpp':
+    case 'c':
+      return snakeCaseName;
+    case 'kotlin':
+    case 'java':
+      return className;
+    default:
+      return className;
+  }
+}
+
+function getTestFileName(
+  className: string,
+  snakeCaseName: string,
+  language: string
+): string {
   const ext = getFileExtension(language);
-  const testNameMap: Record<string, string> = {
-    typescript: `${problemName}.test.${ext}`,
-    javascript: `${problemName}.test.${ext}`,
-    python: `test_${problemName}.${ext}`,
-    java: `${problemName.charAt(0).toUpperCase() + problemName.slice(1)}Test.${ext}`,
-    cpp: `${problemName}.test.${ext}`,
-    go: `${problemName}_test.${ext}`,
-    rust: `${problemName}_test.${ext}`,
-  };
-  return testNameMap[language] || `${problemName}.test.${ext}`;
+  switch (language) {
+    case 'typescript':
+    case 'javascript':
+      return `${className}.test.${ext}`;
+    case 'cpp':
+    case 'c':
+      return `${snakeCaseName}.test.${ext}`;
+    case 'kotlin':
+      return `${className}Test.${ext}`;
+    case 'java':
+      return `${className}Test.${ext}`;
+    case 'python':
+      return `test_${snakeCaseName}.${ext}`;
+    case 'go':
+      return `${snakeCaseName}_test.${ext}`;
+    case 'rust':
+      return `${snakeCaseName}_test.${ext}`;
+    default:
+      return `${className}.test.${ext}`;
+  }
 }
 
 function extractFunctionName(code: string): string | null {

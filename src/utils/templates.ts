@@ -38,7 +38,7 @@ export async function initializeLanguage(language: string): Promise<void> {
     }
 
     const sourcePath = join(templateDir, file);
-    
+
     // Special handling for gitignore file to avoid conflicts in the CLI repo
     const targetFileName = file === 'gitignore' ? '.gitignore' : file;
     const targetPath = join(targetDir, targetFileName);

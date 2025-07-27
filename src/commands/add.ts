@@ -16,10 +16,12 @@ export const addCommand = new Command('add')
   .action(async (language: string) => {
     try {
       const workspaceRoot = findWorkspaceRoot();
-      
+
       if (!workspaceRoot) {
         console.log('No leetkick workspace found. Run "leetkick init" first.');
-        console.log('Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.');
+        console.log(
+          'Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.'
+        );
         return;
       }
 
@@ -37,11 +39,11 @@ export const addCommand = new Command('add')
       }
 
       console.log(`Adding ${language} workspace...`);
-      
+
       // Change to workspace root to create language directory there
       const originalCwd = process.cwd();
       process.chdir(workspaceRoot);
-      
+
       try {
         await initializeLanguage(language);
         console.log(`✓ Created ${language} workspace at: ${languageDir}`);

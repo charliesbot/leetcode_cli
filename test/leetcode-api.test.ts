@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import type {GraphQLResponse, Problem} from '../src/types/leetcode.js';
+import type { GraphQLResponse, Problem } from '../src/types/leetcode.js';
 
 // Mock fetch for testing
 const originalFetch = globalThis.fetch;
@@ -43,7 +43,8 @@ query questionData($titleSlug: String!) {
           questionFrontendId: '1',
           title: 'Two Sum',
           titleSlug: 'two-sum',
-          content: '<p>Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.</p>',
+          content:
+            '<p>Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.</p>',
           difficulty: 'Easy',
           codeSnippets: [
             {
@@ -70,7 +71,7 @@ query questionData($titleSlug: String!) {
   await t.test('should handle API errors gracefully', async () => {
     // Mock fetch to return an error response
     globalThis.fetch = async () => {
-      return new Response(null, {status: 404, statusText: 'Not Found'});
+      return new Response(null, { status: 404, statusText: 'Not Found' });
     };
 
     try {
@@ -116,13 +117,13 @@ query questionData($titleSlug: String!) {
     const titleSlug = 'two-sum';
     const expectedPayload = {
       operationName: 'questionData',
-      variables: {titleSlug},
+      variables: { titleSlug },
       query: 'query questionData($titleSlug: String!) { ... }', // Simplified for test
     };
 
     const actualPayload = {
       operationName: 'questionData',
-      variables: {titleSlug},
+      variables: { titleSlug },
       query: 'query questionData($titleSlug: String!) { ... }',
     };
 

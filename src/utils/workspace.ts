@@ -8,11 +8,21 @@ export interface WorkspaceConfig {
 }
 
 const WORKSPACE_CONFIG_FILE = '.leetkick.json';
-const SUPPORTED_LANGUAGES = ['typescript', 'javascript', 'python', 'java', 'cpp', 'go', 'rust'];
+const SUPPORTED_LANGUAGES = [
+  'typescript',
+  'javascript',
+  'python',
+  'java',
+  'cpp',
+  'go',
+  'rust',
+];
 
-export function findWorkspaceRoot(startDir: string = process.cwd()): string | null {
+export function findWorkspaceRoot(
+  startDir: string = process.cwd()
+): string | null {
   let currentDir = startDir;
-  
+
   while (currentDir !== '/') {
     const configPath = join(currentDir, WORKSPACE_CONFIG_FILE);
     if (existsSync(configPath)) {
@@ -20,7 +30,7 @@ export function findWorkspaceRoot(startDir: string = process.cwd()): string | nu
     }
     currentDir = dirname(currentDir);
   }
-  
+
   return null;
 }
 
@@ -31,12 +41,12 @@ export function isWorkspaceInitialized(dir: string = process.cwd()): boolean {
 export function createWorkspace(dir: string = process.cwd()): void {
   const config: WorkspaceConfig = {
     version: '0.1.0',
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
-  
+
   const configPath = join(dir, WORKSPACE_CONFIG_FILE);
   writeFileSync(configPath, JSON.stringify(config, null, 2));
-  
+
   // Create README.md
   const readmePath = join(dir, 'README.md');
   const readmeContent = `# LeetCode Practice Workspace
@@ -70,9 +80,9 @@ leetkick add python
 
 Happy coding! 🚀
 `;
-  
+
   writeFileSync(readmePath, readmeContent);
-  
+
   // Create .gitignore
   const gitignorePath = join(dir, '.gitignore');
   const gitignoreContent = `# Dependencies
@@ -98,23 +108,27 @@ build/
 *.o
 *.exe
 `;
-  
+
   writeFileSync(gitignorePath, gitignoreContent);
 }
 
-export async function getWorkspaceLanguages(workspaceRoot: string): Promise<string[]> {
+export async function getWorkspaceLanguages(
+  workspaceRoot: string
+): Promise<string[]> {
   try {
     const entries = await readdir(workspaceRoot, { withFileTypes: true });
     return entries
-      .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
-      .filter(entry => SUPPORTED_LANGUAGES.includes(entry.name))
-      .map(entry => entry.name);
+      .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
+      .filter((entry) => SUPPORTED_LANGUAGES.includes(entry.name))
+      .map((entry) => entry.name);
   } catch (error) {
     return [];
   }
 }
 
-export function readWorkspaceConfig(workspaceRoot: string): WorkspaceConfig | null {
+export function readWorkspaceConfig(
+  workspaceRoot: string
+): WorkspaceConfig | null {
   try {
     const configPath = join(workspaceRoot, WORKSPACE_CONFIG_FILE);
     const content = readFileSync(configPath, 'utf-8');

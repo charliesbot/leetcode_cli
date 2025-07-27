@@ -20,20 +20,20 @@ describe('Test Command', () => {
   beforeEach(async () => {
     // Ensure we're in the original directory
     process.chdir(ORIGINAL_CWD);
-    
+
     // Clean up any existing test workspace
     await cleanupTestWorkspace();
-    
+
     // Create fresh test workspace
     await mkdir(TEST_WORKSPACE, { recursive: true });
     process.chdir(TEST_WORKSPACE);
-    
+
     // Initialize workspace
     execSync(`node "${CLI_PATH}" init`, { stdio: 'pipe' });
-    
+
     // Add typescript workspace
     execSync(`node "${CLI_PATH}" add typescript`, { stdio: 'pipe' });
-    
+
     // Create a mock problem directory
     await createMockProblem();
   });
@@ -50,33 +50,42 @@ describe('Test Command', () => {
       await cleanupTestWorkspace();
       await mkdir(TEST_WORKSPACE, { recursive: true });
       process.chdir(TEST_WORKSPACE);
-      
-      const result = execSync(`node "${CLI_PATH}" test 1 --language typescript 2>&1 || true`, { 
-        stdio: 'pipe',
-        encoding: 'utf8'
-      } as any);
+
+      const result = execSync(
+        `node "${CLI_PATH}" test 1 --language typescript 2>&1 || true`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        } as any
+      );
       assert.match(result, /No leetkick workspace found/);
     });
 
     it('should work from workspace root', async () => {
-      const result = execSync(`node "${CLI_PATH}" test 1 --language typescript`, { 
-        stdio: 'pipe',
-        encoding: 'utf8'
-      });
-      
-      assert.match(result, /Running tests for: 0001_two_sum/);
+      const result = execSync(
+        `node "${CLI_PATH}" test 1 --language typescript`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        }
+      );
+
+      assert.match(result, /Running tests for: problem_0001/);
       assert.match(result, /Tests passed!/);
     });
 
     it('should work from subdirectory', async () => {
       process.chdir('./typescript');
-      
-      const result = execSync(`node "${CLI_PATH}" test 1 --language typescript`, { 
-        stdio: 'pipe',
-        encoding: 'utf8'
-      });
-      
-      assert.match(result, /Running tests for: 0001_two_sum/);
+
+      const result = execSync(
+        `node "${CLI_PATH}" test 1 --language typescript`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        }
+      );
+
+      assert.match(result, /Running tests for: problem_0001/);
       assert.match(result, /Tests passed!/);
     });
   });
@@ -94,7 +103,9 @@ describe('Test Command', () => {
 
     it('should validate supported languages', async () => {
       try {
-        execSync(`node "${CLI_PATH}" test 1 --language unsupported`, { stdio: 'pipe' });
+        execSync(`node "${CLI_PATH}" test 1 --language unsupported`, {
+          stdio: 'pipe',
+        });
         assert.fail('Should have thrown an error');
       } catch (error: any) {
         const output = error.stderr?.toString() || '';
@@ -104,51 +115,68 @@ describe('Test Command', () => {
 
     it('should check if language workspace exists', async () => {
       // Use a supported language that doesn't have a workspace yet
-      const result = execSync(`node "${CLI_PATH}" add python 2>&1 || true`, { 
+      const result = execSync(`node "${CLI_PATH}" add python 2>&1 || true`, {
         stdio: 'pipe',
-        encoding: 'utf8'
+        encoding: 'utf8',
       } as any);
-      
+
       // Now test with python that should be supported but not have a workspace
-      const testResult = execSync(`node "${CLI_PATH}" test 1 --language python 2>&1 || true`, { 
-        stdio: 'pipe',
-        encoding: 'utf8'
-      } as any);
-      assert.match(testResult, /python workspace not found|Language 'python' not supported/);
+      const testResult = execSync(
+        `node "${CLI_PATH}" test 1 --language python 2>&1 || true`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        } as any
+      );
+      assert.match(
+        testResult,
+        /python workspace not found|Language 'python' not supported/
+      );
     });
   });
 
   describe('Problem finding', () => {
     it('should find problem by number', async () => {
-      const result = execSync(`node "${CLI_PATH}" test 1 --language typescript`, { 
-        stdio: 'pipe',
-        encoding: 'utf8'
-      });
-      
-      assert.match(result, /Running tests for: 0001_two_sum/);
+      const result = execSync(
+        `node "${CLI_PATH}" test 1 --language typescript`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        }
+      );
+
+      assert.match(result, /Running tests for: problem_0001/);
     });
 
     it('should find problem by slug', async () => {
-      const result = execSync(`node "${CLI_PATH}" test two-sum --language typescript`, { 
-        stdio: 'pipe',
-        encoding: 'utf8'
-      });
-      
-      assert.match(result, /Running tests for: 0001_two_sum/);
+      const result = execSync(
+        `node "${CLI_PATH}" test two-sum --language typescript`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        }
+      );
+
+      assert.match(result, /Running tests for: problem_0001/);
     });
 
     it('should find problem by exact directory name', async () => {
-      const result = execSync(`node "${CLI_PATH}" test 0001_two_sum --language typescript`, { 
-        stdio: 'pipe',
-        encoding: 'utf8'
-      });
-      
-      assert.match(result, /Running tests for: 0001_two_sum/);
+      const result = execSync(
+        `node "${CLI_PATH}" test problem_0001 --language typescript`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        }
+      );
+
+      assert.match(result, /Running tests for: problem_0001/);
     });
 
     it('should fail when problem not found', async () => {
       try {
-        execSync(`node "${CLI_PATH}" test non-existent --language typescript`, { stdio: 'pipe' });
+        execSync(`node "${CLI_PATH}" test non-existent --language typescript`, {
+          stdio: 'pipe',
+        });
         assert.fail('Should have thrown an error');
       } catch (error: any) {
         const output = error.stderr?.toString() || '';
@@ -159,12 +187,15 @@ describe('Test Command', () => {
 
   describe('Test execution', () => {
     it('should run passing tests successfully', async () => {
-      const result = execSync(`node "${CLI_PATH}" test 1 --language typescript`, { 
-        stdio: 'pipe',
-        encoding: 'utf8'
-      });
-      
-      assert.match(result, /Running tests for: 0001_two_sum/);
+      const result = execSync(
+        `node "${CLI_PATH}" test 1 --language typescript`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        }
+      );
+
+      assert.match(result, /Running tests for: problem_0001/);
       assert.match(result, /Tests passed!/);
     });
 
@@ -174,13 +205,19 @@ describe('Test Command', () => {
 });
 
 async function createMockProblem() {
-  const problemDir = join(TEST_WORKSPACE, 'typescript/0001_two_sum');
+  const problemDir = join(TEST_WORKSPACE, 'typescript/problem_0001');
   await mkdir(problemDir, { recursive: true });
-  
+
   // Create exercise file
   await writeFile(
-    join(problemDir, '0001_two_sum.ts'),
+    join(problemDir, 'two_sum.ts'),
     `
+/*
+ * [1] Two Sum
+ * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+ * Difficulty: Easy
+ */
+
 /**
  * @param {number[]} nums
  * @param {number} target
@@ -201,19 +238,18 @@ export function twoSum(nums: number[], target: number): number[] {
 }
     `
   );
-  
+
   // Create test file
   await writeFile(
-    join(problemDir, '0001_two_sum.test.ts'),
+    join(problemDir, 'two_sum.test.ts'),
     `
-import { test } from 'node:test';
-import { strict as assert } from 'node:assert';
-import { twoSum } from './0001_two_sum.js';
+import { test, expect } from 'vitest';
+import { twoSum } from './two_sum.js';
 
 test('twoSum should return correct indices', () => {
-  assert.deepEqual(twoSum([2, 7, 11, 15], 9), [0, 1]);
-  assert.deepEqual(twoSum([3, 2, 4], 6), [1, 2]);
-  assert.deepEqual(twoSum([3, 3], 6), [0, 1]);
+  expect(twoSum([2, 7, 11, 15], 9)).toEqual([0, 1]);
+  expect(twoSum([3, 2, 4], 6)).toEqual([1, 2]);
+  expect(twoSum([3, 3], 6)).toEqual([0, 1]);
 });
     `
   );
@@ -224,7 +260,7 @@ async function cleanupTestWorkspace() {
   if (process.cwd().startsWith(TEST_WORKSPACE)) {
     process.chdir(ORIGINAL_CWD);
   }
-  
+
   if (existsSync(TEST_WORKSPACE)) {
     try {
       await rm(TEST_WORKSPACE, { recursive: true, force: true });
