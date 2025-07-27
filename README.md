@@ -146,6 +146,7 @@ your-project/
 ├── README.md                 # Workspace documentation
 ├── .gitignore                # Git ignore rules
 ├── typescript/
+│   ├── README.md             # TypeScript workspace documentation
 │   ├── package.json          # TypeScript workspace config
 │   ├── tsconfig.json         # TypeScript compiler config
 │   ├── .prettierrc.json      # Code formatting rules
