@@ -7,7 +7,7 @@ import { spawn } from 'node:child_process';
 
 const CLI_PATH = join(process.cwd(), 'build', 'src', 'index.js');
 
-test('duplicate exercise handling test suite', async (t) => {
+void test('duplicate exercise handling test suite', async (t) => {
   const testWorkspace = join(tmpdir(), 'leetcode-cli-duplicate-test');
 
   await t.beforeEach(async () => {
@@ -49,7 +49,7 @@ test('duplicate exercise handling test suite', async (t) => {
     const output = result.stderr || result.stdout;
     assert(
       output.includes('already exists') ||
-      output.includes('Exercise already exists') ||
+        output.includes('Exercise already exists') ||
         output.includes('problem_0001'),
       `Expected output to mention existing exercise, got: ${output}`
     );
@@ -74,7 +74,7 @@ test('duplicate exercise handling test suite', async (t) => {
     // Should offer some kind of guidance about what to do
     assert(
       output.includes('exists') ||
-      output.includes('already') ||
+        output.includes('already') ||
         output.includes('force') ||
         output.includes('overwrite'),
       `Expected output to offer options for existing exercise, got: ${output}`

@@ -3,10 +3,7 @@ import {
   getAvailableLanguages,
   initializeLanguage,
 } from '../utils/templates.js';
-import {
-  isWorkspaceInitialized,
-  findWorkspaceRoot,
-} from '../utils/workspace.js';
+import { findWorkspaceRoot } from '../utils/workspace.js';
 import { existsSync } from 'fs';
 import { join } from 'path';
 

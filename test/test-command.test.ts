@@ -1,15 +1,15 @@
-import { describe, it, before, after, beforeEach, afterEach } from 'node:test';
+import { describe, it, before, beforeEach, afterEach } from 'node:test';
 import { strict as assert } from 'node:assert';
-import { mkdir, rm, writeFile, readdir } from 'fs/promises';
+import { mkdir, rm, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, resolve } from 'path';
-import { execSync, spawn } from 'child_process';
+import { execSync } from 'child_process';
 
 const CLI_PATH = resolve('./build/src/index.js');
 const TEST_WORKSPACE = resolve('./test-workspace-temp');
 const ORIGINAL_CWD = process.cwd();
 
-describe('Test Command', () => {
+void describe('Test Command', () => {
   before(async () => {
     // Ensure CLI is built
     if (!existsSync(CLI_PATH)) {
@@ -44,8 +44,8 @@ describe('Test Command', () => {
     await cleanupTestWorkspace();
   });
 
-  describe('Workspace validation', () => {
-    it('should fail when not in a leetkick workspace', async () => {
+  void describe('Workspace validation', () => {
+    void it('should fail when not in a leetkick workspace', async () => {
       process.chdir(ORIGINAL_CWD);
       await cleanupTestWorkspace();
       await mkdir(TEST_WORKSPACE, { recursive: true });
@@ -56,12 +56,12 @@ describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        } as any
+        }
       );
       assert.match(result, /No leetkick workspace found/);
     });
 
-    it('should work from workspace root', async () => {
+    void it('should work from workspace root', async () => {
       const result = execSync(
         `node "${CLI_PATH}" test 1 --language typescript`,
         {
@@ -74,7 +74,7 @@ describe('Test Command', () => {
       assert.match(result, /Tests passed!/);
     });
 
-    it('should work from subdirectory', async () => {
+    void it('should work from subdirectory', async () => {
       process.chdir('./typescript');
 
       const result = execSync(
@@ -90,35 +90,35 @@ describe('Test Command', () => {
     });
   });
 
-  describe('Language validation', () => {
-    it('should require language option', async () => {
+  void describe('Language validation', () => {
+    void it('should require language option', async () => {
       try {
         execSync(`node "${CLI_PATH}" test 1`, { stdio: 'pipe' });
         assert.fail('Should have thrown an error');
-      } catch (error: any) {
-        const output = error.stderr?.toString() || '';
+      } catch (error: unknown) {
+        const output = (error as { stderr?: Buffer }).stderr?.toString() || '';
         assert.match(output, /Please specify a language/);
       }
     });
 
-    it('should validate supported languages', async () => {
+    void it('should validate supported languages', async () => {
       try {
         execSync(`node "${CLI_PATH}" test 1 --language unsupported`, {
           stdio: 'pipe',
         });
         assert.fail('Should have thrown an error');
-      } catch (error: any) {
-        const output = error.stderr?.toString() || '';
+      } catch (error: unknown) {
+        const output = (error as { stderr?: Buffer }).stderr?.toString() || '';
         assert.match(output, /Language 'unsupported' not supported/);
       }
     });
 
-    it('should check if language workspace exists', async () => {
+    void it('should check if language workspace exists', async () => {
       // Use a supported language that doesn't have a workspace yet
-      const result = execSync(`node "${CLI_PATH}" add python 2>&1 || true`, {
+      execSync(`node "${CLI_PATH}" add python 2>&1 || true`, {
         stdio: 'pipe',
         encoding: 'utf8',
-      } as any);
+      });
 
       // Now test with python that should be supported but not have a workspace
       const testResult = execSync(
@@ -126,7 +126,7 @@ describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        } as any
+        }
       );
       assert.match(
         testResult,
@@ -135,8 +135,8 @@ describe('Test Command', () => {
     });
   });
 
-  describe('Problem finding', () => {
-    it('should find problem by number', async () => {
+  void describe('Problem finding', () => {
+    void it('should find problem by number', async () => {
       const result = execSync(
         `node "${CLI_PATH}" test 1 --language typescript`,
         {
@@ -148,7 +148,7 @@ describe('Test Command', () => {
       assert.match(result, /Running tests for: problem_0001/);
     });
 
-    it('should find problem by slug', async () => {
+    void it('should find problem by slug', async () => {
       const result = execSync(
         `node "${CLI_PATH}" test two-sum --language typescript`,
         {
@@ -160,7 +160,7 @@ describe('Test Command', () => {
       assert.match(result, /Running tests for: problem_0001/);
     });
 
-    it('should find problem by exact directory name', async () => {
+    void it('should find problem by exact directory name', async () => {
       const result = execSync(
         `node "${CLI_PATH}" test problem_0001 --language typescript`,
         {
@@ -172,21 +172,21 @@ describe('Test Command', () => {
       assert.match(result, /Running tests for: problem_0001/);
     });
 
-    it('should fail when problem not found', async () => {
+    void it('should fail when problem not found', async () => {
       try {
         execSync(`node "${CLI_PATH}" test non-existent --language typescript`, {
           stdio: 'pipe',
         });
         assert.fail('Should have thrown an error');
-      } catch (error: any) {
-        const output = error.stderr?.toString() || '';
+      } catch (error: unknown) {
+        const output = (error as { stderr?: Buffer }).stderr?.toString() || '';
         assert.match(output, /Problem 'non-existent' not found/);
       }
     });
   });
 
-  describe('Test execution', () => {
-    it('should run passing tests successfully', async () => {
+  void describe('Test execution', () => {
+    void it('should run passing tests successfully', async () => {
       const result = execSync(
         `node "${CLI_PATH}" test 1 --language typescript`,
         {

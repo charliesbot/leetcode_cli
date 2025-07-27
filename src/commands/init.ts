@@ -5,7 +5,7 @@ import {
   findWorkspaceRoot,
 } from '../utils/workspace.js';
 import { mkdir } from 'fs/promises';
-import { join, resolve } from 'path';
+import { resolve } from 'path';
 import { existsSync } from 'fs';
 
 export const initCommand = new Command('init')

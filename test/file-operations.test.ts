@@ -3,34 +3,14 @@ import assert from 'node:assert';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
-import type { Problem } from '../src/types/leetcode.js';
 
 // Mock the file operations module
 const mockTemplateDir = join(tmpdir(), 'leetcode-cli-test-file-ops-templates');
 const mockWorkingDir = join(tmpdir(), 'leetcode-cli-test-file-ops-workspace');
 
 // Setup test fixtures
-const mockProblem: Problem = {
-  questionId: '1',
-  questionFrontendId: '1',
-  title: 'Two Sum',
-  titleSlug: 'two-sum',
-  content:
-    '<p>Given an array of integers <code>nums</code> and an integer <code>target</code>, return indices of the two numbers such that they add up to target.</p>',
-  difficulty: 'Easy',
-  codeSnippets: [
-    {
-      lang: 'TypeScript',
-      langSlug: 'typescript',
-      code: 'function twoSum(nums: number[], target: number): number[] {\n    \n};',
-    },
-  ],
-  exampleTestcases: '...',
-  sampleTestCase: '...',
-  metaData: '...',
-};
 
-test('file operations test suite', async (t) => {
+void test('file operations test suite', async (t) => {
   // Setup test environment
   await fs.mkdir(mockTemplateDir, { recursive: true });
   await fs.mkdir(mockWorkingDir, { recursive: true });

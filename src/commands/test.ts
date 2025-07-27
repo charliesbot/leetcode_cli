@@ -222,8 +222,8 @@ async function runTests(
         console.log('✓ Tests passed!');
         resolve();
       } else {
-        // For test failures, just exit gracefully without throwing errors
-        process.exit(code || 1);
+        // For test failures, reject with error message
+        reject(new Error(`Tests failed with exit code ${code || 1}`));
       }
     });
 

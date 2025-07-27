@@ -7,7 +7,7 @@ import { tmpdir } from 'os';
 
 const CLI_PATH = join(process.cwd(), 'build', 'src', 'index.js');
 
-test('CLI integration test suite', async (t) => {
+void test('CLI integration test suite', async (t) => {
   const testWorkspace = join(tmpdir(), 'leetcode-cli-integration-test');
 
   await t.test('should show help when no command provided', async () => {
@@ -61,8 +61,7 @@ test('CLI integration test suite', async (t) => {
 
       const result = await runCLI(['fetch', 'two-sum'], { expectError: true });
 
-
-    // Check both stdout and stderr for the error message
+      // Check both stdout and stderr for the error message
       const combinedOutput = result.stdout + result.stderr;
       assert(
         combinedOutput.includes('Available languages:') ||
