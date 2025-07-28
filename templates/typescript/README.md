@@ -1,8 +1,10 @@
 # TypeScript LeetCode Practice
 
-This workspace uses:
+This workspace is configured for solving LeetCode problems in TypeScript.
+
+## Setup
 - **Vitest** for testing and test runner
-- **Prettier** for code formatting
+- **Prettier** for code formatting  
 - **TypeScript** for type safety and modern JavaScript features
 
 ## Prerequisites
@@ -26,6 +28,34 @@ Download from [nodejs.org](https://nodejs.org/) or use:
 winget install OpenJS.NodeJS
 ```
 
+## Generated Code Examples
+
+Each problem generates solution and test files with the problem description and starter code:
+
+**Solution file (`TwoSum.ts`):**
+```typescript
+/*
+ * [1] Two Sum
+ * Given an array of integers nums and an integer target...
+ * Difficulty: Easy
+ */
+export function twoSum(nums: number[], target: number): number[] {
+    // Your solution here
+    return [];
+}
+```
+
+**Test file (`TwoSum.test.ts`):**
+```typescript
+import { test, expect } from 'vitest';
+import { twoSum } from './TwoSum.ts';
+
+test('twoSum', () => {
+  // TODO: Add test cases
+  expect(twoSum([2, 7, 11, 15], 9)).toEqual([0, 1]);
+});
+```
+
 ## Usage
 
 ```bash
@@ -38,13 +68,6 @@ npm test
 
 # Run tests in watch mode
 npx vitest
-```
-
-## Development
-
-```bash
-# Install dependencies (if needed)
-npm install
 
 # Type checking
 npx tsc --noEmit

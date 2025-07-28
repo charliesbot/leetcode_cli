@@ -49,18 +49,53 @@ Clean build:
 
 Open this `kotlin/` directory directly in IntelliJ IDEA or Android Studio. The IDE will automatically import the Gradle project.
 
-## Test Framework
+## Generated Code Examples
 
-Tests use JUnit 5 with AssertJ for fluent assertions:
+Each problem generates solution and test files with the problem description and starter code:
 
+**Solution file (`TwoSum.kt`):**
 ```kotlin
-import org.junit.jupiter.api.Test
-import org.assertj.core.api.Assertions.assertThat
+package problem0001
 
-class ExampleTest {
-    @Test
-    fun `should solve the problem`() {
-        assertThat(solution.solve()).isEqualTo(expected)
+/**
+ * [1] Two Sum
+ * Given an array of integers nums and an integer target...
+ * Difficulty: Easy
+ */
+class Solution {
+    fun twoSum(nums: IntArray, target: Int): IntArray {
+        // Your solution here
+        return intArrayOf()
     }
 }
+```
+
+**Test file (`TwoSumTest.kt`):**
+```kotlin
+package problem0001
+
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.*
+
+class TwoSumTest {
+    private val solution = Solution()
+
+    @Test
+    fun `should solve twoSum`() {
+        val nums = intArrayOf(2, 7, 11, 15)
+        val result = solution.twoSum(nums, 9)
+        
+        assertArrayEquals(intArrayOf(0, 1), result)
+    }
+}
+```
+
+## Test Framework
+
+Tests use JUnit 5 with standard assertions. You can also use AssertJ for fluent assertions:
+
+```kotlin
+import org.assertj.core.api.Assertions.assertThat
+
+assertThat(solution.solve()).isEqualTo(expected)
 ```
