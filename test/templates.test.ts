@@ -18,6 +18,7 @@ void test('templates test suite', async (t) => {
     await fs.mkdir(mockTemplatesDir, { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'typescript'), { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'python'), { recursive: true });
+    await fs.mkdir(join(mockTemplatesDir, 'kotlin'), { recursive: true });
 
     // Create mock template files
     await fs.writeFile(
@@ -31,6 +32,20 @@ void test('templates test suite', async (t) => {
     await fs.writeFile(
       join(mockTemplatesDir, 'typescript', 'test_template.ts'),
       'import { __PROBLEM_NAME_FORMATTED__ } from "./__EXERCISE_FILE_NAME__";'
+    );
+
+    // Create mock Kotlin template files
+    await fs.writeFile(
+      join(mockTemplatesDir, 'kotlin', 'build.gradle.kts'),
+      'plugins { kotlin("jvm") version "2.2.0" }'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'kotlin', 'exercise_template.kt'),
+      'package __PROBLEM_PACKAGE__\n__PROBLEM_DEFAULT_CODE__'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'kotlin', 'test_template.kt'),
+      'package __PROBLEM_PACKAGE__\nclass __PROBLEM_CLASS_NAME__Test'
     );
   });
 
@@ -60,7 +75,8 @@ void test('templates test suite', async (t) => {
       assert(languages.includes('typescript'));
       assert(languages.includes('python'));
       assert(languages.includes('cpp'));
-      assert.strictEqual(languages.length, 3);
+      assert(languages.includes('kotlin'));
+      assert.strictEqual(languages.length, 4);
     }
   );
 
@@ -149,13 +165,14 @@ void test('templates test suite', async (t) => {
     'should generate correct file paths for different languages',
     () => {
       const problemName = 'two_sum';
-      const languages = ['typescript', 'python', 'java', 'go'];
+      const languages = ['typescript', 'python', 'java', 'go', 'kotlin'];
 
       const fileExtensions = {
         typescript: 'ts',
         python: 'py',
         java: 'java',
         go: 'go',
+        kotlin: 'kt',
       };
 
       languages.forEach((lang) => {

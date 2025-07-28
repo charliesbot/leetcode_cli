@@ -32,6 +32,14 @@ void test('file operations test suite', async (t) => {
     assert.strictEqual(cppMethodMatch?.[1], 'twoSum');
   });
 
+  await t.test('should extract function name from Kotlin code', () => {
+    const code =
+      'fun twoSum(nums: IntArray, target: Int): IntArray {\n    return intArrayOf()\n}';
+    // Test the Kotlin function regex pattern
+    const kotlinFunMatch = code.match(/fun\s+(\w+)\s*\(/);
+    assert.strictEqual(kotlinFunMatch?.[1], 'twoSum');
+  });
+
   await t.test('should format problem name to camelCase', () => {
     const title = 'Two Sum';
     const formatted = title
@@ -123,11 +131,13 @@ void test('file operations test suite', async (t) => {
       cpp: 'cpp',
       go: 'go',
       rust: 'rs',
+      kotlin: 'kt',
     };
 
     assert.strictEqual(extMap.typescript, 'ts');
     assert.strictEqual(extMap.python, 'py');
     assert.strictEqual(extMap.java, 'java');
+    assert.strictEqual(extMap.kotlin, 'kt');
   });
 
   await t.test('should get correct language slug for LeetCode API', () => {
@@ -139,11 +149,13 @@ void test('file operations test suite', async (t) => {
       cpp: 'cpp',
       go: 'golang',
       rust: 'rust',
+      kotlin: 'kotlin',
     };
 
     assert.strictEqual(slugMap.typescript, 'typescript');
     assert.strictEqual(slugMap.python, 'python3');
     assert.strictEqual(slugMap.go, 'golang');
+    assert.strictEqual(slugMap.kotlin, 'kotlin');
   });
 
   await t.test('should generate correct test file names', () => {
