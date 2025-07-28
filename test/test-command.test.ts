@@ -116,7 +116,7 @@ void describe('Test Command', () => {
     void it('should validate kotlin as supported language', async () => {
       // Test that kotlin is recognized as a supported language
       execSync(`node "${CLI_PATH}" add kotlin`, { stdio: 'pipe' });
-      
+
       // Should not throw error when using kotlin language
       const result = execSync(
         `node "${CLI_PATH}" test 1 --language kotlin 2>&1 || true`,
@@ -125,7 +125,7 @@ void describe('Test Command', () => {
           encoding: 'utf8',
         }
       );
-      
+
       // Should not contain "not supported" error
       assert(!result.includes("Language 'kotlin' not supported"));
     });
