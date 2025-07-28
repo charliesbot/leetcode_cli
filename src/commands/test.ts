@@ -64,7 +64,17 @@ async function findProblemDirectory(
   problem: string
 ): Promise<string | null> {
   try {
-    const entries = await readdir(languageDir, { withFileTypes: true });
+    // For Kotlin, we need to check under src/main/kotlin
+    const isKotlin = languageDir.endsWith('kotlin');
+    const searchDir = isKotlin
+      ? join(languageDir, 'src', 'main', 'kotlin')
+      : languageDir;
+
+    if (!existsSync(searchDir)) {
+      return null;
+    }
+
+    const entries = await readdir(searchDir, { withFileTypes: true });
     const directories = entries
       .filter((entry) => entry.isDirectory())
       .map((entry) => entry.name);
@@ -74,10 +84,11 @@ async function findProblemDirectory(
       return problem;
     }
 
-    // Try to match by problem number (e.g., "1" matches "problem_0001")
+    // Try to match by problem number (e.g., "1" matches "problem_0001" or "problem0001" for Kotlin)
     const paddedProblem = problem.padStart(4, '0');
     const byNumber = directories.find(
-      (dir) => dir === `problem_${paddedProblem}`
+      (dir) =>
+        dir === `problem_${paddedProblem}` || dir === `problem${paddedProblem}`
     );
     if (byNumber) {
       return byNumber;
@@ -96,9 +107,9 @@ async function findProblemDirectory(
 
     // For slug matching, read problem metadata from files
     for (const dir of directories) {
-      if (dir.startsWith('problem_')) {
+      if (dir.startsWith('problem')) {
         const problemInfo = await extractProblemInfoFromDirectory(
-          join(languageDir, dir)
+          join(searchDir, dir)
         );
         if (problemInfo && matchesProblemSlug(problem, problemInfo)) {
           return dir;
@@ -207,6 +218,18 @@ async function runTests(
           `cd "${problemDir}" && g++ -I.. -std=c++17 *.test.cpp -o test_runner && ./test_runner`,
         ];
         break;
+      case 'kotlin': {
+        // Use Gradle to run tests for specific package
+        // Check if gradlew exists, otherwise fall back to gradle
+        const gradlewPath = join(languageDir, 'gradlew');
+        if (existsSync(gradlewPath)) {
+          command = './gradlew';
+        } else {
+          command = 'gradle';
+        }
+        args = ['test', '--tests', `${problemDir}.*`];
+        break;
+      }
       default:
         reject(new Error(`Testing not implemented for language: ${language}`));
         return;
@@ -222,8 +245,9 @@ async function runTests(
         console.log('✓ Tests passed!');
         resolve();
       } else {
-        // For test failures, reject with error message
-        reject(new Error(`Tests failed with exit code ${code || 1}`));
+        // For test failures, don't reject - the test output already shows what failed
+        console.log(`❌ Tests failed (exit code ${code || 1})`);
+        resolve(); // Resolve instead of reject to avoid Node.js stack trace
       }
     });
 

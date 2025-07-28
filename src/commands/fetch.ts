@@ -69,8 +69,16 @@ export const fetchCommand = new Command('fetch')
 
         // Check if exercise already exists
         const paddedId = problem.questionFrontendId.padStart(4, '0');
-        const problemName = `problem_${paddedId}`;
-        const problemDir = join(languageDir, problemName);
+        let problemDir: string;
+        let problemName: string;
+
+        if (options.language === 'kotlin') {
+          problemName = `problem${paddedId}`;
+          problemDir = join(languageDir, 'src', 'main', 'kotlin', problemName);
+        } else {
+          problemName = `problem_${paddedId}`;
+          problemDir = join(languageDir, problemName);
+        }
 
         if (existsSync(problemDir)) {
           if (!options.force) {
@@ -80,9 +88,7 @@ export const fetchCommand = new Command('fetch')
             console.log('  • Use --force to overwrite existing files');
             console.log('  • Choose a different language');
             console.log('  • Remove the existing directory manually');
-            throw new Error(
-              `Exercise '${problemName}' already exists in ${options.language}`
-            );
+            return; // Exit gracefully without throwing error
           } else {
             console.log(`⚠️  Overwriting existing exercise: ${problemName}`);
           }
@@ -97,7 +103,7 @@ export const fetchCommand = new Command('fetch')
           console.log(
             `✓ Created ${options.language} exercise for: ${problem.title}`
           );
-          console.log(`📁 Location: ${languageDir}/${problemName}`);
+          console.log(`📁 Location: ${problemDir}`);
         } finally {
           process.chdir(originalCwd);
         }

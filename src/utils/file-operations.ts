@@ -14,10 +14,21 @@ export async function createProblemFiles(
   const paddedId = problem.questionFrontendId.padStart(4, '0');
   const problemDirName = `problem_${paddedId}`;
   const languageDir = join(process.cwd(), language);
-  const problemDir = join(languageDir, problemDirName);
 
-  // Create problem directory (this will work even if it exists)
-  await mkdir(problemDir, { recursive: true });
+  // For Kotlin, we need to create src/main/kotlin and src/test/kotlin structure
+  let problemDir: string;
+  let testDir: string;
+  if (language === 'kotlin') {
+    const problemPackage = `problem${paddedId}`;
+    problemDir = join(languageDir, 'src', 'main', 'kotlin', problemPackage);
+    testDir = join(languageDir, 'src', 'test', 'kotlin', problemPackage);
+    await mkdir(problemDir, { recursive: true });
+    await mkdir(testDir, { recursive: true });
+  } else {
+    problemDir = join(languageDir, problemDirName);
+    testDir = problemDir;
+    await mkdir(problemDir, { recursive: true });
+  }
 
   // Find the code snippet for this language
   const codeSnippet = problem.codeSnippets.find(
@@ -25,7 +36,7 @@ export async function createProblemFiles(
   );
 
   const defaultCode =
-    codeSnippet?.code || `// TODO: Implement solution for ${problem.title}`;
+    codeSnippet?.code || getDefaultCodeForLanguage(language, problem.title);
 
   // Generate clean names based on language conventions
   const className = formatClassName(problem.title);
@@ -45,6 +56,8 @@ export async function createProblemFiles(
     __PROBLEM_NAME_FORMATTED__: functionName,
     __CLASS_NAME__: className,
     __SNAKE_CASE_NAME__: snakeCaseName,
+    __PROBLEM_PACKAGE__: language === 'kotlin' ? `problem${paddedId}` : '',
+    __PROBLEM_CLASS_NAME__: className,
     __EXERCISE_FILE_NAME__: getExerciseFileName(
       className,
       snakeCaseName,
@@ -75,7 +88,7 @@ export async function createProblemFiles(
   );
   const testContent = replaceTemplateVars(testTemplate, replacements);
   await writeFile(
-    join(problemDir, getTestFileName(className, snakeCaseName, language)),
+    join(testDir, getTestFileName(className, snakeCaseName, language)),
     testContent
   );
 }
@@ -142,6 +155,7 @@ function getLanguageSlug(language: string): string {
     cpp: 'cpp',
     go: 'golang',
     rust: 'rust',
+    kotlin: 'kotlin',
   };
   return slugMap[language] || language;
 }
@@ -155,6 +169,7 @@ function getFileExtension(language: string): string {
     cpp: 'cpp',
     go: 'go',
     rust: 'rs',
+    kotlin: 'kt',
   };
   return extMap[language] || 'txt';
 }
@@ -228,11 +243,36 @@ function getTestFileName(
   }
 }
 
+function getDefaultCodeForLanguage(language: string, title: string): string {
+  switch (language) {
+    case 'kotlin':
+      return `class Solution {
+    // TODO: Implement solution for ${title}
+}`;
+    case 'typescript':
+    case 'javascript':
+      return `// TODO: Implement solution for ${title}`;
+    case 'cpp':
+      return `class Solution {
+public:
+    // TODO: Implement solution for ${title}
+};`;
+    default:
+      return `// TODO: Implement solution for ${title}`;
+  }
+}
+
 function extractFunctionName(code: string): string | null {
   // Extract function name from C++ code (class method) - handle templates like vector<int>
   const cppMethodMatch = code.match(/[\w<>]+\s+(\w+)\s*\([^)]*\)\s*\{/);
   if (cppMethodMatch) {
     return cppMethodMatch[1];
+  }
+
+  // Extract function name from Kotlin code
+  const kotlinFunMatch = code.match(/fun\s+(\w+)\s*\(/);
+  if (kotlinFunMatch) {
+    return kotlinFunMatch[1];
   }
 
   // Extract function name from TypeScript/JavaScript code

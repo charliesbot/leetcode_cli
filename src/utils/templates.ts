@@ -1,4 +1,4 @@
-import { readdir, copyFile, mkdir } from 'fs/promises';
+import { readdir, copyFile, mkdir, stat } from 'fs/promises';
 import { join, dirname } from 'path';
 import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
@@ -28,6 +28,12 @@ export async function initializeLanguage(language: string): Promise<void> {
   // Create language directory
   await mkdir(targetDir, { recursive: true });
 
+  // For Kotlin, we need to create the source directory structure
+  if (language === 'kotlin') {
+    await mkdir(join(targetDir, 'src', 'main', 'kotlin'), { recursive: true });
+    await mkdir(join(targetDir, 'src', 'test', 'kotlin'), { recursive: true });
+  }
+
   // Copy all non-template files (config files)
   const templateFiles = await readdir(templateDir);
 
@@ -43,6 +49,29 @@ export async function initializeLanguage(language: string): Promise<void> {
     const targetFileName = file === 'gitignore' ? '.gitignore' : file;
     const targetPath = join(targetDir, targetFileName);
 
-    await copyFile(sourcePath, targetPath);
+    // Check if it's a directory or file
+    const fileStats = await stat(sourcePath);
+    if (fileStats.isDirectory()) {
+      await copyDirectoryRecursive(sourcePath, targetPath);
+    } else {
+      await copyFile(sourcePath, targetPath);
+    }
+  }
+}
+
+async function copyDirectoryRecursive(src: string, dest: string): Promise<void> {
+  await mkdir(dest, { recursive: true });
+  
+  const entries = await readdir(src, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const srcPath = join(src, entry.name);
+    const destPath = join(dest, entry.name);
+    
+    if (entry.isDirectory()) {
+      await copyDirectoryRecursive(srcPath, destPath);
+    } else {
+      await copyFile(srcPath, destPath);
+    }
   }
 }

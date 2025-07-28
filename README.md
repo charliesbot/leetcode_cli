@@ -127,6 +127,7 @@ CLI warns before overwriting existing solutions. Use `--force` to override.
 
 - **TypeScript** - Ready to use with Vitest testing framework
 - **C++** - Ready to use with Catch2 testing framework (bundled)
+- **Kotlin** - Ready to use with JUnit 5 testing framework and Gradle
 - **Python, Java, Go, Rust** - Coming soon!
 
 #### Prerequisites
@@ -135,6 +136,9 @@ CLI warns before overwriting existing solutions. Use `--force` to override.
 - **macOS**: Xcode command line tools (`xcode-select --install`)
 - **Linux**: Build essentials (`sudo apt install build-essential` or equivalent)
 - Any C++17-compatible compiler (g++, clang++)
+
+**Kotlin Requirements:**
+- **JDK 17 or higher** (uses your system's installed JDK)
 
 ## Project Structure
 
