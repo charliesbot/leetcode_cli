@@ -2,6 +2,9 @@
 
 A modern CLI tool for scaffolding LeetCode exercises with language-specific testing setups. Fetch problems, auto-generate boilerplate, and start coding immediately!
 
+> **🚧 Heads up!**  
+> LeetKick is still pretty new and changing fast. Things might break between updates as I add support for more programming languages. Once it hits v1.0, it'll be much more stable!
+
 ## Features
 
 - **Fetch problems directly from LeetCode** - no copy/paste needed
