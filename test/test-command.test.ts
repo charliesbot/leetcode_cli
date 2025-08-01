@@ -130,6 +130,23 @@ void describe('Test Command', () => {
       assert(!result.includes("Language 'kotlin' not supported"));
     });
 
+    void it('should validate java as supported language', async () => {
+      // Test that java is recognized as a supported language
+      execSync(`node "${CLI_PATH}" add java`, { stdio: 'pipe' });
+
+      // Should not throw error when using java language
+      const result = execSync(
+        `node "${CLI_PATH}" test 1 --language java 2>&1 || true`,
+        {
+          stdio: 'pipe',
+          encoding: 'utf8',
+        }
+      );
+
+      // Should not contain "not supported" error
+      assert(!result.includes("Language 'java' not supported"));
+    });
+
     void it('should check if language workspace exists', async () => {
       // Use a supported language that doesn't have a workspace yet
       execSync(`node "${CLI_PATH}" add python 2>&1 || true`, {

@@ -15,13 +15,13 @@ export async function createProblemFiles(
   const problemDirName = `problem_${paddedId}`;
   const languageDir = join(process.cwd(), language);
 
-  // For Kotlin, we need to create src/main/kotlin and src/test/kotlin structure
+  // For Kotlin and Java, we need to create src/main/{lang} and src/test/{lang} structure
   let problemDir: string;
   let testDir: string;
-  if (language === 'kotlin') {
+  if (language === 'kotlin' || language === 'java') {
     const problemPackage = `problem${paddedId}`;
-    problemDir = join(languageDir, 'src', 'main', 'kotlin', problemPackage);
-    testDir = join(languageDir, 'src', 'test', 'kotlin', problemPackage);
+    problemDir = join(languageDir, 'src', 'main', language, problemPackage);
+    testDir = join(languageDir, 'src', 'test', language, problemPackage);
     await mkdir(problemDir, { recursive: true });
     await mkdir(testDir, { recursive: true });
   } else {
@@ -56,7 +56,8 @@ export async function createProblemFiles(
     __PROBLEM_NAME_FORMATTED__: functionName,
     __CLASS_NAME__: className,
     __SNAKE_CASE_NAME__: snakeCaseName,
-    __PROBLEM_PACKAGE__: language === 'kotlin' ? `problem${paddedId}` : '',
+    __PROBLEM_PACKAGE__:
+      language === 'kotlin' || language === 'java' ? `problem${paddedId}` : '',
     __PROBLEM_CLASS_NAME__: className,
     __EXERCISE_FILE_NAME__: getExerciseFileName(
       className,
@@ -249,6 +250,10 @@ function getDefaultCodeForLanguage(language: string, title: string): string {
       return `class Solution {
     // TODO: Implement solution for ${title}
 }`;
+    case 'java':
+      return `class Solution {
+    // TODO: Implement solution for ${title}
+}`;
     case 'typescript':
     case 'javascript':
       return `// TODO: Implement solution for ${title}`;
@@ -267,6 +272,14 @@ function extractFunctionName(code: string): string | null {
   const cppMethodMatch = code.match(/[\w<>]+\s+(\w+)\s*\([^)]*\)\s*\{/);
   if (cppMethodMatch) {
     return cppMethodMatch[1];
+  }
+
+  // Extract function name from Java code (public method in class)
+  const javaMethodMatch = code.match(
+    /public\s+[\w<>[\]]+\s+(\w+)\s*\([^)]*\)\s*\{/
+  );
+  if (javaMethodMatch) {
+    return javaMethodMatch[1];
   }
 
   // Extract function name from Kotlin code

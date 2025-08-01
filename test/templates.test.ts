@@ -19,6 +19,7 @@ void test('templates test suite', async (t) => {
     await fs.mkdir(join(mockTemplatesDir, 'typescript'), { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'python'), { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'kotlin'), { recursive: true });
+    await fs.mkdir(join(mockTemplatesDir, 'java'), { recursive: true });
 
     // Create mock template files
     await fs.writeFile(
@@ -46,6 +47,20 @@ void test('templates test suite', async (t) => {
     await fs.writeFile(
       join(mockTemplatesDir, 'kotlin', 'test_template.kt'),
       'package __PROBLEM_PACKAGE__\nclass __PROBLEM_CLASS_NAME__Test'
+    );
+
+    // Create mock Java template files
+    await fs.writeFile(
+      join(mockTemplatesDir, 'java', 'build.gradle.kts'),
+      'plugins { id("java") }'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'java', 'exercise_template.java'),
+      'package __PROBLEM_PACKAGE__;\n__PROBLEM_DEFAULT_CODE__'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'java', 'test_template.java'),
+      'package __PROBLEM_PACKAGE__;\npublic class __PROBLEM_CLASS_NAME__Test {}'
     );
   });
 
@@ -76,7 +91,8 @@ void test('templates test suite', async (t) => {
       assert(languages.includes('python'));
       assert(languages.includes('cpp'));
       assert(languages.includes('kotlin'));
-      assert.strictEqual(languages.length, 4);
+      assert(languages.includes('java'));
+      assert.strictEqual(languages.length, 5);
     }
   );
 

@@ -28,10 +28,10 @@ export async function initializeLanguage(language: string): Promise<void> {
   // Create language directory
   await mkdir(targetDir, { recursive: true });
 
-  // For Kotlin, we need to create the source directory structure
-  if (language === 'kotlin') {
-    await mkdir(join(targetDir, 'src', 'main', 'kotlin'), { recursive: true });
-    await mkdir(join(targetDir, 'src', 'test', 'kotlin'), { recursive: true });
+  // For Kotlin and Java, we need to create the source directory structure
+  if (language === 'kotlin' || language === 'java') {
+    await mkdir(join(targetDir, 'src', 'main', language), { recursive: true });
+    await mkdir(join(targetDir, 'src', 'test', language), { recursive: true });
   }
 
   // Copy all non-template files (config files)

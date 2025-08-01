@@ -40,6 +40,16 @@ void test('file operations test suite', async (t) => {
     assert.strictEqual(kotlinFunMatch?.[1], 'twoSum');
   });
 
+  await t.test('should extract function name from Java code', () => {
+    const code =
+      'public int[] twoSum(int[] nums, int target) {\n    return new int[0];\n}';
+    // Test the Java method regex pattern
+    const javaMethodMatch = code.match(
+      /public\s+[\w<>[\]]+\s+(\w+)\s*\([^)]*\)\s*\{/
+    );
+    assert.strictEqual(javaMethodMatch?.[1], 'twoSum');
+  });
+
   await t.test('should format problem name to camelCase', () => {
     const title = 'Two Sum';
     const formatted = title

@@ -64,11 +64,13 @@ async function findProblemDirectory(
   problem: string
 ): Promise<string | null> {
   try {
-    // For Kotlin, we need to check under src/main/kotlin
+    // For Kotlin and Java, we need to check under src/main/{language}
     const isKotlin = languageDir.endsWith('kotlin');
-    const searchDir = isKotlin
-      ? join(languageDir, 'src', 'main', 'kotlin')
-      : languageDir;
+    const isJava = languageDir.endsWith('java');
+    const searchDir =
+      isKotlin || isJava
+        ? join(languageDir, 'src', 'main', isKotlin ? 'kotlin' : 'java')
+        : languageDir;
 
     if (!existsSync(searchDir)) {
       return null;
@@ -198,10 +200,18 @@ async function runTests(
         command = 'python';
         args = ['-m', 'pytest', `${problemDir}/`, '-v'];
         break;
-      case 'java':
-        command = 'mvn';
-        args = ['test', `-Dtest=**/${problemDir}/*Test`];
+      case 'java': {
+        // Use Gradle to run tests for specific package
+        // Check if gradlew exists, otherwise fall back to gradle
+        const gradlewPath = join(languageDir, 'gradlew');
+        if (existsSync(gradlewPath)) {
+          command = './gradlew';
+        } else {
+          command = 'gradle';
+        }
+        args = ['test', '--tests', `${problemDir}.*`];
         break;
+      }
       case 'go':
         command = 'go';
         args = ['test', `./${problemDir}/...`];
