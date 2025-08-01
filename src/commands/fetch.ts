@@ -72,9 +72,15 @@ export const fetchCommand = new Command('fetch')
         let problemDir: string;
         let problemName: string;
 
-        if (options.language === 'kotlin') {
+        if (options.language === 'kotlin' || options.language === 'java') {
           problemName = `problem${paddedId}`;
-          problemDir = join(languageDir, 'src', 'main', 'kotlin', problemName);
+          problemDir = join(
+            languageDir,
+            'src',
+            'main',
+            options.language,
+            problemName
+          );
         } else {
           problemName = `problem_${paddedId}`;
           problemDir = join(languageDir, problemName);
@@ -103,7 +109,7 @@ export const fetchCommand = new Command('fetch')
           console.log(
             `✓ Created ${options.language} exercise for: ${problem.title}`
           );
-          console.log(`📁 Location: ${problemDir}`);
+          console.log(`📁 Problem ID: ${problemName}`);
         } finally {
           process.chdir(originalCwd);
         }
