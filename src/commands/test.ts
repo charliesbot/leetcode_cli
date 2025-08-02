@@ -57,7 +57,10 @@ export const testCommand = new Command('test')
           }
 
           console.log(`Running tests for: ${problemDir}...`);
-          await runTests(languageDir, problemDir, options.language);
+          const testPassed = await runTests(languageDir, problemDir, options.language);
+          if (!testPassed) {
+            process.exit(1);
+          }
         } else {
           // Run all tests
           console.log(`Running all tests for ${options.language}...`);
@@ -193,7 +196,7 @@ async function runTests(
   languageDir: string,
   problemDir: string,
   language: string
-): Promise<void> {
+): Promise<boolean> {
   return new Promise((resolve, reject) => {
     let command: string;
     let args: string[];
@@ -264,11 +267,11 @@ async function runTests(
     child.on('close', (code) => {
       if (code === 0) {
         console.log('✓ Tests passed!');
-        resolve();
+        resolve(true);
       } else {
         // For test failures, don't reject - the test output already shows what failed
         console.log(`❌ Tests failed (exit code ${code || 1})`);
-        resolve(); // Resolve instead of reject to avoid Node.js stack trace
+        resolve(false); // Return false to indicate failure
       }
     });
 
@@ -351,7 +354,7 @@ async function runAllTests(
         resolve();
       } else {
         console.log(`❌ Some tests failed (exit code ${code || 1})`);
-        resolve(); // Resolve instead of reject to avoid Node.js stack trace
+        process.exit(1);
       }
     });
 
@@ -380,11 +383,9 @@ async function runAllCppTests(languageDir: string): Promise<void> {
     let allPassed = true;
     for (const problemDir of problemDirs) {
       console.log(`\nTesting ${problemDir}...`);
-      try {
-        await runTests(languageDir, problemDir, 'cpp');
-      } catch (error) {
+      const testPassed = await runTests(languageDir, problemDir, 'cpp');
+      if (!testPassed) {
         allPassed = false;
-        console.log(`❌ ${problemDir} tests failed`);
       }
     }
 
@@ -392,6 +393,7 @@ async function runAllCppTests(languageDir: string): Promise<void> {
       console.log('\n✓ All C++ tests passed!');
     } else {
       console.log('\n❌ Some C++ tests failed');
+      process.exit(1);
     }
   } catch (error) {
     throw new Error(
