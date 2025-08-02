@@ -7,57 +7,68 @@ import { spawn } from 'child_process';
 import { readdir, readFile } from 'fs/promises';
 
 export const testCommand = new Command('test')
-  .description('Run tests for a LeetCode problem')
-  .argument('<problem>', 'Problem number (e.g., "1") or slug (e.g., "two-sum")')
+  .description('Run tests for a LeetCode problem or all problems')
+  .argument(
+    '[problem]',
+    'Problem number (e.g., "1") or slug (e.g., "two-sum"). If not provided, runs all tests.'
+  )
   .option('-l, --language <language>', 'Programming language')
-  .action(async (problem: string, options: { language?: string }) => {
-    try {
-      const workspaceRoot = findWorkspaceRoot();
+  .action(
+    async (problem: string | undefined, options: { language?: string }) => {
+      try {
+        const workspaceRoot = findWorkspaceRoot();
 
-      if (!workspaceRoot) {
-        console.log('No leetkick workspace found. Run "leetkick init" first.');
-        console.log(
-          'Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.'
-        );
-        return;
+        if (!workspaceRoot) {
+          console.log(
+            'No leetkick workspace found. Run "leetkick init" first.'
+          );
+          console.log(
+            'Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.'
+          );
+          return;
+        }
+
+        const availableLanguages = await getAvailableLanguages();
+
+        if (!options.language) {
+          console.log('Available languages:', availableLanguages.join(', '));
+          throw new Error('Please specify a language with --language <lang>');
+        }
+
+        if (!availableLanguages.includes(options.language)) {
+          console.log('Available languages:', availableLanguages.join(', '));
+          throw new Error(`Language '${options.language}' not supported.`);
+        }
+
+        const languageDir = join(workspaceRoot, options.language);
+        if (!existsSync(languageDir)) {
+          throw new Error(
+            `${options.language} workspace not found. Run "leetkick add ${options.language}" first.`
+          );
+        }
+
+        if (problem) {
+          // Find the specific problem directory
+          const problemDir = await findProblemDirectory(languageDir, problem);
+          if (!problemDir) {
+            throw new Error(
+              `Problem '${problem}' not found in ${options.language} workspace.`
+            );
+          }
+
+          console.log(`Running tests for: ${problemDir}...`);
+          await runTests(languageDir, problemDir, options.language);
+        } else {
+          // Run all tests
+          console.log(`Running all tests for ${options.language}...`);
+          await runAllTests(languageDir, options.language);
+        }
+      } catch (error) {
+        console.error('Error:', error instanceof Error ? error.message : error);
+        throw error;
       }
-
-      const availableLanguages = await getAvailableLanguages();
-
-      if (!options.language) {
-        console.log('Available languages:', availableLanguages.join(', '));
-        throw new Error('Please specify a language with --language <lang>');
-      }
-
-      if (!availableLanguages.includes(options.language)) {
-        console.log('Available languages:', availableLanguages.join(', '));
-        throw new Error(`Language '${options.language}' not supported.`);
-      }
-
-      const languageDir = join(workspaceRoot, options.language);
-      if (!existsSync(languageDir)) {
-        throw new Error(
-          `${options.language} workspace not found. Run "leetkick add ${options.language}" first.`
-        );
-      }
-
-      // Find the problem directory
-      const problemDir = await findProblemDirectory(languageDir, problem);
-      if (!problemDir) {
-        throw new Error(
-          `Problem '${problem}' not found in ${options.language} workspace.`
-        );
-      }
-
-      console.log(`Running tests for: ${problemDir}...`);
-
-      // Run tests based on language
-      await runTests(languageDir, problemDir, options.language);
-    } catch (error) {
-      console.error('Error:', error instanceof Error ? error.message : error);
-      throw error;
     }
-  });
+  );
 
 async function findProblemDirectory(
   languageDir: string,
@@ -265,4 +276,126 @@ async function runTests(
       reject(new Error(`Failed to run tests: ${error.message}`));
     });
   });
+}
+
+async function runAllTests(
+  languageDir: string,
+  language: string
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let command: string;
+    let args: string[];
+
+    switch (language) {
+      case 'typescript':
+        command = 'npx';
+        args = ['vitest', 'run'];
+        break;
+      case 'javascript':
+        command = 'node';
+        args = ['--test', '**/*.test.js'];
+        break;
+      case 'python':
+        command = 'python';
+        args = ['-m', 'pytest', '-v'];
+        break;
+      case 'java': {
+        // Use Gradle to run all tests
+        const gradlewPath = join(languageDir, 'gradlew');
+        if (existsSync(gradlewPath)) {
+          command = './gradlew';
+        } else {
+          command = 'gradle';
+        }
+        args = ['test'];
+        break;
+      }
+      case 'go':
+        command = 'go';
+        args = ['test', './...'];
+        break;
+      case 'rust':
+        command = 'cargo';
+        args = ['test'];
+        break;
+      case 'cpp': {
+        // For C++, we need to find all problem directories and run each test
+        // This is more complex, so we'll handle it specially
+        runAllCppTests(languageDir).then(resolve).catch(reject);
+        return;
+      }
+      case 'kotlin': {
+        // Use Gradle to run all tests
+        const gradlewPath = join(languageDir, 'gradlew');
+        if (existsSync(gradlewPath)) {
+          command = './gradlew';
+        } else {
+          command = 'gradle';
+        }
+        args = ['test'];
+        break;
+      }
+      default:
+        reject(new Error(`Testing not implemented for language: ${language}`));
+        return;
+    }
+
+    const child = spawn(command, args, {
+      cwd: languageDir,
+      stdio: 'inherit',
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        console.log('✓ All tests passed!');
+        resolve();
+      } else {
+        console.log(`❌ Some tests failed (exit code ${code || 1})`);
+        resolve(); // Resolve instead of reject to avoid Node.js stack trace
+      }
+    });
+
+    child.on('error', (error) => {
+      reject(new Error(`Failed to run tests: ${error.message}`));
+    });
+  });
+}
+
+async function runAllCppTests(languageDir: string): Promise<void> {
+  try {
+    const entries = await readdir(languageDir, { withFileTypes: true });
+    const problemDirs = entries
+      .filter(
+        (entry) => entry.isDirectory() && entry.name.startsWith('problem')
+      )
+      .map((entry) => entry.name);
+
+    if (problemDirs.length === 0) {
+      console.log('No C++ problems found to test.');
+      return;
+    }
+
+    console.log(`Found ${problemDirs.length} C++ problem(s) to test...`);
+
+    let allPassed = true;
+    for (const problemDir of problemDirs) {
+      console.log(`\nTesting ${problemDir}...`);
+      try {
+        await runTests(languageDir, problemDir, 'cpp');
+      } catch (error) {
+        allPassed = false;
+        console.log(`❌ ${problemDir} tests failed`);
+      }
+    }
+
+    if (allPassed) {
+      console.log('\n✓ All C++ tests passed!');
+    } else {
+      console.log('\n❌ Some C++ tests failed');
+    }
+  } catch (error) {
+    throw new Error(
+      `Failed to run all C++ tests: ${error instanceof Error ? error.message : error}`
+    );
+  }
 }
