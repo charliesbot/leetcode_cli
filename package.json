@@ -1,6 +1,6 @@
 {
   "name": "leetkick",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A CLI tool for scaffolding LeetCode exercises with language-specific testing setups",
   "type": "module",
   "main": "build/src/index.js",
