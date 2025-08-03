@@ -29,6 +29,10 @@ export async function createProblemFiles(
     problemDir = join(languageDir, 'src');
     testDir = problemDir;
     await mkdir(problemDir, { recursive: true });
+  } else if (language === 'go') {
+    problemDir = join(languageDir, problemDirName);
+    testDir = problemDir;
+    await mkdir(problemDir, { recursive: true });
   } else {
     problemDir = join(languageDir, problemDirName);
     testDir = problemDir;
@@ -62,7 +66,11 @@ export async function createProblemFiles(
     __CLASS_NAME__: className,
     __SNAKE_CASE_NAME__: snakeCaseName,
     __PROBLEM_PACKAGE__:
-      language === 'kotlin' || language === 'java' ? `problem${paddedId}` : '',
+      language === 'kotlin' || language === 'java'
+        ? `problem${paddedId}`
+        : language === 'go'
+          ? `problem_${paddedId}`
+          : '',
     __PROBLEM_CLASS_NAME__: className,
     __EXERCISE_FILE_NAME__: getExerciseFileName(
       className,
@@ -218,6 +226,8 @@ function getExerciseFileName(
       return `${className}.${ext}`;
     case 'rust':
       return `problem_${paddedId || '0001'}.rs`;
+    case 'go':
+      return `${snakeCaseName}.${ext}`;
     default:
       return `${className}.${ext}`;
   }
@@ -241,6 +251,8 @@ function getExerciseFileNameNoExt(
       return className;
     case 'rust':
       return `problem_${paddedId || '0001'}`;
+    case 'go':
+      return 'solution';
     default:
       return className;
   }
@@ -292,6 +304,8 @@ function getDefaultCodeForLanguage(language: string, title: string): string {
 public:
     // TODO: Implement solution for ${title}
 };`;
+    case 'go':
+      return `// TODO: Implement solution for ${title}`;
     default:
       return `// TODO: Implement solution for ${title}`;
   }
@@ -352,6 +366,12 @@ function extractFunctionName(code: string): string | null {
   const arrowMatch = code.match(/(\w+)\s*[=:]\s*\(/);
   if (arrowMatch) {
     return arrowMatch[1];
+  }
+
+  // Extract function name from Go code
+  const goFuncMatch = code.match(/func\s+(\w+)\s*\(/);
+  if (goFuncMatch) {
+    return goFuncMatch[1];
   }
 
   return null;

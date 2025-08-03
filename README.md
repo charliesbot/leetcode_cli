@@ -12,7 +12,7 @@ A modern CLI tool for scaffolding LeetCode exercises with language-specific test
 - **Clean organization** - problems organized by language and number
 - **Zero-config testing** - just run `leetkick test` from anywhere
 - **Smart problem matching** - run tests by number, slug, or name
-- **Multi-language support** - 5 languages supported, 10+ planned (goal: all LeetCode languages)
+- **Multi-language support** - 6 languages supported, 10+ planned (goal: all LeetCode languages)
 
 ## Quick Start
 
@@ -54,10 +54,10 @@ Our goal is to support all languages that LeetCode offers. Here's our current pr
 | **C++**        | ✅ **Supported** | Catch2 (bundled)  | clang-format | —              | C++17 standard                  |
 | **Kotlin**     | ✅ **Supported** | JUnit 5 + Gradle  | —            | —              | Full Gradle integration         |
 | **Java**       | ✅ **Supported** | JUnit 5 + Gradle  | —            | —              | Full Gradle integration         |
+| **Go**         | ✅ **Supported** | Built-in testing  | —            | —              | Go 1.21+ with modules          |
 | **Rust**       | ✅ **Supported** | cargo test        | —            | —              | Rust 2021 edition               |
 | **Python**     | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
 | **JavaScript** | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
-| **Go**         | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
 | **C**          | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
 | **C#**         | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
 | **Ruby**       | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
@@ -122,6 +122,14 @@ your-project/
 │   ├── src/test/kotlin/      # Tests
 │   │   └── problem0001/TwoSumTest.kt
 │   └── build.gradle.kts      # Gradle configuration
+├── go/                       # Go workspace
+│   ├── go.mod                # Module definition
+│   ├── problem_0001/         # Each problem is its own package
+│   │   ├── solution.go       # Solution
+│   │   └── solution_test.go  # Tests
+│   └── problem_0704/
+│       ├── solution.go
+│       └── solution_test.go
 └── ...
 ```
 

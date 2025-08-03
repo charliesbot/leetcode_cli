@@ -58,6 +58,14 @@ void test('file operations test suite', async (t) => {
     assert.strictEqual(rustFnMatch?.[1], 'two_sum');
   });
 
+  await t.test('should extract function name from Go code', () => {
+    const code =
+      'func twoSum(nums []int, target int) []int {\n    return []int{}\n}';
+    // Test the Go function regex pattern
+    const goFuncMatch = code.match(/func\s+(\w+)\s*\(/);
+    assert.strictEqual(goFuncMatch?.[1], 'twoSum');
+  });
+
   await t.test('should format problem name to camelCase', () => {
     const title = 'Two Sum';
     const formatted = title
@@ -260,11 +268,13 @@ void test('file operations test suite', async (t) => {
       cpp: `${snakeCaseName}.cpp`,
       kotlin: `${className}.kt`,
       java: `${className}.java`,
+      go: `${snakeCaseName}.go`,
       rust: 'lib.rs', // Rust always uses lib.rs
     };
 
     assert.strictEqual(exerciseNameMap.typescript, 'TwoSum.ts');
     assert.strictEqual(exerciseNameMap.cpp, 'two_sum.cpp');
+    assert.strictEqual(exerciseNameMap.go, 'two_sum.go');
     assert.strictEqual(exerciseNameMap.rust, 'lib.rs');
   });
 

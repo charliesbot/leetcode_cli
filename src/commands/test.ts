@@ -301,8 +301,9 @@ async function runTests(
         break;
       }
       case 'go':
-        command = 'go';
-        args = ['test', `./${problemDir}/...`];
+        // Run go test in the specific problem directory
+        command = 'sh';
+        args = ['-c', `cd "${problemDir}" && go test -v`];
         break;
       case 'rust':
         // Run cargo test for specific module in workspace

@@ -370,6 +370,179 @@ void test('duplicate exercise handling test suite', async (t) => {
     }
   );
 
+  // Go-specific tests for directory-based overwrite protection
+  await t.test('should detect existing Go exercise directory', async () => {
+    // Setup Go workspace structure
+    await fs.mkdir(join(testWorkspace, 'go'), { recursive: true });
+    await fs.mkdir(join(testWorkspace, 'go', 'problem_0001'), {
+      recursive: true,
+    });
+
+    // Create go.mod
+    await fs.writeFile(
+      join(testWorkspace, 'go', 'go.mod'),
+      'module leetkick-go\n\ngo 1.21'
+    );
+
+    // Create existing problem files to simulate already solved problem
+    await fs.writeFile(
+      join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
+      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\n\npackage problem_0001\n\nfunc twoSum(nums []int, target int) []int {\n    // Some existing solution\n    return []int{}\n}'
+    );
+    await fs.writeFile(
+      join(testWorkspace, 'go', 'problem_0001', 'two_sum_test.go'),
+      'package problem_0001\n\nimport "testing"\n\nfunc TestTwoSum(t *testing.T) {\n    // Some existing tests\n    t.Log("Existing test")\n}'
+    );
+
+    // Now try to fetch the same problem again
+    const result = await runCLI(['fetch', 'two-sum', '--language', 'go'], {
+      expectError: true,
+    });
+
+    const output = result.stderr || result.stdout;
+    assert(
+      output.includes('already exists') ||
+        output.includes('Exercise already exists') ||
+        output.includes('problem_0001'),
+      `Expected output to mention existing exercise directory, got: ${output}`
+    );
+  });
+
+  await t.test(
+    'should preserve existing Go files when exercise exists without force',
+    async () => {
+      // Setup Go workspace
+      await fs.mkdir(join(testWorkspace, 'go', 'problem_0001'), {
+        recursive: true,
+      });
+      await fs.writeFile(
+        join(testWorkspace, 'go', 'go.mod'),
+        'module leetkick-go\n\ngo 1.21'
+      );
+
+      // Create existing exercise with custom content
+      const originalContent =
+        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\n\npackage problem_0001\n\nfunc twoSum(nums []int, target int) []int {\n    /* GO_UNIQUE_MARKER_12345 my solution */\n    return []int{1, 2}\n}';
+      await fs.writeFile(
+        join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
+        originalContent
+      );
+
+      // Try to fetch without force - should fail/warn but not overwrite
+      await runCLI(['fetch', 'two-sum', '--language', 'go'], {
+        expectError: true,
+      });
+
+      // Check that original content is preserved
+      const preservedContent = await fs.readFile(
+        join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
+        'utf-8'
+      );
+      assert.strictEqual(preservedContent, originalContent);
+    }
+  );
+
+  await t.test(
+    'should handle --force flag to overwrite existing Go exercise',
+    async () => {
+      // Setup Go workspace
+      await fs.mkdir(join(testWorkspace, 'go', 'problem_0001'), {
+        recursive: true,
+      });
+      await fs.writeFile(
+        join(testWorkspace, 'go', 'go.mod'),
+        'module leetkick-go\n\ngo 1.21'
+      );
+
+      // Setup existing exercise
+      await fs.writeFile(
+        join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
+        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\n\npackage problem_0001\n\nfunc twoSum(nums []int, target int) []int {\n    /* GO_FORCE_TEST_MARKER_67890 */\n    return []int{}\n}'
+      );
+
+      // Try to fetch with force flag
+      const result = await runCLI([
+        'fetch',
+        'two-sum',
+        '--language',
+        'go',
+        '--force',
+      ]);
+
+      // Should succeed and overwrite
+      assert(
+        result.exitCode === 0,
+        `Command failed with exit code ${result.exitCode}. stdout: ${result.stdout}, stderr: ${result.stderr}`
+      );
+      assert(
+        result.stdout.includes('✓'),
+        `Expected success message in output: ${result.stdout}`
+      );
+
+      // Check that file was overwritten - new content should not contain our old marker
+      const newContent = await fs.readFile(
+        join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
+        'utf-8'
+      );
+      assert(
+        !newContent.includes('GO_FORCE_TEST_MARKER_67890'),
+        `File was not overwritten. Content: ${newContent}`
+      );
+      // The new file should have the problem structure
+      assert(
+        newContent.includes('package problem_0001') &&
+          newContent.includes('[1] Two Sum'),
+        `New content should have Go problem structure. Content: ${newContent}`
+      );
+    }
+  );
+
+  await t.test(
+    'should work normally when Go exercise does not exist',
+    async () => {
+      // Setup clean Go workspace - no existing exercise
+      await fs.mkdir(join(testWorkspace, 'go'), { recursive: true });
+      await fs.writeFile(
+        join(testWorkspace, 'go', 'go.mod'),
+        'module leetkick-go\n\ngo 1.21'
+      );
+
+      const exerciseDir = join(testWorkspace, 'go', 'problem_0001');
+      const exists = await fs
+        .access(exerciseDir)
+        .then(() => true)
+        .catch(() => false);
+      assert(!exists);
+
+      // Should work normally
+      const result = await runCLI(['fetch', 'two-sum', '--language', 'go']);
+
+      assert(result.exitCode === 0);
+      assert(result.stdout.includes('✓ Created go exercise'));
+
+      // Verify directory and files were created
+      const exerciseExists = await fs
+        .access(exerciseDir)
+        .then(() => true)
+        .catch(() => false);
+      assert(exerciseExists);
+
+      // Verify two_sum.go was created
+      const solutionExists = await fs
+        .access(join(exerciseDir, 'two_sum.go'))
+        .then(() => true)
+        .catch(() => false);
+      assert(solutionExists);
+
+      // Verify two_sum_test.go was created
+      const testExists = await fs
+        .access(join(exerciseDir, 'two_sum_test.go'))
+        .then(() => true)
+        .catch(() => false);
+      assert(testExists);
+    }
+  );
+
   // Cleanup
   await t.afterEach(async () => {
     await fs.rm(testWorkspace, { recursive: true, force: true });
