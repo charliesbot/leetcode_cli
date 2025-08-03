@@ -188,6 +188,188 @@ void test('duplicate exercise handling test suite', async (t) => {
     }
   );
 
+  // Rust-specific tests for file-based overwrite protection
+  await t.test('should detect existing Rust exercise file', async () => {
+    // Setup Rust workspace structure
+    await fs.mkdir(join(testWorkspace, 'rust'), { recursive: true });
+    await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
+
+    // Create Cargo.toml
+    await fs.writeFile(
+      join(testWorkspace, 'rust', 'Cargo.toml'),
+      '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]'
+    );
+
+    // Create lib.rs
+    await fs.writeFile(
+      join(testWorkspace, 'rust', 'src', 'lib.rs'),
+      '// LeetKick Rust Workspace\npub mod problem_0001;\n'
+    );
+
+    // Create existing problem file to simulate already solved problem
+    await fs.writeFile(
+      join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
+      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\npub struct Solution;\n\nimpl Solution {\n    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n        // Some existing solution\n        vec![]\n    }\n}'
+    );
+
+    // Now try to fetch the same problem again
+    const result = await runCLI(['fetch', 'two-sum', '--language', 'rust'], {
+      expectError: true,
+    });
+
+    const output = result.stderr || result.stdout;
+    assert(
+      output.includes('already exists') ||
+        output.includes('Exercise already exists') ||
+        output.includes('problem_0001.rs'),
+      `Expected output to mention existing exercise file, got: ${output}`
+    );
+  });
+
+  await t.test(
+    'should preserve existing Rust file when exercise exists without force',
+    async () => {
+      // Setup Rust workspace
+      await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
+      await fs.writeFile(
+        join(testWorkspace, 'rust', 'Cargo.toml'),
+        '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]'
+      );
+      await fs.writeFile(
+        join(testWorkspace, 'rust', 'src', 'lib.rs'),
+        '// LeetKick Rust Workspace\npub mod problem_0001;\n'
+      );
+
+      // Create existing exercise with custom content
+      const originalContent =
+        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\npub struct Solution;\n\nimpl Solution {\n    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n        /* RUST_UNIQUE_MARKER_67890 my solution */\n        vec![1, 2]\n    }\n}';
+      await fs.writeFile(
+        join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
+        originalContent
+      );
+
+      // Try to fetch without force - should fail/warn but not overwrite
+      await runCLI(['fetch', 'two-sum', '--language', 'rust'], {
+        expectError: true,
+      });
+
+      // Check that original content is preserved
+      const preservedContent = await fs.readFile(
+        join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
+        'utf-8'
+      );
+      assert.strictEqual(preservedContent, originalContent);
+    }
+  );
+
+  await t.test(
+    'should handle --force flag to overwrite existing Rust exercise',
+    async () => {
+      // Setup Rust workspace
+      await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
+      await fs.writeFile(
+        join(testWorkspace, 'rust', 'Cargo.toml'),
+        '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]'
+      );
+      await fs.writeFile(
+        join(testWorkspace, 'rust', 'src', 'lib.rs'),
+        '// LeetKick Rust Workspace\npub mod problem_0001;\n'
+      );
+
+      // Setup existing exercise
+      await fs.writeFile(
+        join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
+        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\npub struct Solution;\n\nimpl Solution {\n    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n        /* RUST_FORCE_TEST_MARKER_54321 */\n        vec![]\n    }\n}'
+      );
+
+      // Try to fetch with force flag
+      const result = await runCLI([
+        'fetch',
+        'two-sum',
+        '--language',
+        'rust',
+        '--force',
+      ]);
+
+      // Should succeed and overwrite
+      assert(
+        result.exitCode === 0,
+        `Command failed with exit code ${result.exitCode}. stdout: ${result.stdout}, stderr: ${result.stderr}`
+      );
+      assert(
+        result.stdout.includes('✓'),
+        `Expected success message in output: ${result.stdout}`
+      );
+
+      // Check that file was overwritten - new content should not contain our old marker
+      const newContent = await fs.readFile(
+        join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
+        'utf-8'
+      );
+      assert(
+        !newContent.includes('RUST_FORCE_TEST_MARKER_54321'),
+        `File was not overwritten. Content: ${newContent}`
+      );
+      // The new file should have the problem structure
+      assert(
+        newContent.includes('pub struct Solution') &&
+          newContent.includes('[1] Two Sum'),
+        `New content should have Rust problem structure. Content: ${newContent}`
+      );
+    }
+  );
+
+  await t.test(
+    'should work normally when Rust exercise does not exist',
+    async () => {
+      // Setup clean Rust workspace - no existing exercise
+      await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
+      await fs.writeFile(
+        join(testWorkspace, 'rust', 'Cargo.toml'),
+        '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]'
+      );
+      await fs.writeFile(
+        join(testWorkspace, 'rust', 'src', 'lib.rs'),
+        '// LeetKick Rust Workspace\n// Problem modules will be automatically declared here when you fetch problems\n'
+      );
+
+      const exerciseFile = join(
+        testWorkspace,
+        'rust',
+        'src',
+        'problem_0001.rs'
+      );
+      const exists = await fs
+        .access(exerciseFile)
+        .then(() => true)
+        .catch(() => false);
+      assert(!exists);
+
+      // Should work normally
+      const result = await runCLI(['fetch', 'two-sum', '--language', 'rust']);
+
+      assert(result.exitCode === 0);
+      assert(result.stdout.includes('✓ Created rust exercise'));
+
+      // Verify file was created
+      const exerciseExists = await fs
+        .access(exerciseFile)
+        .then(() => true)
+        .catch(() => false);
+      assert(exerciseExists);
+
+      // Verify lib.rs was updated with module declaration
+      const libContent = await fs.readFile(
+        join(testWorkspace, 'rust', 'src', 'lib.rs'),
+        'utf-8'
+      );
+      assert(
+        libContent.includes('pub mod problem_0001;'),
+        `lib.rs should include module declaration. Content: ${libContent}`
+      );
+    }
+  );
+
   // Cleanup
   await t.afterEach(async () => {
     await fs.rm(testWorkspace, { recursive: true, force: true });

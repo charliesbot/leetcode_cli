@@ -8,11 +8,11 @@ A modern CLI tool for scaffolding LeetCode exercises with language-specific test
 ## Features
 
 - **Fetch problems directly from LeetCode** - no copy/paste needed
-- **Auto-scaffolding** - solution + test files generated instantly  
+- **Auto-scaffolding** - solution + test files generated instantly
 - **Clean organization** - problems organized by language and number
 - **Zero-config testing** - just run `leetkick test` from anywhere
 - **Smart problem matching** - run tests by number, slug, or name
-- **Multi-language support** - TypeScript, C++, Kotlin, Java, Rust (Python, Go coming soon!)
+- **Multi-language support** - 5 languages supported, 10+ planned (goal: all LeetCode languages)
 
 ## Quick Start
 
@@ -21,7 +21,7 @@ A modern CLI tool for scaffolding LeetCode exercises with language-specific test
 leetkick init my-practice && cd my-practice
 leetkick add typescript
 
-# Use daily 
+# Use daily
 leetkick fetch two-sum --language typescript    # Auto-generates solution + test files
 leetkick test two-sum --language typescript     # Run tests instantly
 ```
@@ -44,40 +44,58 @@ cd leetkick && npm install && npm run compile && npm link
 leetkick --help
 ```
 
-## Supported Languages
+## Language Support
 
-- **TypeScript** - Vitest testing framework
-- **C++** - Catch2 testing framework (bundled)
-- **Kotlin** - JUnit 5 + Gradle
-- **Java** - JUnit 5 + Gradle
-- **Rust** - Built-in cargo test
-- **Python, Go** - Coming soon!
+Our goal is to support all languages that LeetCode offers. Here's our current progress:
 
-Each language workspace includes setup instructions, prerequisites, and testing guides in its own README.
+| Language       | Status           | Testing Framework | Formatter    | Linter         | Notes                           |
+| -------------- | ---------------- | ----------------- | ------------ | -------------- | ------------------------------- |
+| **TypeScript** | ✅ **Supported** | Vitest            | Prettier     | —              | Full support with type checking |
+| **C++**        | ✅ **Supported** | Catch2 (bundled)  | clang-format | —              | C++17 standard                  |
+| **Kotlin**     | ✅ **Supported** | JUnit 5 + Gradle  | —            | —              | Full Gradle integration         |
+| **Java**       | ✅ **Supported** | JUnit 5 + Gradle  | —            | —              | Full Gradle integration         |
+| **Rust**       | ✅ **Supported** | cargo test        | —            | —              | Rust 2021 edition               |
+| **Python**     | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **JavaScript** | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **Go**         | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **C**          | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **C#**         | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **Ruby**       | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **Swift**      | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **Scala**      | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **PHP**        | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **Dart**       | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+
+**Legend:**
+
+- ✅ **Supported** - Full integration with templates, testing, and tooling
+- 🚧 **Planned** - On our roadmap, contributions welcome!
+
+Each supported language workspace includes setup instructions, prerequisites, and testing guides in its own README.
 
 ## Command Reference
 
-| Command | Purpose | Example |
-|---------|---------|---------|
-| `init [dir]` | Create workspace | `leetkick init my-practice` |
-| `add <lang>` | Add language support | `leetkick add typescript` |
+| Command                             | Purpose              | Example                                        |
+| ----------------------------------- | -------------------- | ---------------------------------------------- |
+| `init [dir]`                        | Create workspace     | `leetkick init my-practice`                    |
+| `add <lang>`                        | Add language support | `leetkick add typescript`                      |
 | `fetch <problem> --language <lang>` | Get LeetCode problem | `leetkick fetch two-sum --language typescript` |
-| `test <problem> --language <lang>` | Run tests | `leetkick test 1 --language typescript` |
-| `help [cmd]` | Show help | `leetkick help fetch` |
+| `test <problem> --language <lang>`  | Run tests            | `leetkick test 1 --language typescript`        |
+| `help [cmd]`                        | Show help            | `leetkick help fetch`                          |
 
 ### Advanced Features
 
 **Smart Problem Matching**
+
 ```bash
 leetkick test 1 --language typescript           # By number
-leetkick test two-sum --language typescript     # By slug  
+leetkick test two-sum --language typescript     # By slug
 leetkick test problem0001 --language typescript # By exact package name
 ```
 
 **Works Anywhere:** Run commands from any directory in your workspace  
 **Safe Overwrites:** CLI warns before overwriting existing solutions. Use `--force` to override  
 **Shortcuts:** Use `-l` instead of `--language`, `-f` instead of `--force`
-
 
 ## Project Structure
 
@@ -93,7 +111,7 @@ your-project/
 │   └── problem_0704/
 │       ├── BinarySearch.ts
 │       └── BinarySearch.test.ts
-├── cpp/                      # C++ workspace  
+├── cpp/                      # C++ workspace
 │   ├── problem_0001/
 │   │   ├── two_sum.cpp       # Your solution
 │   │   └── two_sum.test.cpp  # Test cases
@@ -101,7 +119,7 @@ your-project/
 ├── kotlin/                   # Kotlin workspace
 │   ├── src/main/kotlin/      # Solutions
 │   │   └── problem0001/TwoSum.kt
-│   ├── src/test/kotlin/      # Tests  
+│   ├── src/test/kotlin/      # Tests
 │   │   └── problem0001/TwoSumTest.kt
 │   └── build.gradle.kts      # Gradle configuration
 └── ...
@@ -112,8 +130,9 @@ Each language workspace includes all necessary configuration files, testing fram
 ## What You Get
 
 Each problem generates solution and test files with:
+
 - Problem description and difficulty
-- LeetCode starter code 
+- LeetCode starter code
 - Test framework setup ready to use
 - Language-specific project structure
 
@@ -122,20 +141,24 @@ Each problem generates solution and test files with:
 ## Troubleshooting
 
 **Installation Issues:**
+
 - Ensure Node.js 18+ is installed: `node --version`
 - Clear npm cache: `npm cache clean --force`
 - Use `npm install -g leetkick --force` to reinstall
 
 **Command Issues:**
+
 - Run `leetkick --help` to verify installation
 - Check you're in a leetkick workspace (contains `.leetkick.json`)
 - Use full problem names if short names don't work
 
 **Language Issues:**
+
 - Check language-specific README for setup instructions and prerequisites
 - Ensure required compilers/runtimes are installed
 
 **Update LeetKick:**
+
 ```bash
 npm update -g leetkick
 leetkick --version

@@ -1,4 +1,4 @@
-import { readdir, copyFile, mkdir, stat } from 'fs/promises';
+import { readdir, copyFile, mkdir, stat, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
@@ -34,9 +34,18 @@ export async function initializeLanguage(language: string): Promise<void> {
     await mkdir(join(targetDir, 'src', 'test', language), { recursive: true });
   }
 
-  // For Rust, we need to create the src directory
+  // For Rust, we need to create the src directory and lib.rs
   if (language === 'rust') {
     await mkdir(join(targetDir, 'src'), { recursive: true });
+
+    // Create initial lib.rs file
+    const libContent = `// LeetKick Rust Workspace
+// This file serves as the main library entry point for all LeetCode problems.
+// Each problem is implemented as a separate module in the src/ directory.
+
+// Problem modules will be automatically declared here when you fetch problems
+`;
+    await writeFile(join(targetDir, 'src', 'lib.rs'), libContent);
   }
 
   // Copy all non-template files (config files)
@@ -47,6 +56,8 @@ export async function initializeLanguage(language: string): Promise<void> {
     if (file.includes('_template.')) {
       continue;
     }
+
+    // Cargo.toml is now workspace-level for Rust, so copy it
 
     const sourcePath = join(templateDir, file);
 

@@ -71,6 +71,7 @@ export const fetchCommand = new Command('fetch')
         const paddedId = problem.questionFrontendId.padStart(4, '0');
         let problemDir: string;
         let problemName: string;
+        let existingPath: string;
 
         if (options.language === 'kotlin' || options.language === 'java') {
           problemName = `problem${paddedId}`;
@@ -81,19 +82,25 @@ export const fetchCommand = new Command('fetch')
             options.language,
             problemName
           );
+          existingPath = problemDir;
+        } else if (options.language === 'rust') {
+          problemName = `problem_${paddedId}`;
+          problemDir = join(languageDir, 'src');
+          existingPath = join(problemDir, `${problemName}.rs`);
         } else {
           problemName = `problem_${paddedId}`;
           problemDir = join(languageDir, problemName);
+          existingPath = problemDir;
         }
 
-        if (existsSync(problemDir)) {
+        if (existsSync(existingPath)) {
           if (!options.force) {
-            console.log(`❌ Exercise already exists: ${problemDir}`);
-            console.log('The exercise directory already contains files.');
+            console.log(`❌ Exercise already exists: ${existingPath}`);
+            console.log('The exercise file/directory already exists.');
             console.log('Options:');
             console.log('  • Use --force to overwrite existing files');
             console.log('  • Choose a different language');
-            console.log('  • Remove the existing directory manually');
+            console.log('  • Remove the existing file/directory manually');
             return; // Exit gracefully without throwing error
           } else {
             console.log(`⚠️  Overwriting existing exercise: ${problemName}`);

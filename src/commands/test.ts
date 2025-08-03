@@ -87,10 +87,52 @@ async function findProblemDirectory(
     const isJava = languageDir.endsWith('java');
     const isRust = languageDir.endsWith('rust');
 
-    // For Rust, all problems are in a single lib.rs file
+    // For Rust, problems are files in src/ directory, not separate directories
     if (isRust) {
-      // Return a special marker for Rust
-      return 'rust-all';
+      const srcDir = join(languageDir, 'src');
+      if (!existsSync(srcDir)) {
+        return null;
+      }
+
+      const entries = await readdir(srcDir);
+      const problemFiles = entries.filter(
+        (file) => file.startsWith('problem_') && file.endsWith('.rs')
+      );
+
+      // Try to match by problem number
+      const paddedProblem = problem.padStart(4, '0');
+      const targetFile = `problem_${paddedProblem}.rs`;
+
+      if (problemFiles.includes(targetFile)) {
+        return `problem_${paddedProblem}`;
+      }
+
+      // Try exact match
+      const exactFile = `${problem}.rs`;
+      if (problemFiles.includes(exactFile)) {
+        return problem;
+      }
+
+      // For numeric search
+      if (/^\d+$/.test(problem)) {
+        const numericMatch = problemFiles.find((file) =>
+          file.includes(paddedProblem)
+        );
+        if (numericMatch) {
+          return numericMatch.replace('.rs', '');
+        }
+      }
+
+      // For slug matching, read problem metadata from files
+      for (const file of problemFiles) {
+        const filePath = join(srcDir, file);
+        const problemInfo = await extractProblemInfoFromFile(filePath);
+        if (problemInfo && matchesProblemSlug(problem, problemInfo)) {
+          return file.replace('.rs', '');
+        }
+      }
+
+      return null;
     }
 
     const searchDir =
@@ -143,6 +185,26 @@ async function findProblemDirectory(
           return dir;
         }
       }
+    }
+
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
+
+async function extractProblemInfoFromFile(
+  filePath: string
+): Promise<{ title: string; slug: string } | null> {
+  try {
+    const content = await readFile(filePath, 'utf-8');
+
+    // Extract problem info from comment header
+    const titleMatch = content.match(/\* \[\d+\] (.+)/);
+    if (titleMatch) {
+      const title = titleMatch[1];
+      const slug = titleToSlug(title);
+      return { title, slug };
     }
 
     return null;
@@ -243,8 +305,9 @@ async function runTests(
         args = ['test', `./${problemDir}/...`];
         break;
       case 'rust':
+        // Run cargo test for specific module in workspace
         command = 'cargo';
-        args = ['test'];
+        args = ['test', `${problemDir}::`];
         break;
       case 'cpp':
         // Compile and run C++ test directly with include path for shared headers

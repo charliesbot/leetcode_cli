@@ -67,12 +67,14 @@ export async function createProblemFiles(
     __EXERCISE_FILE_NAME__: getExerciseFileName(
       className,
       snakeCaseName,
-      language
+      language,
+      paddedId
     ),
     __EXERCISE_FILE_NAME_NO_EXT__: getExerciseFileNameNoExt(
       className,
       snakeCaseName,
-      language
+      language,
+      paddedId
     ),
   };
 
@@ -83,9 +85,17 @@ export async function createProblemFiles(
   );
   const exerciseContent = replaceTemplateVars(exerciseTemplate, replacements);
   await writeFile(
-    join(problemDir, getExerciseFileName(className, snakeCaseName, language)),
+    join(
+      problemDir,
+      getExerciseFileName(className, snakeCaseName, language, paddedId)
+    ),
     exerciseContent
   );
+
+  // For Rust, add module declaration to lib.rs
+  if (language === 'rust') {
+    await addModuleToLibRs(languageDir, `problem_${paddedId}`);
+  }
 
   // Create test file (skip for Rust as tests are in the same file)
   if (language !== 'rust') {
@@ -192,7 +202,8 @@ function getFileExtension(language: string): string {
 function getExerciseFileName(
   className: string,
   snakeCaseName: string,
-  language: string
+  language: string,
+  paddedId?: string
 ): string {
   const ext = getFileExtension(language);
   switch (language) {
@@ -206,7 +217,7 @@ function getExerciseFileName(
     case 'java':
       return `${className}.${ext}`;
     case 'rust':
-      return 'lib.rs';
+      return `problem_${paddedId || '0001'}.rs`;
     default:
       return `${className}.${ext}`;
   }
@@ -215,7 +226,8 @@ function getExerciseFileName(
 function getExerciseFileNameNoExt(
   className: string,
   snakeCaseName: string,
-  language: string
+  language: string,
+  paddedId?: string
 ): string {
   switch (language) {
     case 'typescript':
@@ -228,7 +240,7 @@ function getExerciseFileNameNoExt(
     case 'java':
       return className;
     case 'rust':
-      return 'lib';
+      return `problem_${paddedId || '0001'}`;
     default:
       return className;
   }
@@ -282,6 +294,30 @@ public:
 };`;
     default:
       return `// TODO: Implement solution for ${title}`;
+  }
+}
+
+async function addModuleToLibRs(
+  languageDir: string,
+  moduleName: string
+): Promise<void> {
+  const libPath = join(languageDir, 'src', 'lib.rs');
+
+  try {
+    let libContent = await readFile(libPath, 'utf-8');
+
+    // Check if module is already declared
+    const moduleDeclaration = `pub mod ${moduleName};`;
+    if (libContent.includes(moduleDeclaration)) {
+      return; // Module already declared
+    }
+
+    // Add module declaration at the end
+    libContent += `\npub mod ${moduleName};\n`;
+
+    await writeFile(libPath, libContent);
+  } catch (error) {
+    throw new Error(`Failed to update lib.rs: ${error}`);
   }
 }
 
