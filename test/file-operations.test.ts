@@ -50,6 +50,14 @@ void test('file operations test suite', async (t) => {
     assert.strictEqual(javaMethodMatch?.[1], 'twoSum');
   });
 
+  await t.test('should extract function name from Rust code', () => {
+    const code =
+      'pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n    vec![]\n}';
+    // Test the Rust function regex pattern
+    const rustFnMatch = code.match(/pub\s+fn\s+(\w+)\s*\(/);
+    assert.strictEqual(rustFnMatch?.[1], 'two_sum');
+  });
+
   await t.test('should format problem name to camelCase', () => {
     const title = 'Two Sum';
     const formatted = title
@@ -80,6 +88,58 @@ void test('file operations test suite', async (t) => {
       cleaned,
       'Given an array of integers nums and an integer target, return indices.'
     );
+  });
+
+  await t.test('should decode HTML entities in descriptions', () => {
+    // Test the specific entities mentioned in the bug report
+    const htmlWithEntities =
+      'Given an m x n 2D binary grid which represents a map of &#39;1&#39;s (land) and &#39;0&#39;s (water). ' +
+      'Input: grid = [&quot;1&quot;,&quot;1&quot;,&quot;0&quot;] and grid[i][j] is &#39;0&#39; or &#39;1&#39;.';
+
+    const cleaned = htmlWithEntities
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&apos;/g, "'")
+      .replace(/&ldquo;/g, '"')
+      .replace(/&rdquo;/g, '"')
+      .replace(/&lsquo;/g, "'")
+      .replace(/&rsquo;/g, "'")
+      .replace(/&amp;/g, '&')
+      .trim();
+
+    assert.strictEqual(
+      cleaned,
+      "Given an m x n 2D binary grid which represents a map of '1's (land) and '0's (water). " +
+        'Input: grid = ["1","1","0"] and grid[i][j] is \'0\' or \'1\'.'
+    );
+  });
+
+  await t.test('should handle various quote entities', () => {
+    const testCases = [
+      { input: '&quot;hello&quot;', expected: '"hello"' },
+      { input: '&#39;world&#39;', expected: "'world'" },
+      { input: '&apos;test&apos;', expected: "'test'" },
+      { input: '&ldquo;fancy&rdquo;', expected: '"fancy"' },
+      { input: '&lsquo;quote&rsquo;', expected: "'quote'" },
+    ];
+
+    testCases.forEach(({ input, expected }) => {
+      const cleaned = input
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&apos;/g, "'")
+        .replace(/&ldquo;/g, '"')
+        .replace(/&rdquo;/g, '"')
+        .replace(/&lsquo;/g, "'")
+        .replace(/&rsquo;/g, "'")
+        .replace(/&amp;/g, '&');
+
+      assert.strictEqual(cleaned, expected);
+    });
   });
 
   await t.test('should create clean problem directory name', () => {
@@ -179,7 +239,7 @@ void test('file operations test suite', async (t) => {
       cpp: `${snakeCaseName}.test.cpp`,
       kotlin: `${className}Test.kt`,
       go: `${snakeCaseName}_test.go`,
-      rust: `${snakeCaseName}_test.rs`,
+      rust: 'lib.rs', // Rust tests are in the same file
     };
 
     assert.strictEqual(testNameMap.typescript, 'TwoSum.test.ts');
@@ -188,6 +248,24 @@ void test('file operations test suite', async (t) => {
     assert.strictEqual(testNameMap.cpp, 'two_sum.test.cpp');
     assert.strictEqual(testNameMap.kotlin, 'TwoSumTest.kt');
     assert.strictEqual(testNameMap.go, 'two_sum_test.go');
+    assert.strictEqual(testNameMap.rust, 'lib.rs');
+  });
+
+  await t.test('should generate correct exercise file names', () => {
+    const className = 'TwoSum';
+    const snakeCaseName = 'two_sum';
+    const exerciseNameMap: Record<string, string> = {
+      typescript: `${className}.ts`,
+      javascript: `${className}.js`,
+      cpp: `${snakeCaseName}.cpp`,
+      kotlin: `${className}.kt`,
+      java: `${className}.java`,
+      rust: 'lib.rs', // Rust always uses lib.rs
+    };
+
+    assert.strictEqual(exerciseNameMap.typescript, 'TwoSum.ts');
+    assert.strictEqual(exerciseNameMap.cpp, 'two_sum.cpp');
+    assert.strictEqual(exerciseNameMap.rust, 'lib.rs');
   });
 
   // Cleanup

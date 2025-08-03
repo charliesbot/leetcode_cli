@@ -12,7 +12,7 @@ A modern CLI tool for scaffolding LeetCode exercises with language-specific test
 - **Clean organization** - problems organized by language and number
 - **Zero-config testing** - just run `leetkick test` from anywhere
 - **Smart problem matching** - run tests by number, slug, or name
-- **Multi-language support** - TypeScript, C++, Kotlin, Java (Python, Go, Rust coming soon!)
+- **Multi-language support** - TypeScript, C++, Kotlin, Java, Rust (Python, Go coming soon!)
 
 ## Quick Start
 
@@ -50,7 +50,8 @@ leetkick --help
 - **C++** - Catch2 testing framework (bundled)
 - **Kotlin** - JUnit 5 + Gradle
 - **Java** - JUnit 5 + Gradle
-- **Python, Go, Rust** - Coming soon!
+- **Rust** - Built-in cargo test
+- **Python, Go** - Coming soon!
 
 Each language workspace includes setup instructions, prerequisites, and testing guides in its own README.
 

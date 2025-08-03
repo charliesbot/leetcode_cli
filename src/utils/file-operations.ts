@@ -16,6 +16,7 @@ export async function createProblemFiles(
   const languageDir = join(process.cwd(), language);
 
   // For Kotlin and Java, we need to create src/main/{lang} and src/test/{lang} structure
+  // For Rust, we need src/ directory for Cargo
   let problemDir: string;
   let testDir: string;
   if (language === 'kotlin' || language === 'java') {
@@ -24,6 +25,10 @@ export async function createProblemFiles(
     testDir = join(languageDir, 'src', 'test', language, problemPackage);
     await mkdir(problemDir, { recursive: true });
     await mkdir(testDir, { recursive: true });
+  } else if (language === 'rust') {
+    problemDir = join(languageDir, 'src');
+    testDir = problemDir;
+    await mkdir(problemDir, { recursive: true });
   } else {
     problemDir = join(languageDir, problemDirName);
     testDir = problemDir;
@@ -82,16 +87,18 @@ export async function createProblemFiles(
     exerciseContent
   );
 
-  // Create test file
-  const testTemplate = await readFile(
-    join(templateDir, 'test_template.' + getFileExtension(language)),
-    'utf-8'
-  );
-  const testContent = replaceTemplateVars(testTemplate, replacements);
-  await writeFile(
-    join(testDir, getTestFileName(className, snakeCaseName, language)),
-    testContent
-  );
+  // Create test file (skip for Rust as tests are in the same file)
+  if (language !== 'rust') {
+    const testTemplate = await readFile(
+      join(templateDir, 'test_template.' + getFileExtension(language)),
+      'utf-8'
+    );
+    const testContent = replaceTemplateVars(testTemplate, replacements);
+    await writeFile(
+      join(testDir, getTestFileName(className, snakeCaseName, language)),
+      testContent
+    );
+  }
 }
 
 function replaceTemplateVars(
@@ -112,7 +119,14 @@ function cleanDescription(htmlContent: string): string {
     .replace(/&nbsp;/g, ' ')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&ldquo;/g, '"')
+    .replace(/&rdquo;/g, '"')
+    .replace(/&lsquo;/g, "'")
+    .replace(/&rsquo;/g, "'")
+    .replace(/&amp;/g, '&') // Keep this last as other entities contain &
     .trim();
 }
 
@@ -191,6 +205,8 @@ function getExerciseFileName(
     case 'kotlin':
     case 'java':
       return `${className}.${ext}`;
+    case 'rust':
+      return 'lib.rs';
     default:
       return `${className}.${ext}`;
   }
@@ -211,6 +227,8 @@ function getExerciseFileNameNoExt(
     case 'kotlin':
     case 'java':
       return className;
+    case 'rust':
+      return 'lib';
     default:
       return className;
   }
@@ -238,7 +256,7 @@ function getTestFileName(
     case 'go':
       return `${snakeCaseName}_test.${ext}`;
     case 'rust':
-      return `${snakeCaseName}_test.${ext}`;
+      return 'lib.rs'; // Tests are in the same file for Rust
     default:
       return `${className}.test.${ext}`;
   }

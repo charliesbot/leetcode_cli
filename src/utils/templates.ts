@@ -34,6 +34,11 @@ export async function initializeLanguage(language: string): Promise<void> {
     await mkdir(join(targetDir, 'src', 'test', language), { recursive: true });
   }
 
+  // For Rust, we need to create the src directory
+  if (language === 'rust') {
+    await mkdir(join(targetDir, 'src'), { recursive: true });
+  }
+
   // Copy all non-template files (config files)
   const templateFiles = await readdir(templateDir);
 

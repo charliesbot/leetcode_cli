@@ -57,9 +57,13 @@ export const testCommand = new Command('test')
           }
 
           console.log(`Running tests for: ${problemDir}...`);
-          const testPassed = await runTests(languageDir, problemDir, options.language);
+          const testPassed = await runTests(
+            languageDir,
+            problemDir,
+            options.language
+          );
           if (!testPassed) {
-            process.exit(1);
+            throw new Error('Tests failed');
           }
         } else {
           // Run all tests
@@ -81,6 +85,14 @@ async function findProblemDirectory(
     // For Kotlin and Java, we need to check under src/main/{language}
     const isKotlin = languageDir.endsWith('kotlin');
     const isJava = languageDir.endsWith('java');
+    const isRust = languageDir.endsWith('rust');
+
+    // For Rust, all problems are in a single lib.rs file
+    if (isRust) {
+      // Return a special marker for Rust
+      return 'rust-all';
+    }
+
     const searchDir =
       isKotlin || isJava
         ? join(languageDir, 'src', 'main', isKotlin ? 'kotlin' : 'java')
@@ -232,7 +244,7 @@ async function runTests(
         break;
       case 'rust':
         command = 'cargo';
-        args = ['test', '--manifest-path', `${problemDir}/Cargo.toml`];
+        args = ['test'];
         break;
       case 'cpp':
         // Compile and run C++ test directly with include path for shared headers
@@ -354,7 +366,7 @@ async function runAllTests(
         resolve();
       } else {
         console.log(`❌ Some tests failed (exit code ${code || 1})`);
-        process.exit(1);
+        reject(new Error('Some tests failed'));
       }
     });
 
@@ -393,7 +405,7 @@ async function runAllCppTests(languageDir: string): Promise<void> {
       console.log('\n✓ All C++ tests passed!');
     } else {
       console.log('\n❌ Some C++ tests failed');
-      process.exit(1);
+      throw new Error('Some C++ tests failed');
     }
   } catch (error) {
     throw new Error(

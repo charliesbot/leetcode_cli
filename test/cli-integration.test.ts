@@ -138,6 +138,41 @@ void test('CLI integration test suite', async (t) => {
     assert(typescriptExists);
   });
 
+  await t.test(
+    'should add rust language to workspace successfully',
+    async () => {
+      // First initialize workspace
+      await runCLI(['init']);
+
+      // Then add rust
+      const result = await runCLI(['add', 'rust']);
+
+      assert(result.stdout.includes('Adding rust workspace'));
+      assert(result.stdout.includes('Created rust workspace'));
+
+      // Verify rust workspace was created
+      const rustExists = await fs
+        .access(join(testWorkspace, 'rust'))
+        .then(() => true)
+        .catch(() => false);
+      assert(rustExists);
+
+      // Verify Cargo.toml was created
+      const cargoExists = await fs
+        .access(join(testWorkspace, 'rust', 'Cargo.toml'))
+        .then(() => true)
+        .catch(() => false);
+      assert(cargoExists);
+
+      // Verify src directory was created
+      const srcExists = await fs
+        .access(join(testWorkspace, 'rust', 'src'))
+        .then(() => true)
+        .catch(() => false);
+      assert(srcExists);
+    }
+  );
+
   await t.test('should require workspace for add command', async () => {
     // Setup fresh directory without workspace
     const noWorkspaceDir = join(tmpdir(), 'no-workspace-test');

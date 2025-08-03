@@ -20,6 +20,7 @@ void test('templates test suite', async (t) => {
     await fs.mkdir(join(mockTemplatesDir, 'python'), { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'kotlin'), { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'java'), { recursive: true });
+    await fs.mkdir(join(mockTemplatesDir, 'rust'), { recursive: true });
 
     // Create mock template files
     await fs.writeFile(
@@ -62,6 +63,20 @@ void test('templates test suite', async (t) => {
       join(mockTemplatesDir, 'java', 'test_template.java'),
       'package __PROBLEM_PACKAGE__;\npublic class __PROBLEM_CLASS_NAME__Test {}'
     );
+
+    // Create mock Rust template files
+    await fs.writeFile(
+      join(mockTemplatesDir, 'rust', 'Cargo.toml'),
+      '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'rust', 'exercise_template.rs'),
+      'pub struct Solution;\n__PROBLEM_DEFAULT_CODE__\n#[cfg(test)]\nmod tests {\n    use super::*;\n    #[test]\n    fn test___SNAKE_CASE_NAME__() {\n        assert_eq!(1, 1);\n    }\n}'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'rust', 'test_template.rs'),
+      '// Tests are included in the main exercise file for Rust'
+    );
   });
 
   await t.test(
@@ -92,7 +107,8 @@ void test('templates test suite', async (t) => {
       assert(languages.includes('cpp'));
       assert(languages.includes('kotlin'));
       assert(languages.includes('java'));
-      assert.strictEqual(languages.length, 5);
+      assert(languages.includes('rust'));
+      assert.strictEqual(languages.length, 6);
     }
   );
 
@@ -181,7 +197,14 @@ void test('templates test suite', async (t) => {
     'should generate correct file paths for different languages',
     () => {
       const problemName = 'two_sum';
-      const languages = ['typescript', 'python', 'java', 'go', 'kotlin'];
+      const languages = [
+        'typescript',
+        'python',
+        'java',
+        'go',
+        'kotlin',
+        'rust',
+      ];
 
       const fileExtensions = {
         typescript: 'ts',
@@ -189,17 +212,57 @@ void test('templates test suite', async (t) => {
         java: 'java',
         go: 'go',
         kotlin: 'kt',
+        rust: 'rs',
       };
 
       languages.forEach((lang) => {
         const ext = fileExtensions[lang as keyof typeof fileExtensions];
-        const exerciseFile = `${problemName}.${ext}`;
 
-        assert(exerciseFile.endsWith(`.${ext}`));
-        assert(exerciseFile.startsWith(problemName));
+        if (lang === 'rust') {
+          // Rust always uses lib.rs
+          const exerciseFile = 'lib.rs';
+          assert.strictEqual(exerciseFile, 'lib.rs');
+        } else {
+          const exerciseFile = `${problemName}.${ext}`;
+          assert(exerciseFile.endsWith(`.${ext}`));
+          assert(exerciseFile.startsWith(problemName));
+        }
       });
     }
   );
+
+  await t.test('should handle Rust template structure correctly', async () => {
+    const rustDir = join(mockTemplatesDir, 'rust');
+    const files = await fs.readdir(rustDir);
+
+    // Check that Rust has the required files
+    assert(files.includes('Cargo.toml'), 'Should have Cargo.toml');
+    assert(
+      files.includes('exercise_template.rs'),
+      'Should have exercise template'
+    );
+    assert(
+      files.includes('test_template.rs'),
+      'Should have test template placeholder'
+    );
+
+    // Check that Cargo.toml has correct content
+    const cargoContent = await fs.readFile(
+      join(rustDir, 'Cargo.toml'),
+      'utf-8'
+    );
+    assert(cargoContent.includes('name = "leetkick-rust"'));
+    assert(cargoContent.includes('edition = "2021"'));
+
+    // Check that exercise template includes struct Solution and tests
+    const exerciseContent = await fs.readFile(
+      join(rustDir, 'exercise_template.rs'),
+      'utf-8'
+    );
+    assert(exerciseContent.includes('pub struct Solution;'));
+    assert(exerciseContent.includes('#[cfg(test)]'));
+    assert(exerciseContent.includes('mod tests'));
+  });
 
   // Cleanup after each test
   await t.afterEach(async () => {
