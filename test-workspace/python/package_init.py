@@ -1,1 +1,0 @@
-# Problem __PROBLEM_ID__: __PROBLEM_TITLE__
