@@ -48,23 +48,23 @@ leetkick --help
 
 Our goal is to support all languages that LeetCode offers. Here's our current progress:
 
-| Language       | Status           | Testing Framework | Formatter    | Linter         | Notes                           |
-| -------------- | ---------------- | ----------------- | ------------ | -------------- | ------------------------------- |
-| **TypeScript** | ✅ **Supported** | Vitest            | Prettier     | —              | Full support with type checking |
-| **C++**        | ✅ **Supported** | Catch2 (bundled)  | clang-format | —              | C++17 standard                  |
-| **Kotlin**     | ✅ **Supported** | JUnit 5 + Gradle  | —            | —              | Full Gradle integration         |
-| **Java**       | ✅ **Supported** | JUnit 5 + Gradle  | —            | —              | Full Gradle integration         |
-| **Go**         | ✅ **Supported** | Built-in testing  | —            | —              | Go 1.21+ with modules          |
-| **Rust**       | ✅ **Supported** | cargo test        | —            | —              | Rust 2021 edition               |
-| **Python**     | ✅ **Supported** | pytest            | ruff         | ruff           | Python 3.8+ with modern tooling |
-| **JavaScript** | ✅ **Supported** | Vitest            | Prettier     | —              | ES Modules with modern tooling |
-| **C**          | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
-| **C#**         | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
-| **Ruby**       | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
-| **Swift**      | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
-| **Scala**      | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
-| **PHP**        | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
-| **Dart**       | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| Language       | Status           | Testing Framework | Formatter    | Linter | Notes                           |
+| -------------- | ---------------- | ----------------- | ------------ | ------ | ------------------------------- |
+| **TypeScript** | ✅ **Supported** | Vitest            | Prettier     | —      | Full support with type checking |
+| **C++**        | ✅ **Supported** | Catch2 (bundled)  | clang-format | —      | C++17 standard                  |
+| **Kotlin**     | ✅ **Supported** | JUnit 5 + Gradle  | —            | —      | Full Gradle integration         |
+| **Java**       | ✅ **Supported** | JUnit 5 + Gradle  | —            | —      | Full Gradle integration         |
+| **Go**         | ✅ **Supported** | Built-in testing  | —            | —      | Go 1.21+ with modules           |
+| **Rust**       | ✅ **Supported** | cargo test        | —            | —      | Rust 2021 edition               |
+| **Python**     | ✅ **Supported** | pytest            | ruff         | ruff   | Python 3.8+ with modern tooling |
+| **JavaScript** | ✅ **Supported** | Vitest            | Prettier     | —      | ES Modules with modern tooling  |
+| **C**          | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
+| **C#**         | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
+| **Ruby**       | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
+| **Swift**      | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
+| **Scala**      | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
+| **PHP**        | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
+| **Dart**       | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
 
 **Legend:**
 
@@ -225,10 +225,7 @@ MIT
 
 ## Acknowledgments
 
-- Inspired by the original [charliesbot/leetcode_cli](https://github.com/charliesbot/leetcode_cli) Rust implementation
 - Built with [Google TypeScript Style (gts)](https://github.com/google/gts)
 - Uses LeetCode's GraphQL API for problem fetching
 
 ---
-
-**Happy Coding!** Start practicing with organized, testable LeetCode solutions.
