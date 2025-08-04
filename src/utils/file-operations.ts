@@ -17,12 +17,18 @@ export async function createProblemFiles(
 
   // For Kotlin and Java, we need to create src/main/{lang} and src/test/{lang} structure
   // For Rust, we need src/ directory for Cargo
+  // For Python, we need src/{problem_pkg} and tests/{problem_pkg} structure
   let problemDir: string;
   let testDir: string;
   if (language === 'kotlin' || language === 'java') {
     const problemPackage = `problem${paddedId}`;
     problemDir = join(languageDir, 'src', 'main', language, problemPackage);
     testDir = join(languageDir, 'src', 'test', language, problemPackage);
+    await mkdir(problemDir, { recursive: true });
+    await mkdir(testDir, { recursive: true });
+  } else if (language === 'python') {
+    problemDir = join(languageDir, 'src', problemDirName);
+    testDir = join(languageDir, 'tests', problemDirName);
     await mkdir(problemDir, { recursive: true });
     await mkdir(testDir, { recursive: true });
   } else if (language === 'rust') {
@@ -63,6 +69,7 @@ export async function createProblemFiles(
     __PROBLEM_DIFFICULTY__: problem.difficulty,
     __PROBLEM_DEFAULT_CODE__: defaultCode,
     __PROBLEM_NAME_FORMATTED__: functionName,
+    __PROBLEM_NAME_SNAKE_CASE__: snakeCaseName,
     __CLASS_NAME__: className,
     __SNAKE_CASE_NAME__: snakeCaseName,
     __PROBLEM_PACKAGE__:
@@ -70,7 +77,9 @@ export async function createProblemFiles(
         ? `problem${paddedId}`
         : language === 'go'
           ? `problem_${paddedId}`
-          : '',
+          : language === 'python'
+            ? `problem_${paddedId}`
+            : '',
     __PROBLEM_CLASS_NAME__: className,
     __EXERCISE_FILE_NAME__: getExerciseFileName(
       className,
@@ -104,6 +113,8 @@ export async function createProblemFiles(
   if (language === 'rust') {
     await addModuleToLibRs(languageDir, `problem_${paddedId}`);
   }
+
+  // Python uses implicit namespace packages (no __init__.py needed)
 
   // Create test file (skip for Rust as tests are in the same file)
   if (language !== 'rust') {
@@ -228,6 +239,8 @@ function getExerciseFileName(
       return `problem_${paddedId || '0001'}.rs`;
     case 'go':
       return `${snakeCaseName}.${ext}`;
+    case 'python':
+      return `${snakeCaseName}.${ext}`;
     default:
       return `${className}.${ext}`;
   }
@@ -253,6 +266,8 @@ function getExerciseFileNameNoExt(
       return `problem_${paddedId || '0001'}`;
     case 'go':
       return 'solution';
+    case 'python':
+      return snakeCaseName;
     default:
       return className;
   }
@@ -372,6 +387,12 @@ function extractFunctionName(code: string): string | null {
   const goFuncMatch = code.match(/func\s+(\w+)\s*\(/);
   if (goFuncMatch) {
     return goFuncMatch[1];
+  }
+
+  // Extract function name from Python code (def function or class method)
+  const pythonFuncMatch = code.match(/def\s+(\w+)\s*\(/);
+  if (pythonFuncMatch) {
+    return pythonFuncMatch[1];
   }
 
   return null;

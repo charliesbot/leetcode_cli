@@ -12,18 +12,18 @@ A modern CLI tool for scaffolding LeetCode exercises with language-specific test
 - **Clean organization** - problems organized by language and number
 - **Zero-config testing** - just run `leetkick test` from anywhere
 - **Smart problem matching** - run tests by number, slug, or name
-- **Multi-language support** - 6 languages supported, 10+ planned (goal: all LeetCode languages)
+- **Multi-language support** - 7 languages supported, 10+ planned (goal: all LeetCode languages)
 
 ## Quick Start
 
 ```bash
 # Setup once
 leetkick init my-practice && cd my-practice
-leetkick add typescript
+leetkick add python    # or typescript, go, rust, kotlin, java, cpp
 
 # Use daily
-leetkick fetch two-sum --language typescript    # Auto-generates solution + test files
-leetkick test two-sum --language typescript     # Run tests instantly
+leetkick fetch two-sum --language python    # Auto-generates solution + test files
+leetkick test two-sum --language python     # Run tests instantly
 ```
 
 **What you get:** Ready-to-code files with problem description, starter code, and test setup. No configuration needed!
@@ -56,7 +56,7 @@ Our goal is to support all languages that LeetCode offers. Here's our current pr
 | **Java**       | ✅ **Supported** | JUnit 5 + Gradle  | —            | —              | Full Gradle integration         |
 | **Go**         | ✅ **Supported** | Built-in testing  | —            | —              | Go 1.21+ with modules          |
 | **Rust**       | ✅ **Supported** | cargo test        | —            | —              | Rust 2021 edition               |
-| **Python**     | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **Python**     | ✅ **Supported** | pytest            | ruff         | ruff           | Python 3.8+ with modern tooling |
 | **JavaScript** | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
 | **C**          | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
 | **C#**         | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
@@ -79,8 +79,8 @@ Each supported language workspace includes setup instructions, prerequisites, an
 | ----------------------------------- | -------------------- | ---------------------------------------------- |
 | `init [dir]`                        | Create workspace     | `leetkick init my-practice`                    |
 | `add <lang>`                        | Add language support | `leetkick add typescript`                      |
-| `fetch <problem> --language <lang>` | Get LeetCode problem | `leetkick fetch two-sum --language typescript` |
-| `test <problem> --language <lang>`  | Run tests            | `leetkick test 1 --language typescript`        |
+| `fetch <problem> --language <lang>` | Get LeetCode problem | `leetkick fetch two-sum --language python` |
+| `test <problem> --language <lang>`  | Run tests            | `leetkick test 1 --language python`        |
 | `help [cmd]`                        | Show help            | `leetkick help fetch`                          |
 
 ### Advanced Features
@@ -88,9 +88,9 @@ Each supported language workspace includes setup instructions, prerequisites, an
 **Smart Problem Matching**
 
 ```bash
-leetkick test 1 --language typescript           # By number
-leetkick test two-sum --language typescript     # By slug
-leetkick test problem0001 --language typescript # By exact package name
+leetkick test 1 --language python           # By number
+leetkick test two-sum --language python     # By slug
+leetkick test problem_0001 --language python # By exact package name
 ```
 
 **Works Anywhere:** Run commands from any directory in your workspace  
@@ -130,6 +130,19 @@ your-project/
 │   └── problem_0704/
 │       ├── solution.go
 │       └── solution_test.go
+├── python/                   # Python workspace
+│   ├── src/                  # Source code
+│   │   ├── problem_0001/
+│   │   │   └── two_sum.py    # Your solution
+│   │   └── problem_0704/
+│   │       └── binary_search.py
+│   ├── tests/                # Tests
+│   │   ├── problem_0001/
+│   │   │   └── test_two_sum.py
+│   │   └── problem_0704/
+│   │       └── test_binary_search.py
+│   ├── requirements.txt      # Dependencies
+│   └── pyproject.toml        # Configuration
 └── ...
 ```
 

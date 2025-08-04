@@ -34,6 +34,12 @@ export async function initializeLanguage(language: string): Promise<void> {
     await mkdir(join(targetDir, 'src', 'test', language), { recursive: true });
   }
 
+  // For Python, we need to create src/ and tests/ directories
+  if (language === 'python') {
+    await mkdir(join(targetDir, 'src'), { recursive: true });
+    await mkdir(join(targetDir, 'tests'), { recursive: true });
+  }
+
   // For Rust, we need to create the src directory and lib.rs
   if (language === 'rust') {
     await mkdir(join(targetDir, 'src'), { recursive: true });

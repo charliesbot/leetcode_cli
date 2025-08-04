@@ -4,7 +4,32 @@ import { getAvailableLanguages } from '../utils/templates.js';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { spawn } from 'child_process';
+import { execSync } from 'child_process';
 import { readdir, readFile } from 'fs/promises';
+
+function findPythonCommand(languageDir: string): string {
+  // 1. Try virtual environment first
+  const venvPython = join(languageDir, 'venv', 'bin', 'python');
+  const venvPython3 = join(languageDir, 'venv', 'bin', 'python3');
+
+  if (existsSync(venvPython)) return venvPython;
+  if (existsSync(venvPython3)) return venvPython3;
+
+  // 2. Try system commands in order of preference
+  const pythonCommands = ['python3', 'python'];
+
+  for (const cmd of pythonCommands) {
+    try {
+      execSync(`which ${cmd}`, { stdio: 'ignore' });
+      return cmd;
+    } catch {
+      // Command not found, continue
+    }
+  }
+
+  // 3. Fallback - let spawn handle the error
+  return 'python3';
+}
 
 export const testCommand = new Command('test')
   .description('Run tests for a LeetCode problem or all problems')
@@ -135,10 +160,14 @@ async function findProblemDirectory(
       return null;
     }
 
+    const isPython = languageDir.endsWith('python');
+
     const searchDir =
       isKotlin || isJava
         ? join(languageDir, 'src', 'main', isKotlin ? 'kotlin' : 'java')
-        : languageDir;
+        : isPython
+          ? join(languageDir, 'src')
+          : languageDir;
 
     if (!existsSync(searchDir)) {
       return null;
@@ -200,7 +229,14 @@ async function extractProblemInfoFromFile(
     const content = await readFile(filePath, 'utf-8');
 
     // Extract problem info from comment header
-    const titleMatch = content.match(/\* \[\d+\] (.+)/);
+    // C-style comments: /* * [1] Title */
+    let titleMatch = content.match(/\* \[\d+\] (.+)/);
+
+    // Python-style comments: """ [1] Title """
+    if (!titleMatch) {
+      titleMatch = content.match(/\[\d+\] (.+)/);
+    }
+
     if (titleMatch) {
       const title = titleMatch[1];
       const slug = titleToSlug(title);
@@ -229,7 +265,14 @@ async function extractProblemInfoFromDirectory(
       const content = await readFile(filePath, 'utf-8');
 
       // Extract problem info from comment header
-      const titleMatch = content.match(/\* \[\d+\] (.+)/);
+      // C-style comments: /* * [1] Title */
+      let titleMatch = content.match(/\* \[\d+\] (.+)/);
+
+      // Python-style comments: """ [1] Title """
+      if (!titleMatch) {
+        titleMatch = content.match(/\[\d+\] (.+)/);
+      }
+
       if (titleMatch) {
         const title = titleMatch[1];
         const slug = titleToSlug(title);
@@ -285,8 +328,8 @@ async function runTests(
         args = ['--test', `${problemDir}/*.test.js`];
         break;
       case 'python':
-        command = 'python';
-        args = ['-m', 'pytest', `${problemDir}/`, '-v'];
+        command = findPythonCommand(languageDir);
+        args = ['-m', 'pytest', `tests/${problemDir}/`, '-v'];
         break;
       case 'java': {
         // Use Gradle to run tests for specific package
@@ -335,9 +378,15 @@ async function runTests(
         return;
     }
 
+    const env = { ...process.env };
+    if (language === 'python') {
+      env.PYTHONPATH = 'src';
+    }
+
     const child = spawn(command, args, {
       cwd: languageDir,
       stdio: 'inherit',
+      env,
     });
 
     child.on('close', (code) => {
@@ -375,7 +424,7 @@ async function runAllTests(
         args = ['--test', '**/*.test.js'];
         break;
       case 'python':
-        command = 'python';
+        command = findPythonCommand(languageDir);
         args = ['-m', 'pytest', '-v'];
         break;
       case 'java': {
@@ -419,9 +468,15 @@ async function runAllTests(
         return;
     }
 
+    const env = { ...process.env };
+    if (language === 'python') {
+      env.PYTHONPATH = 'src';
+    }
+
     const child = spawn(command, args, {
       cwd: languageDir,
       stdio: 'inherit',
+      env,
     });
 
     child.on('close', (code) => {

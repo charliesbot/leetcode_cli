@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+target/
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+*.class
+*.o
+*.exe

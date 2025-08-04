@@ -66,6 +66,22 @@ void test('file operations test suite', async (t) => {
     assert.strictEqual(goFuncMatch?.[1], 'twoSum');
   });
 
+  await t.test('should extract function name from Python code', () => {
+    const code =
+      'def twoSum(self, nums: List[int], target: int) -> List[int]:\n    pass';
+    // Test the Python function regex pattern
+    const pythonFuncMatch = code.match(/def\s+(\w+)\s*\(/);
+    assert.strictEqual(pythonFuncMatch?.[1], 'twoSum');
+  });
+
+  await t.test('should extract function name from Python class method', () => {
+    const code =
+      'class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        pass';
+    // Test the Python method extraction
+    const pythonFuncMatch = code.match(/def\s+(\w+)\s*\(/);
+    assert.strictEqual(pythonFuncMatch?.[1], 'twoSum');
+  });
+
   await t.test('should format problem name to camelCase', () => {
     const title = 'Two Sum';
     const formatted = title
@@ -265,6 +281,7 @@ void test('file operations test suite', async (t) => {
     const exerciseNameMap: Record<string, string> = {
       typescript: `${className}.ts`,
       javascript: `${className}.js`,
+      python: `${snakeCaseName}.py`,
       cpp: `${snakeCaseName}.cpp`,
       kotlin: `${className}.kt`,
       java: `${className}.java`,
@@ -273,6 +290,7 @@ void test('file operations test suite', async (t) => {
     };
 
     assert.strictEqual(exerciseNameMap.typescript, 'TwoSum.ts');
+    assert.strictEqual(exerciseNameMap.python, 'two_sum.py');
     assert.strictEqual(exerciseNameMap.cpp, 'two_sum.cpp');
     assert.strictEqual(exerciseNameMap.go, 'two_sum.go');
     assert.strictEqual(exerciseNameMap.rust, 'lib.rs');

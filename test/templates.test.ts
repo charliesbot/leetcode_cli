@@ -64,6 +64,24 @@ void test('templates test suite', async (t) => {
       'package __PROBLEM_PACKAGE__;\npublic class __PROBLEM_CLASS_NAME__Test {}'
     );
 
+    // Create mock Python template files
+    await fs.writeFile(
+      join(mockTemplatesDir, 'python', 'requirements.txt'),
+      'pytest>=7.0.0\nruff>=0.1.0\nmypy>=1.0.0'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'python', 'pyproject.toml'),
+      '[tool.pytest.ini_options]\ntestpaths = ["tests"]'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'python', 'exercise_template.py'),
+      '"""\n[__PROBLEM_ID__] __PROBLEM_TITLE__\n\n__PROBLEM_DESC__\n"""\n\nfrom typing import List, Optional\n\n__PROBLEM_DEFAULT_CODE__\n        pass  # TODO: Implement solution'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'python', 'test_template.py'),
+      'import sys\nfrom pathlib import Path\n\nsys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))\n\nimport pytest\nfrom __PROBLEM_PACKAGE__.__EXERCISE_FILE_NAME_NO_EXT__ import Solution\n\ndef test___PROBLEM_NAME_FORMATTED__() -> None:\n    solution = Solution()\n    assert True'
+    );
+
     // Create mock Rust template files
     await fs.writeFile(
       join(mockTemplatesDir, 'rust', 'Cargo.toml'),
@@ -228,6 +246,58 @@ void test('templates test suite', async (t) => {
           assert(exerciseFile.startsWith(problemName));
         }
       });
+    }
+  );
+
+  await t.test(
+    'should handle Python template structure correctly',
+    async () => {
+      const pythonDir = join(mockTemplatesDir, 'python');
+      const files = await fs.readdir(pythonDir);
+
+      // Check that Python has the required files
+      assert(
+        files.includes('requirements.txt'),
+        'Should have requirements.txt'
+      );
+      assert(files.includes('pyproject.toml'), 'Should have pyproject.toml');
+      assert(
+        files.includes('exercise_template.py'),
+        'Should have exercise template'
+      );
+      assert(files.includes('test_template.py'), 'Should have test template');
+
+      // Check that requirements.txt has correct dependencies
+      const requirementsContent = await fs.readFile(
+        join(pythonDir, 'requirements.txt'),
+        'utf-8'
+      );
+      assert(requirementsContent.includes('pytest>=7.0.0'));
+      assert(requirementsContent.includes('ruff>=0.1.0'));
+      assert(requirementsContent.includes('mypy>=1.0.0'));
+
+      // Check that exercise template has correct Python structure
+      const exerciseContent = await fs.readFile(
+        join(pythonDir, 'exercise_template.py'),
+        'utf-8'
+      );
+      assert(exerciseContent.includes('from typing import List, Optional'));
+      assert(exerciseContent.includes('__PROBLEM_DEFAULT_CODE__'));
+      assert(exerciseContent.includes('pass  # TODO: Implement solution'));
+
+      // Check that test template has correct import structure
+      const testContent = await fs.readFile(
+        join(pythonDir, 'test_template.py'),
+        'utf-8'
+      );
+      assert(testContent.includes('import sys'));
+      assert(testContent.includes('from pathlib import Path'));
+      assert(testContent.includes('import pytest'));
+      assert(
+        testContent.includes(
+          'from __PROBLEM_PACKAGE__.__EXERCISE_FILE_NAME_NO_EXT__ import Solution'
+        )
+      );
     }
   );
 
