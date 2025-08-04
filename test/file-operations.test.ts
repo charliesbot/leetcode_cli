@@ -229,6 +229,7 @@ void test('file operations test suite', async (t) => {
     };
 
     assert.strictEqual(extMap.typescript, 'ts');
+    assert.strictEqual(extMap.javascript, 'js');
     assert.strictEqual(extMap.python, 'py');
     assert.strictEqual(extMap.java, 'java');
     assert.strictEqual(extMap.kotlin, 'kt');
@@ -247,6 +248,7 @@ void test('file operations test suite', async (t) => {
     };
 
     assert.strictEqual(slugMap.typescript, 'typescript');
+    assert.strictEqual(slugMap.javascript, 'javascript');
     assert.strictEqual(slugMap.python, 'python3');
     assert.strictEqual(slugMap.go, 'golang');
     assert.strictEqual(slugMap.kotlin, 'kotlin');
@@ -267,6 +269,7 @@ void test('file operations test suite', async (t) => {
     };
 
     assert.strictEqual(testNameMap.typescript, 'TwoSum.test.ts');
+    assert.strictEqual(testNameMap.javascript, 'TwoSum.test.js');
     assert.strictEqual(testNameMap.python, 'test_two_sum.py');
     assert.strictEqual(testNameMap.java, 'TwoSumTest.java');
     assert.strictEqual(testNameMap.cpp, 'two_sum.test.cpp');
@@ -290,6 +293,7 @@ void test('file operations test suite', async (t) => {
     };
 
     assert.strictEqual(exerciseNameMap.typescript, 'TwoSum.ts');
+    assert.strictEqual(exerciseNameMap.javascript, 'TwoSum.js');
     assert.strictEqual(exerciseNameMap.python, 'two_sum.py');
     assert.strictEqual(exerciseNameMap.cpp, 'two_sum.cpp');
     assert.strictEqual(exerciseNameMap.go, 'two_sum.go');

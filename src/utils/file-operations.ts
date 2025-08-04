@@ -50,8 +50,13 @@ export async function createProblemFiles(
     (snippet) => snippet.langSlug === getLanguageSlug(language)
   );
 
-  const defaultCode =
+  let defaultCode =
     codeSnippet?.code || getDefaultCodeForLanguage(language, problem.title);
+
+  // Process JavaScript code to make it exportable
+  if (language === 'javascript' && codeSnippet?.code) {
+    defaultCode = processJavaScriptCode(defaultCode);
+  }
 
   // Generate clean names based on language conventions
   const className = formatClassName(problem.title);
@@ -348,6 +353,26 @@ async function addModuleToLibRs(
   } catch (error) {
     throw new Error(`Failed to update lib.rs: ${error}`);
   }
+}
+
+function processJavaScriptCode(code: string): string {
+  // Convert var declarations to export const/function
+  if (code.includes('var ') && code.includes(' = function(')) {
+    // Handle: var twoSum = function(nums, target) { ... };
+    code = code.replace(
+      /var\s+(\w+)\s*=\s*function\s*\(/g,
+      'export function $1('
+    );
+    code = code.replace(/;\s*$/, ''); // Remove trailing semicolon
+  } else if (code.includes('function ')) {
+    // Handle: function twoSum(nums, target) { ... }
+    code = code.replace(/^(\s*)function\s+/m, '$1export function ');
+  } else if (code.includes('const ') && code.includes(' = (')) {
+    // Handle: const twoSum = (nums, target) => { ... };
+    code = code.replace(/const\s+(\w+)\s*=/g, 'export const $1 =');
+  }
+
+  return code;
 }
 
 function extractFunctionName(code: string): string | null {

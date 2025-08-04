@@ -12,14 +12,14 @@ A modern CLI tool for scaffolding LeetCode exercises with language-specific test
 - **Clean organization** - problems organized by language and number
 - **Zero-config testing** - just run `leetkick test` from anywhere
 - **Smart problem matching** - run tests by number, slug, or name
-- **Multi-language support** - 7 languages supported, 10+ planned (goal: all LeetCode languages)
+- **Multi-language support** - 8 languages supported, 10+ planned (goal: all LeetCode languages)
 
 ## Quick Start
 
 ```bash
 # Setup once
 leetkick init my-practice && cd my-practice
-leetkick add python    # or typescript, go, rust, kotlin, java, cpp
+leetkick add python    # or typescript, javascript, go, rust, kotlin, java, cpp
 
 # Use daily
 leetkick fetch two-sum --language python    # Auto-generates solution + test files
@@ -57,7 +57,7 @@ Our goal is to support all languages that LeetCode offers. Here's our current pr
 | **Go**         | ✅ **Supported** | Built-in testing  | —            | —              | Go 1.21+ with modules          |
 | **Rust**       | ✅ **Supported** | cargo test        | —            | —              | Rust 2021 edition               |
 | **Python**     | ✅ **Supported** | pytest            | ruff         | ruff           | Python 3.8+ with modern tooling |
-| **JavaScript** | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
+| **JavaScript** | ✅ **Supported** | Vitest            | Prettier     | —              | ES Modules with modern tooling |
 | **C**          | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
 | **C#**         | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
 | **Ruby**       | 🚧 **Planned**   | —                 | —            | —              | Coming soon                     |
@@ -78,9 +78,9 @@ Each supported language workspace includes setup instructions, prerequisites, an
 | Command                             | Purpose              | Example                                        |
 | ----------------------------------- | -------------------- | ---------------------------------------------- |
 | `init [dir]`                        | Create workspace     | `leetkick init my-practice`                    |
-| `add <lang>`                        | Add language support | `leetkick add typescript`                      |
-| `fetch <problem> --language <lang>` | Get LeetCode problem | `leetkick fetch two-sum --language python` |
-| `test <problem> --language <lang>`  | Run tests            | `leetkick test 1 --language python`        |
+| `add <lang>`                        | Add language support | `leetkick add javascript`                      |
+| `fetch <problem> --language <lang>` | Get LeetCode problem | `leetkick fetch two-sum --language javascript` |
+| `test <problem> --language <lang>`  | Run tests            | `leetkick test 1 --language javascript`        |
 | `help [cmd]`                        | Show help            | `leetkick help fetch`                          |
 
 ### Advanced Features
@@ -88,9 +88,9 @@ Each supported language workspace includes setup instructions, prerequisites, an
 **Smart Problem Matching**
 
 ```bash
-leetkick test 1 --language python           # By number
-leetkick test two-sum --language python     # By slug
-leetkick test problem_0001 --language python # By exact package name
+leetkick test 1 --language javascript           # By number
+leetkick test two-sum --language javascript     # By slug
+leetkick test problem_0001 --language javascript # By exact directory name
 ```
 
 **Works Anywhere:** Run commands from any directory in your workspace  

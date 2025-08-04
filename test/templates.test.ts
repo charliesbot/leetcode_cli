@@ -17,6 +17,7 @@ void test('templates test suite', async (t) => {
     // Setup fresh test environment
     await fs.mkdir(mockTemplatesDir, { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'typescript'), { recursive: true });
+    await fs.mkdir(join(mockTemplatesDir, 'javascript'), { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'python'), { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'kotlin'), { recursive: true });
     await fs.mkdir(join(mockTemplatesDir, 'java'), { recursive: true });
@@ -33,6 +34,20 @@ void test('templates test suite', async (t) => {
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'typescript', 'test_template.ts'),
+      'import { __PROBLEM_NAME_FORMATTED__ } from "./__EXERCISE_FILE_NAME__";'
+    );
+
+    // Create mock JavaScript template files
+    await fs.writeFile(
+      join(mockTemplatesDir, 'javascript', 'package.json'),
+      JSON.stringify({ name: 'leetcode-javascript', type: 'module' })
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'javascript', 'exercise_template.js'),
+      '__PROBLEM_DEFAULT_CODE__'
+    );
+    await fs.writeFile(
+      join(mockTemplatesDir, 'javascript', 'test_template.js'),
       'import { __PROBLEM_NAME_FORMATTED__ } from "./__EXERCISE_FILE_NAME__";'
     );
 
@@ -121,12 +136,13 @@ void test('templates test suite', async (t) => {
         .map((entry) => entry.name);
 
       assert(languages.includes('typescript'));
+      assert(languages.includes('javascript'));
       assert(languages.includes('python'));
       assert(languages.includes('cpp'));
       assert(languages.includes('kotlin'));
       assert(languages.includes('java'));
       assert(languages.includes('rust'));
-      assert.strictEqual(languages.length, 6);
+      assert.strictEqual(languages.length, 7);
     }
   );
 
@@ -298,6 +314,46 @@ void test('templates test suite', async (t) => {
           'from __PROBLEM_PACKAGE__.__EXERCISE_FILE_NAME_NO_EXT__ import Solution'
         )
       );
+    }
+  );
+
+  await t.test(
+    'should handle JavaScript template structure correctly',
+    async () => {
+      const jsDir = join(mockTemplatesDir, 'javascript');
+      const files = await fs.readdir(jsDir);
+
+      // Check that JavaScript has the required files
+      assert(files.includes('package.json'), 'Should have package.json');
+      assert(
+        files.includes('exercise_template.js'),
+        'Should have exercise template'
+      );
+      assert(files.includes('test_template.js'), 'Should have test template');
+
+      // Check that package.json has correct content
+      const packageContent = await fs.readFile(
+        join(jsDir, 'package.json'),
+        'utf-8'
+      );
+      const packageObj = JSON.parse(packageContent);
+      assert.strictEqual(packageObj.name, 'leetcode-javascript');
+      assert.strictEqual(packageObj.type, 'module');
+
+      // Check that exercise template has correct placeholder
+      const exerciseContent = await fs.readFile(
+        join(jsDir, 'exercise_template.js'),
+        'utf-8'
+      );
+      assert(exerciseContent.includes('__PROBLEM_DEFAULT_CODE__'));
+
+      // Check that test template has correct import structure
+      const testContent = await fs.readFile(
+        join(jsDir, 'test_template.js'),
+        'utf-8'
+      );
+      assert(testContent.includes('import { __PROBLEM_NAME_FORMATTED__ }'));
+      assert(testContent.includes('from "./__EXERCISE_FILE_NAME__"'));
     }
   );
 
