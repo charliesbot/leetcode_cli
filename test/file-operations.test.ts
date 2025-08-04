@@ -45,7 +45,7 @@ void test('file operations test suite', async (t) => {
       'public int[] twoSum(int[] nums, int target) {\n    return new int[0];\n}';
     // Test the Java method regex pattern
     const javaMethodMatch = code.match(
-      /public\s+[\w<>[\]]+\s+(\w+)\s*\([^)]*\)\s*\{/
+      /public\s+[\w<>[\]]+\s+(\w+)\s*\([^)]*\)\s*\{/,
     );
     assert.strictEqual(javaMethodMatch?.[1], 'twoSum');
   });
@@ -90,7 +90,7 @@ void test('file operations test suite', async (t) => {
       .map((word, index) =>
         index === 0
           ? word.toLowerCase()
-          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
       )
       .join('');
 
@@ -110,7 +110,7 @@ void test('file operations test suite', async (t) => {
 
     assert.strictEqual(
       cleaned,
-      'Given an array of integers nums and an integer target, return indices.'
+      'Given an array of integers nums and an integer target, return indices.',
     );
   });
 
@@ -138,7 +138,7 @@ void test('file operations test suite', async (t) => {
     assert.strictEqual(
       cleaned,
       "Given an m x n 2D binary grid which represents a map of '1's (land) and '0's (water). " +
-        'Input: grid = ["1","1","0"] and grid[i][j] is \'0\' or \'1\'.'
+        'Input: grid = ["1","1","0"] and grid[i][j] is \'0\' or \'1\'.',
     );
   });
 
@@ -189,7 +189,7 @@ void test('file operations test suite', async (t) => {
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .split(' ')
         .map(
-          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
         )
         .join('');
       assert.strictEqual(formatted, expected);

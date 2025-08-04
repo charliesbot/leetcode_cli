@@ -83,7 +83,7 @@ export async function initializeLanguage(language: string): Promise<void> {
 
 async function copyDirectoryRecursive(
   src: string,
-  dest: string
+  dest: string,
 ): Promise<void> {
   await mkdir(dest, { recursive: true });
 

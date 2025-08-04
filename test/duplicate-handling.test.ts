@@ -33,17 +33,17 @@ void test('duplicate exercise handling test suite', async (t) => {
     // Create existing files to simulate already solved problem
     await fs.writeFile(
       join(testWorkspace, 'typescript', 'problem_0001', 'TwoSum.ts'),
-      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\nexport function twoSum(nums: number[], target: number): number[] {\n  // Some existing solution\n  return [];\n}'
+      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\nexport function twoSum(nums: number[], target: number): number[] {\n  // Some existing solution\n  return [];\n}',
     );
     await fs.writeFile(
       join(testWorkspace, 'typescript', 'problem_0001', 'TwoSum.test.ts'),
-      'import test from "node:test";\nimport { twoSum } from "./TwoSum.js";\n// Some existing tests'
+      'import test from "node:test";\nimport { twoSum } from "./TwoSum.js";\n// Some existing tests',
     );
 
     // Now try to fetch the same problem again
     const result = await runCLI(
       ['fetch', 'two-sum', '--language', 'typescript'],
-      { expectError: true }
+      { expectError: true },
     );
 
     const output = result.stderr || result.stdout;
@@ -51,7 +51,7 @@ void test('duplicate exercise handling test suite', async (t) => {
       output.includes('already exists') ||
         output.includes('Exercise already exists') ||
         output.includes('problem_0001'),
-      `Expected output to mention existing exercise, got: ${output}`
+      `Expected output to mention existing exercise, got: ${output}`,
     );
   });
 
@@ -62,12 +62,12 @@ void test('duplicate exercise handling test suite', async (t) => {
     });
     await fs.writeFile(
       join(testWorkspace, 'typescript', 'problem_0001', 'TwoSum.ts'),
-      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\nexport function twoSum() { return []; }'
+      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\nexport function twoSum() { return []; }',
     );
 
     const result = await runCLI(
       ['fetch', 'two-sum', '--language', 'typescript'],
-      { expectError: true }
+      { expectError: true },
     );
 
     const output = result.stderr || result.stdout;
@@ -77,7 +77,7 @@ void test('duplicate exercise handling test suite', async (t) => {
         output.includes('already') ||
         output.includes('force') ||
         output.includes('overwrite'),
-      `Expected output to offer options for existing exercise, got: ${output}`
+      `Expected output to offer options for existing exercise, got: ${output}`,
     );
   });
 
@@ -90,7 +90,7 @@ void test('duplicate exercise handling test suite', async (t) => {
       });
       await fs.writeFile(
         join(testWorkspace, 'typescript', 'problem_0001', 'TwoSum.ts'),
-        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\nexport function twoSum() { /* UNIQUE_TEST_MARKER_12345 */ return []; }'
+        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\nexport function twoSum() { /* UNIQUE_TEST_MARKER_12345 */ return []; }',
       );
 
       // Try to fetch with force flag
@@ -105,28 +105,28 @@ void test('duplicate exercise handling test suite', async (t) => {
       // Should succeed and overwrite
       assert(
         result.exitCode === 0,
-        `Command failed with exit code ${result.exitCode}. stdout: ${result.stdout}, stderr: ${result.stderr}`
+        `Command failed with exit code ${result.exitCode}. stdout: ${result.stdout}, stderr: ${result.stderr}`,
       );
       assert(
         result.stdout.includes('✓'),
-        `Expected success message in output: ${result.stdout}`
+        `Expected success message in output: ${result.stdout}`,
       );
 
       // Check that file was overwritten - new content should not contain our old comment
       const newContent = await fs.readFile(
         join(testWorkspace, 'typescript', 'problem_0001', 'TwoSum.ts'),
-        'utf-8'
+        'utf-8',
       );
       assert(
         !newContent.includes('UNIQUE_TEST_MARKER_12345'),
-        `File was not overwritten. Content: ${newContent}`
+        `File was not overwritten. Content: ${newContent}`,
       );
       // The new file should have the LeetCode problem header
       assert(
         newContent.includes('[1] Two Sum') || newContent.includes('Two Sum'),
-        `New content should have problem title. Content: ${newContent}`
+        `New content should have problem title. Content: ${newContent}`,
       );
-    }
+    },
   );
 
   await t.test(
@@ -140,7 +140,7 @@ void test('duplicate exercise handling test suite', async (t) => {
         '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\nexport function twoSum() { /* my solution */ return [1, 2]; }';
       await fs.writeFile(
         join(testWorkspace, 'typescript', 'problem_0001', 'TwoSum.ts'),
-        originalContent
+        originalContent,
       );
 
       // Try to fetch without force - should fail/warn but not overwrite
@@ -151,10 +151,10 @@ void test('duplicate exercise handling test suite', async (t) => {
       // Check that original content is preserved
       const preservedContent = await fs.readFile(
         join(testWorkspace, 'typescript', 'problem_0001', 'TwoSum.ts'),
-        'utf-8'
+        'utf-8',
       );
       assert.strictEqual(preservedContent, originalContent);
-    }
+    },
   );
 
   await t.test(
@@ -185,7 +185,7 @@ void test('duplicate exercise handling test suite', async (t) => {
         .then(() => true)
         .catch(() => false);
       assert(exerciseExists);
-    }
+    },
   );
 
   // Rust-specific tests for file-based overwrite protection
@@ -197,19 +197,19 @@ void test('duplicate exercise handling test suite', async (t) => {
     // Create Cargo.toml
     await fs.writeFile(
       join(testWorkspace, 'rust', 'Cargo.toml'),
-      '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]'
+      '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]',
     );
 
     // Create lib.rs
     await fs.writeFile(
       join(testWorkspace, 'rust', 'src', 'lib.rs'),
-      '// LeetKick Rust Workspace\npub mod problem_0001;\n'
+      '// LeetKick Rust Workspace\npub mod problem_0001;\n',
     );
 
     // Create existing problem file to simulate already solved problem
     await fs.writeFile(
       join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
-      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\npub struct Solution;\n\nimpl Solution {\n    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n        // Some existing solution\n        vec![]\n    }\n}'
+      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\npub struct Solution;\n\nimpl Solution {\n    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n        // Some existing solution\n        vec![]\n    }\n}',
     );
 
     // Now try to fetch the same problem again
@@ -222,7 +222,7 @@ void test('duplicate exercise handling test suite', async (t) => {
       output.includes('already exists') ||
         output.includes('Exercise already exists') ||
         output.includes('problem_0001.rs'),
-      `Expected output to mention existing exercise file, got: ${output}`
+      `Expected output to mention existing exercise file, got: ${output}`,
     );
   });
 
@@ -233,11 +233,11 @@ void test('duplicate exercise handling test suite', async (t) => {
       await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
       await fs.writeFile(
         join(testWorkspace, 'rust', 'Cargo.toml'),
-        '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]'
+        '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]',
       );
       await fs.writeFile(
         join(testWorkspace, 'rust', 'src', 'lib.rs'),
-        '// LeetKick Rust Workspace\npub mod problem_0001;\n'
+        '// LeetKick Rust Workspace\npub mod problem_0001;\n',
       );
 
       // Create existing exercise with custom content
@@ -245,7 +245,7 @@ void test('duplicate exercise handling test suite', async (t) => {
         '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\npub struct Solution;\n\nimpl Solution {\n    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n        /* RUST_UNIQUE_MARKER_67890 my solution */\n        vec![1, 2]\n    }\n}';
       await fs.writeFile(
         join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
-        originalContent
+        originalContent,
       );
 
       // Try to fetch without force - should fail/warn but not overwrite
@@ -256,10 +256,10 @@ void test('duplicate exercise handling test suite', async (t) => {
       // Check that original content is preserved
       const preservedContent = await fs.readFile(
         join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
-        'utf-8'
+        'utf-8',
       );
       assert.strictEqual(preservedContent, originalContent);
-    }
+    },
   );
 
   await t.test(
@@ -269,17 +269,17 @@ void test('duplicate exercise handling test suite', async (t) => {
       await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
       await fs.writeFile(
         join(testWorkspace, 'rust', 'Cargo.toml'),
-        '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]'
+        '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]',
       );
       await fs.writeFile(
         join(testWorkspace, 'rust', 'src', 'lib.rs'),
-        '// LeetKick Rust Workspace\npub mod problem_0001;\n'
+        '// LeetKick Rust Workspace\npub mod problem_0001;\n',
       );
 
       // Setup existing exercise
       await fs.writeFile(
         join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
-        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\npub struct Solution;\n\nimpl Solution {\n    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n        /* RUST_FORCE_TEST_MARKER_54321 */\n        vec![]\n    }\n}'
+        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\npub struct Solution;\n\nimpl Solution {\n    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n        /* RUST_FORCE_TEST_MARKER_54321 */\n        vec![]\n    }\n}',
       );
 
       // Try to fetch with force flag
@@ -294,29 +294,29 @@ void test('duplicate exercise handling test suite', async (t) => {
       // Should succeed and overwrite
       assert(
         result.exitCode === 0,
-        `Command failed with exit code ${result.exitCode}. stdout: ${result.stdout}, stderr: ${result.stderr}`
+        `Command failed with exit code ${result.exitCode}. stdout: ${result.stdout}, stderr: ${result.stderr}`,
       );
       assert(
         result.stdout.includes('✓'),
-        `Expected success message in output: ${result.stdout}`
+        `Expected success message in output: ${result.stdout}`,
       );
 
       // Check that file was overwritten - new content should not contain our old marker
       const newContent = await fs.readFile(
         join(testWorkspace, 'rust', 'src', 'problem_0001.rs'),
-        'utf-8'
+        'utf-8',
       );
       assert(
         !newContent.includes('RUST_FORCE_TEST_MARKER_54321'),
-        `File was not overwritten. Content: ${newContent}`
+        `File was not overwritten. Content: ${newContent}`,
       );
       // The new file should have the problem structure
       assert(
         newContent.includes('pub struct Solution') &&
           newContent.includes('[1] Two Sum'),
-        `New content should have Rust problem structure. Content: ${newContent}`
+        `New content should have Rust problem structure. Content: ${newContent}`,
       );
-    }
+    },
   );
 
   await t.test(
@@ -326,18 +326,18 @@ void test('duplicate exercise handling test suite', async (t) => {
       await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
       await fs.writeFile(
         join(testWorkspace, 'rust', 'Cargo.toml'),
-        '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]'
+        '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]',
       );
       await fs.writeFile(
         join(testWorkspace, 'rust', 'src', 'lib.rs'),
-        '// LeetKick Rust Workspace\n// Problem modules will be automatically declared here when you fetch problems\n'
+        '// LeetKick Rust Workspace\n// Problem modules will be automatically declared here when you fetch problems\n',
       );
 
       const exerciseFile = join(
         testWorkspace,
         'rust',
         'src',
-        'problem_0001.rs'
+        'problem_0001.rs',
       );
       const exists = await fs
         .access(exerciseFile)
@@ -361,13 +361,13 @@ void test('duplicate exercise handling test suite', async (t) => {
       // Verify lib.rs was updated with module declaration
       const libContent = await fs.readFile(
         join(testWorkspace, 'rust', 'src', 'lib.rs'),
-        'utf-8'
+        'utf-8',
       );
       assert(
         libContent.includes('pub mod problem_0001;'),
-        `lib.rs should include module declaration. Content: ${libContent}`
+        `lib.rs should include module declaration. Content: ${libContent}`,
       );
-    }
+    },
   );
 
   // Go-specific tests for directory-based overwrite protection
@@ -381,17 +381,17 @@ void test('duplicate exercise handling test suite', async (t) => {
     // Create go.mod
     await fs.writeFile(
       join(testWorkspace, 'go', 'go.mod'),
-      'module leetkick-go\n\ngo 1.21'
+      'module leetkick-go\n\ngo 1.21',
     );
 
     // Create existing problem files to simulate already solved problem
     await fs.writeFile(
       join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
-      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\n\npackage problem_0001\n\nfunc twoSum(nums []int, target int) []int {\n    // Some existing solution\n    return []int{}\n}'
+      '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\n\npackage problem_0001\n\nfunc twoSum(nums []int, target int) []int {\n    // Some existing solution\n    return []int{}\n}',
     );
     await fs.writeFile(
       join(testWorkspace, 'go', 'problem_0001', 'two_sum_test.go'),
-      'package problem_0001\n\nimport "testing"\n\nfunc TestTwoSum(t *testing.T) {\n    // Some existing tests\n    t.Log("Existing test")\n}'
+      'package problem_0001\n\nimport "testing"\n\nfunc TestTwoSum(t *testing.T) {\n    // Some existing tests\n    t.Log("Existing test")\n}',
     );
 
     // Now try to fetch the same problem again
@@ -404,7 +404,7 @@ void test('duplicate exercise handling test suite', async (t) => {
       output.includes('already exists') ||
         output.includes('Exercise already exists') ||
         output.includes('problem_0001'),
-      `Expected output to mention existing exercise directory, got: ${output}`
+      `Expected output to mention existing exercise directory, got: ${output}`,
     );
   });
 
@@ -417,7 +417,7 @@ void test('duplicate exercise handling test suite', async (t) => {
       });
       await fs.writeFile(
         join(testWorkspace, 'go', 'go.mod'),
-        'module leetkick-go\n\ngo 1.21'
+        'module leetkick-go\n\ngo 1.21',
       );
 
       // Create existing exercise with custom content
@@ -425,7 +425,7 @@ void test('duplicate exercise handling test suite', async (t) => {
         '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\n\npackage problem_0001\n\nfunc twoSum(nums []int, target int) []int {\n    /* GO_UNIQUE_MARKER_12345 my solution */\n    return []int{1, 2}\n}';
       await fs.writeFile(
         join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
-        originalContent
+        originalContent,
       );
 
       // Try to fetch without force - should fail/warn but not overwrite
@@ -436,10 +436,10 @@ void test('duplicate exercise handling test suite', async (t) => {
       // Check that original content is preserved
       const preservedContent = await fs.readFile(
         join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
-        'utf-8'
+        'utf-8',
       );
       assert.strictEqual(preservedContent, originalContent);
-    }
+    },
   );
 
   await t.test(
@@ -451,13 +451,13 @@ void test('duplicate exercise handling test suite', async (t) => {
       });
       await fs.writeFile(
         join(testWorkspace, 'go', 'go.mod'),
-        'module leetkick-go\n\ngo 1.21'
+        'module leetkick-go\n\ngo 1.21',
       );
 
       // Setup existing exercise
       await fs.writeFile(
         join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
-        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\n\npackage problem_0001\n\nfunc twoSum(nums []int, target int) []int {\n    /* GO_FORCE_TEST_MARKER_67890 */\n    return []int{}\n}'
+        '/*\n * [1] Two Sum\n * Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n * Difficulty: Easy\n */\n\npackage problem_0001\n\nfunc twoSum(nums []int, target int) []int {\n    /* GO_FORCE_TEST_MARKER_67890 */\n    return []int{}\n}',
       );
 
       // Try to fetch with force flag
@@ -472,29 +472,29 @@ void test('duplicate exercise handling test suite', async (t) => {
       // Should succeed and overwrite
       assert(
         result.exitCode === 0,
-        `Command failed with exit code ${result.exitCode}. stdout: ${result.stdout}, stderr: ${result.stderr}`
+        `Command failed with exit code ${result.exitCode}. stdout: ${result.stdout}, stderr: ${result.stderr}`,
       );
       assert(
         result.stdout.includes('✓'),
-        `Expected success message in output: ${result.stdout}`
+        `Expected success message in output: ${result.stdout}`,
       );
 
       // Check that file was overwritten - new content should not contain our old marker
       const newContent = await fs.readFile(
         join(testWorkspace, 'go', 'problem_0001', 'two_sum.go'),
-        'utf-8'
+        'utf-8',
       );
       assert(
         !newContent.includes('GO_FORCE_TEST_MARKER_67890'),
-        `File was not overwritten. Content: ${newContent}`
+        `File was not overwritten. Content: ${newContent}`,
       );
       // The new file should have the problem structure
       assert(
         newContent.includes('package problem_0001') &&
           newContent.includes('[1] Two Sum'),
-        `New content should have Go problem structure. Content: ${newContent}`
+        `New content should have Go problem structure. Content: ${newContent}`,
       );
-    }
+    },
   );
 
   await t.test(
@@ -504,7 +504,7 @@ void test('duplicate exercise handling test suite', async (t) => {
       await fs.mkdir(join(testWorkspace, 'go'), { recursive: true });
       await fs.writeFile(
         join(testWorkspace, 'go', 'go.mod'),
-        'module leetkick-go\n\ngo 1.21'
+        'module leetkick-go\n\ngo 1.21',
       );
 
       const exerciseDir = join(testWorkspace, 'go', 'problem_0001');
@@ -540,7 +540,7 @@ void test('duplicate exercise handling test suite', async (t) => {
         .then(() => true)
         .catch(() => false);
       assert(testExists);
-    }
+    },
   );
 
   // Cleanup
@@ -552,7 +552,7 @@ void test('duplicate exercise handling test suite', async (t) => {
 // Helper function to run CLI commands
 async function runCLI(
   args: string[],
-  options: { expectError?: boolean; timeout?: number } = {}
+  options: { expectError?: boolean; timeout?: number } = {},
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   return new Promise((resolve, reject) => {
     const child = spawn('node', [CLI_PATH, ...args], {
@@ -581,8 +581,8 @@ async function runCLI(
       if (!options.expectError && code !== 0) {
         reject(
           new Error(
-            `CLI command failed with exit code ${code}\nstdout: ${stdout}\nstderr: ${stderr}`
-          )
+            `CLI command failed with exit code ${code}\nstdout: ${stdout}\nstderr: ${stderr}`,
+          ),
         );
       } else {
         resolve({

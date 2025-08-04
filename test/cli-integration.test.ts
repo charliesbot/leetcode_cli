@@ -65,23 +65,23 @@ void test('CLI integration test suite', async (t) => {
       const combinedOutput = result.stdout + result.stderr;
       assert(
         combinedOutput.includes('Available languages:') ||
-          combinedOutput.includes('Please specify a language')
+          combinedOutput.includes('Please specify a language'),
       );
       assert(combinedOutput.includes('typescript'));
-    }
+    },
   );
 
   await t.test('should handle invalid language gracefully', async () => {
     // Use the workspace from previous test
     const result = await runCLI(
       ['fetch', 'two-sum', '--language', 'invalidlang'],
-      { expectError: true }
+      { expectError: true },
     );
 
     const combinedOutput = result.stdout + result.stderr;
     assert(
       combinedOutput.includes("Language 'invalidlang' not supported") ||
-        combinedOutput.includes('not supported')
+        combinedOutput.includes('not supported'),
     );
     assert(combinedOutput.includes('Available languages:'));
   });
@@ -94,7 +94,7 @@ void test('CLI integration test suite', async (t) => {
         '--language',
         'typescript',
       ],
-      { expectError: true }
+      { expectError: true },
     );
 
     assert(result.stderr.includes('Error:'));
@@ -170,7 +170,7 @@ void test('CLI integration test suite', async (t) => {
         .then(() => true)
         .catch(() => false);
       assert(srcExists);
-    }
+    },
   );
 
   await t.test('should require workspace for add command', async () => {
@@ -197,7 +197,7 @@ void test('CLI integration test suite', async (t) => {
 // Helper function to run CLI commands
 async function runCLI(
   args: string[],
-  options: { expectError?: boolean; timeout?: number } = {}
+  options: { expectError?: boolean; timeout?: number } = {},
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   return new Promise((resolve, reject) => {
     const child = spawn('node', [CLI_PATH, ...args], {
@@ -226,8 +226,8 @@ async function runCLI(
       if (!options.expectError && code !== 0) {
         reject(
           new Error(
-            `CLI command failed with exit code ${code}\nstdout: ${stdout}\nstderr: ${stderr}`
-          )
+            `CLI command failed with exit code ${code}\nstdout: ${stdout}\nstderr: ${stderr}`,
+          ),
         );
       } else {
         resolve({

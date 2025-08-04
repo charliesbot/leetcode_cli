@@ -17,7 +17,7 @@ export const addCommand = new Command('add')
       if (!workspaceRoot) {
         console.log('No leetkick workspace found. Run "leetkick init" first.');
         console.log(
-          'Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.'
+          'Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.',
         );
         return;
       }

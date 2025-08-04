@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { readdir, stat, copyFile, unlink, readFile } from 'fs/promises';
+import { readdir, copyFile, unlink, readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync } from 'fs';
@@ -20,42 +20,64 @@ export const syncCommand = new Command()
   .argument('[language]', 'Language to sync (omit to sync all)')
   .option('--all', 'Sync all languages in workspace')
   .option('--dry-run', 'Preview changes without applying them')
-  .action(async (language?: string, options?: { all?: boolean; dryRun?: boolean }) => {
-    try {
-      const workspaceRoot = await findWorkspaceRoot();
-      if (!workspaceRoot) {
-        console.error('❌ No leetkick workspace found. Run "leetkick init" first.');
-        process.exit(1);
-      }
+  .action(
+    async (
+      language?: string,
+      options?: { all?: boolean; dryRun?: boolean },
+    ) => {
+      try {
+        const workspaceRoot = await findWorkspaceRoot();
+        if (!workspaceRoot) {
+          throw new Error(
+            'No leetkick workspace found. Run "leetkick init" first.',
+          );
+        }
 
-      const languages = language ? [language] : await getWorkspaceLanguages(workspaceRoot);
-      
-      if (languages.length === 0) {
-        console.log('No languages found in workspace. Use "leetkick add <language>" first.');
-        return;
-      }
+        const languages = language
+          ? [language]
+          : await getWorkspaceLanguages(workspaceRoot);
 
-      console.log(`Syncing ${languages.length === 1 ? languages[0] : languages.length + ' languages'}...`);
-      
-      for (const lang of languages) {
-        const result = await syncLanguage(workspaceRoot, lang, options?.dryRun || false);
-        displaySyncResult(lang, result, options?.dryRun || false);
-      }
+        if (languages.length === 0) {
+          console.log(
+            'No languages found in workspace. Use "leetkick add <language>" first.',
+          );
+          return;
+        }
 
-    } catch (error) {
-      console.error('❌ Sync failed:', error instanceof Error ? error.message : String(error));
-      process.exit(1);
-    }
-  });
+        console.log(
+          `Syncing ${languages.length === 1 ? languages[0] : languages.length + ' languages'}...`,
+        );
+
+        for (const lang of languages) {
+          const result = await syncLanguage(
+            workspaceRoot,
+            lang,
+            options?.dryRun || false,
+          );
+          displaySyncResult(lang, result, options?.dryRun || false);
+        }
+      } catch (error) {
+        console.error(
+          '❌ Sync failed:',
+          error instanceof Error ? error.message : String(error),
+        );
+        throw error;
+      }
+    },
+  );
 
 async function getWorkspaceLanguages(workspaceRoot: string): Promise<string[]> {
   const languages: string[] = [];
-  
+
   try {
     const entries = await readdir(workspaceRoot, { withFileTypes: true });
-    
+
     for (const entry of entries) {
-      if (entry.isDirectory() && entry.name !== '.git' && !entry.name.startsWith('.')) {
+      if (
+        entry.isDirectory() &&
+        entry.name !== '.git' &&
+        !entry.name.startsWith('.')
+      ) {
         // Check if this directory has a template
         const templateDir = join(TEMPLATES_DIR, entry.name);
         if (existsSync(templateDir)) {
@@ -66,11 +88,15 @@ async function getWorkspaceLanguages(workspaceRoot: string): Promise<string[]> {
   } catch (error) {
     console.error('Failed to scan workspace languages:', error);
   }
-  
+
   return languages;
 }
 
-async function syncLanguage(workspaceRoot: string, language: string, dryRun: boolean): Promise<SyncResult> {
+async function syncLanguage(
+  workspaceRoot: string,
+  language: string,
+  dryRun: boolean,
+): Promise<SyncResult> {
   const result: SyncResult = { updated: [], added: [], removed: [] };
   const languageDir = join(workspaceRoot, language);
   const templateDir = join(TEMPLATES_DIR, language);
@@ -85,7 +111,7 @@ async function syncLanguage(workspaceRoot: string, language: string, dryRun: boo
 
   // Get all template files (excluding exercise/test templates)
   const templateFiles = await getConfigFiles(templateDir);
-  
+
   for (const file of templateFiles) {
     const sourcePath = join(templateDir, file);
     const targetPath = join(languageDir, file);
@@ -95,7 +121,7 @@ async function syncLanguage(workspaceRoot: string, language: string, dryRun: boo
       if (!dryRun) {
         await copyFile(sourcePath, targetPath);
       }
-      
+
       if (exists) {
         result.updated.push(file);
       } else {
@@ -122,21 +148,28 @@ async function syncLanguage(workspaceRoot: string, language: string, dryRun: boo
 async function getConfigFiles(templateDir: string): Promise<string[]> {
   const files: string[] = [];
   const entries = await readdir(templateDir, { withFileTypes: true });
-  
+
   for (const entry of entries) {
     if (entry.isFile() && !isTemplateFile(entry.name)) {
       files.push(entry.name);
     }
   }
-  
+
   return files;
 }
 
 function isTemplateFile(filename: string): boolean {
-  return filename.includes('_template.') || filename.startsWith('exercise_') || filename.startsWith('test_');
+  return (
+    filename.includes('_template.') ||
+    filename.startsWith('exercise_') ||
+    filename.startsWith('test_')
+  );
 }
 
-async function shouldSyncFile(sourcePath: string, targetPath: string): Promise<boolean> {
+async function shouldSyncFile(
+  sourcePath: string,
+  targetPath: string,
+): Promise<boolean> {
   if (!existsSync(targetPath)) {
     return true; // File doesn't exist, should add it
   }
@@ -144,7 +177,7 @@ async function shouldSyncFile(sourcePath: string, targetPath: string): Promise<b
   try {
     const sourceContent = await readFile(sourcePath, 'utf-8');
     const targetContent = await readFile(targetPath, 'utf-8');
-    
+
     // Only sync if files are different
     return sourceContent !== targetContent;
   } catch {
@@ -152,29 +185,38 @@ async function shouldSyncFile(sourcePath: string, targetPath: string): Promise<b
   }
 }
 
-async function getObsoleteFiles(languageDir: string, language: string): Promise<string[]> {
+async function getObsoleteFiles(
+  languageDir: string,
+  language: string,
+): Promise<string[]> {
   const obsoleteFiles: string[] = [];
-  
+
   // Common obsolete files when migrating from Prettier to Biome
   const prettierFiles = ['.prettierrc.json', '.prettierrc.js', '.prettierrc'];
-  
+
   for (const file of prettierFiles) {
     if (existsSync(join(languageDir, file))) {
       // Only mark as obsolete if we have biome.json
-      if (existsSync(join(languageDir, 'biome.json')) || 
-          existsSync(join(TEMPLATES_DIR, language, 'biome.json'))) {
+      if (
+        existsSync(join(languageDir, 'biome.json')) ||
+        existsSync(join(TEMPLATES_DIR, language, 'biome.json'))
+      ) {
         obsoleteFiles.push(file);
       }
     }
   }
-  
+
   return obsoleteFiles;
 }
 
-function displaySyncResult(language: string, result: SyncResult, dryRun: boolean): void {
+function displaySyncResult(
+  language: string,
+  result: SyncResult,
+  dryRun: boolean,
+): void {
   const { updated, added, removed } = result;
   const total = updated.length + added.length + removed.length;
-  
+
   if (total === 0) {
     console.log(`✓ ${language}: Already up to date`);
     return;
@@ -182,18 +224,20 @@ function displaySyncResult(language: string, result: SyncResult, dryRun: boolean
 
   const prefix = dryRun ? '[DRY RUN] ' : '';
   console.log(`${prefix}${language}:`);
-  
+
   if (added.length > 0) {
-    added.forEach(file => console.log(`  + Added ${file}`));
+    added.forEach((file) => console.log(`  + Added ${file}`));
   }
-  
+
   if (updated.length > 0) {
-    updated.forEach(file => console.log(`  ✓ Updated ${file}`));
+    updated.forEach((file) => console.log(`  ✓ Updated ${file}`));
   }
-  
+
   if (removed.length > 0) {
-    removed.forEach(file => console.log(`  - Removed ${file}`));
+    removed.forEach((file) => console.log(`  - Removed ${file}`));
   }
-  
-  console.log(`  → ${total} file${total === 1 ? '' : 's'} ${dryRun ? 'would be ' : ''}changed\n`);
+
+  console.log(
+    `  → ${total} file${total === 1 ? '' : 's'} ${dryRun ? 'would be ' : ''}changed\n`,
+  );
 }

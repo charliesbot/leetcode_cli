@@ -26,89 +26,89 @@ void test('templates test suite', async (t) => {
     // Create mock template files
     await fs.writeFile(
       join(mockTemplatesDir, 'typescript', 'package.json'),
-      JSON.stringify({ name: 'test-package' })
+      JSON.stringify({ name: 'test-package' }),
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'typescript', 'exercise_template.ts'),
-      'export __PROBLEM_DEFAULT_CODE__'
+      'export __PROBLEM_DEFAULT_CODE__',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'typescript', 'test_template.ts'),
-      'import { __PROBLEM_NAME_FORMATTED__ } from "./__EXERCISE_FILE_NAME__";'
+      'import { __PROBLEM_NAME_FORMATTED__ } from "./__EXERCISE_FILE_NAME__";',
     );
 
     // Create mock JavaScript template files
     await fs.writeFile(
       join(mockTemplatesDir, 'javascript', 'package.json'),
-      JSON.stringify({ name: 'leetcode-javascript', type: 'module' })
+      JSON.stringify({ name: 'leetcode-javascript', type: 'module' }),
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'javascript', 'exercise_template.js'),
-      '__PROBLEM_DEFAULT_CODE__'
+      '__PROBLEM_DEFAULT_CODE__',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'javascript', 'test_template.js'),
-      'import { __PROBLEM_NAME_FORMATTED__ } from "./__EXERCISE_FILE_NAME__";'
+      'import { __PROBLEM_NAME_FORMATTED__ } from "./__EXERCISE_FILE_NAME__";',
     );
 
     // Create mock Kotlin template files
     await fs.writeFile(
       join(mockTemplatesDir, 'kotlin', 'build.gradle.kts'),
-      'plugins { kotlin("jvm") version "2.2.0" }'
+      'plugins { kotlin("jvm") version "2.2.0" }',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'kotlin', 'exercise_template.kt'),
-      'package __PROBLEM_PACKAGE__\n__PROBLEM_DEFAULT_CODE__'
+      'package __PROBLEM_PACKAGE__\n__PROBLEM_DEFAULT_CODE__',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'kotlin', 'test_template.kt'),
-      'package __PROBLEM_PACKAGE__\nclass __PROBLEM_CLASS_NAME__Test'
+      'package __PROBLEM_PACKAGE__\nclass __PROBLEM_CLASS_NAME__Test',
     );
 
     // Create mock Java template files
     await fs.writeFile(
       join(mockTemplatesDir, 'java', 'build.gradle.kts'),
-      'plugins { id("java") }'
+      'plugins { id("java") }',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'java', 'exercise_template.java'),
-      'package __PROBLEM_PACKAGE__;\n__PROBLEM_DEFAULT_CODE__'
+      'package __PROBLEM_PACKAGE__;\n__PROBLEM_DEFAULT_CODE__',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'java', 'test_template.java'),
-      'package __PROBLEM_PACKAGE__;\npublic class __PROBLEM_CLASS_NAME__Test {}'
+      'package __PROBLEM_PACKAGE__;\npublic class __PROBLEM_CLASS_NAME__Test {}',
     );
 
     // Create mock Python template files
     await fs.writeFile(
       join(mockTemplatesDir, 'python', 'requirements.txt'),
-      'pytest>=7.0.0\nruff>=0.1.0\nmypy>=1.0.0'
+      'pytest>=7.0.0\nruff>=0.1.0\nmypy>=1.0.0',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'python', 'pyproject.toml'),
-      '[tool.pytest.ini_options]\ntestpaths = ["tests"]'
+      '[tool.pytest.ini_options]\ntestpaths = ["tests"]',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'python', 'exercise_template.py'),
-      '"""\n[__PROBLEM_ID__] __PROBLEM_TITLE__\n\n__PROBLEM_DESC__\n"""\n\nfrom typing import List, Optional\n\n__PROBLEM_DEFAULT_CODE__\n        pass  # TODO: Implement solution'
+      '"""\n[__PROBLEM_ID__] __PROBLEM_TITLE__\n\n__PROBLEM_DESC__\n"""\n\nfrom typing import List, Optional\n\n__PROBLEM_DEFAULT_CODE__\n        pass  # TODO: Implement solution',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'python', 'test_template.py'),
-      'import sys\nfrom pathlib import Path\n\nsys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))\n\nimport pytest\nfrom __PROBLEM_PACKAGE__.__EXERCISE_FILE_NAME_NO_EXT__ import Solution\n\ndef test___PROBLEM_NAME_FORMATTED__() -> None:\n    solution = Solution()\n    assert True'
+      'import sys\nfrom pathlib import Path\n\nsys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))\n\nimport pytest\nfrom __PROBLEM_PACKAGE__.__EXERCISE_FILE_NAME_NO_EXT__ import Solution\n\ndef test___PROBLEM_NAME_FORMATTED__() -> None:\n    solution = Solution()\n    assert True',
     );
 
     // Create mock Rust template files
     await fs.writeFile(
       join(mockTemplatesDir, 'rust', 'Cargo.toml'),
-      '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"'
+      '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'rust', 'exercise_template.rs'),
-      'pub struct Solution;\n__PROBLEM_DEFAULT_CODE__\n#[cfg(test)]\nmod tests {\n    use super::*;\n    #[test]\n    fn test___SNAKE_CASE_NAME__() {\n        assert_eq!(1, 1);\n    }\n}'
+      'pub struct Solution;\n__PROBLEM_DEFAULT_CODE__\n#[cfg(test)]\nmod tests {\n    use super::*;\n    #[test]\n    fn test___SNAKE_CASE_NAME__() {\n        assert_eq!(1, 1);\n    }\n}',
     );
     await fs.writeFile(
       join(mockTemplatesDir, 'rust', 'test_template.rs'),
-      '// Tests are included in the main exercise file for Rust'
+      '// Tests are included in the main exercise file for Rust',
     );
   });
 
@@ -119,13 +119,13 @@ void test('templates test suite', async (t) => {
       await fs.mkdir(join(mockTemplatesDir, 'cpp'), { recursive: true });
       await fs.writeFile(
         join(mockTemplatesDir, 'cpp', 'exercise_template.cpp'),
-        '__PROBLEM_DEFAULT_CODE__'
+        '__PROBLEM_DEFAULT_CODE__',
       );
 
       // Also add files to python directory to make it a valid language
       await fs.writeFile(
         join(mockTemplatesDir, 'python', 'exercise_template.py'),
-        '__PROBLEM_DEFAULT_CODE__'
+        '__PROBLEM_DEFAULT_CODE__',
       );
 
       const entries = await fs.readdir(mockTemplatesDir, {
@@ -143,7 +143,7 @@ void test('templates test suite', async (t) => {
       assert(languages.includes('java'));
       assert(languages.includes('rust'));
       assert.strictEqual(languages.length, 7);
-    }
+    },
   );
 
   await t.test('should identify template files vs config files', async () => {
@@ -176,7 +176,7 @@ void test('templates test suite', async (t) => {
       const content = await fs.readFile(targetFile, 'utf-8');
       const parsed = JSON.parse(content);
       assert.strictEqual(parsed.name, 'test-package');
-    }
+    },
   );
 
   await t.test('should replace template placeholders correctly', () => {
@@ -194,7 +194,7 @@ void test('templates test suite', async (t) => {
 
     assert.strictEqual(
       result,
-      'export function twoSum(nums: number[]): number[] { /* Two Sum */ }'
+      'export function twoSum(nums: number[]): number[] { /* Two Sum */ }',
     );
   });
 
@@ -210,7 +210,7 @@ void test('templates test suite', async (t) => {
         assert(error instanceof Error);
         assert((error as NodeJS.ErrnoException).code === 'ENOENT');
       }
-    }
+    },
   );
 
   await t.test('should validate template file structure', async () => {
@@ -219,7 +219,7 @@ void test('templates test suite', async (t) => {
     const files = await fs.readdir(typescriptDir);
 
     const hasExerciseTemplate = files.some((f) =>
-      f.includes('exercise_template')
+      f.includes('exercise_template'),
     );
     const hasTestTemplate = files.some((f) => f.includes('test_template'));
 
@@ -262,7 +262,7 @@ void test('templates test suite', async (t) => {
           assert(exerciseFile.startsWith(problemName));
         }
       });
-    }
+    },
   );
 
   await t.test(
@@ -274,19 +274,19 @@ void test('templates test suite', async (t) => {
       // Check that Python has the required files
       assert(
         files.includes('requirements.txt'),
-        'Should have requirements.txt'
+        'Should have requirements.txt',
       );
       assert(files.includes('pyproject.toml'), 'Should have pyproject.toml');
       assert(
         files.includes('exercise_template.py'),
-        'Should have exercise template'
+        'Should have exercise template',
       );
       assert(files.includes('test_template.py'), 'Should have test template');
 
       // Check that requirements.txt has correct dependencies
       const requirementsContent = await fs.readFile(
         join(pythonDir, 'requirements.txt'),
-        'utf-8'
+        'utf-8',
       );
       assert(requirementsContent.includes('pytest>=7.0.0'));
       assert(requirementsContent.includes('ruff>=0.1.0'));
@@ -295,7 +295,7 @@ void test('templates test suite', async (t) => {
       // Check that exercise template has correct Python structure
       const exerciseContent = await fs.readFile(
         join(pythonDir, 'exercise_template.py'),
-        'utf-8'
+        'utf-8',
       );
       assert(exerciseContent.includes('from typing import List, Optional'));
       assert(exerciseContent.includes('__PROBLEM_DEFAULT_CODE__'));
@@ -304,17 +304,17 @@ void test('templates test suite', async (t) => {
       // Check that test template has correct import structure
       const testContent = await fs.readFile(
         join(pythonDir, 'test_template.py'),
-        'utf-8'
+        'utf-8',
       );
       assert(testContent.includes('import sys'));
       assert(testContent.includes('from pathlib import Path'));
       assert(testContent.includes('import pytest'));
       assert(
         testContent.includes(
-          'from __PROBLEM_PACKAGE__.__EXERCISE_FILE_NAME_NO_EXT__ import Solution'
-        )
+          'from __PROBLEM_PACKAGE__.__EXERCISE_FILE_NAME_NO_EXT__ import Solution',
+        ),
       );
-    }
+    },
   );
 
   await t.test(
@@ -327,14 +327,14 @@ void test('templates test suite', async (t) => {
       assert(files.includes('package.json'), 'Should have package.json');
       assert(
         files.includes('exercise_template.js'),
-        'Should have exercise template'
+        'Should have exercise template',
       );
       assert(files.includes('test_template.js'), 'Should have test template');
 
       // Check that package.json has correct content
       const packageContent = await fs.readFile(
         join(jsDir, 'package.json'),
-        'utf-8'
+        'utf-8',
       );
       const packageObj = JSON.parse(packageContent);
       assert.strictEqual(packageObj.name, 'leetcode-javascript');
@@ -343,18 +343,18 @@ void test('templates test suite', async (t) => {
       // Check that exercise template has correct placeholder
       const exerciseContent = await fs.readFile(
         join(jsDir, 'exercise_template.js'),
-        'utf-8'
+        'utf-8',
       );
       assert(exerciseContent.includes('__PROBLEM_DEFAULT_CODE__'));
 
       // Check that test template has correct import structure
       const testContent = await fs.readFile(
         join(jsDir, 'test_template.js'),
-        'utf-8'
+        'utf-8',
       );
       assert(testContent.includes('import { __PROBLEM_NAME_FORMATTED__ }'));
       assert(testContent.includes('from "./__EXERCISE_FILE_NAME__"'));
-    }
+    },
   );
 
   await t.test('should handle Rust template structure correctly', async () => {
@@ -365,17 +365,17 @@ void test('templates test suite', async (t) => {
     assert(files.includes('Cargo.toml'), 'Should have Cargo.toml');
     assert(
       files.includes('exercise_template.rs'),
-      'Should have exercise template'
+      'Should have exercise template',
     );
     assert(
       files.includes('test_template.rs'),
-      'Should have test template placeholder'
+      'Should have test template placeholder',
     );
 
     // Check that Cargo.toml has correct content
     const cargoContent = await fs.readFile(
       join(rustDir, 'Cargo.toml'),
-      'utf-8'
+      'utf-8',
     );
     assert(cargoContent.includes('name = "leetkick-rust"'));
     assert(cargoContent.includes('edition = "2021"'));
@@ -383,7 +383,7 @@ void test('templates test suite', async (t) => {
     // Check that exercise template includes struct Solution and tests
     const exerciseContent = await fs.readFile(
       join(rustDir, 'exercise_template.rs'),
-      'utf-8'
+      'utf-8',
     );
     assert(exerciseContent.includes('pub struct Solution;'));
     assert(exerciseContent.includes('#[cfg(test)]'));

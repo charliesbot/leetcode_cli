@@ -17,17 +17,17 @@ export const fetchCommand = new Command('fetch')
   .action(
     async (
       problemSlug: string,
-      options: { language?: string; force?: boolean }
+      options: { language?: string; force?: boolean },
     ) => {
       try {
         const workspaceRoot = findWorkspaceRoot();
 
         if (!workspaceRoot) {
           console.log(
-            'No leetkick workspace found. Run "leetkick init" first.'
+            'No leetkick workspace found. Run "leetkick init" first.',
           );
           console.log(
-            'Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.'
+            'Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.',
           );
           return;
         }
@@ -36,7 +36,7 @@ export const fetchCommand = new Command('fetch')
 
         const problem = await fetchProblem(problemSlug);
         console.log(
-          `✓ Found: [${problem.questionFrontendId}] ${problem.title}`
+          `✓ Found: [${problem.questionFrontendId}] ${problem.title}`,
         );
 
         const availableLanguages = await getAvailableLanguages();
@@ -80,7 +80,7 @@ export const fetchCommand = new Command('fetch')
             'src',
             'main',
             options.language,
-            problemName
+            problemName,
           );
           existingPath = problemDir;
         } else if (options.language === 'rust') {
@@ -114,7 +114,7 @@ export const fetchCommand = new Command('fetch')
         try {
           await createProblemFiles(problem, options.language);
           console.log(
-            `✓ Created ${options.language} exercise for: ${problem.title}`
+            `✓ Created ${options.language} exercise for: ${problem.title}`,
           );
           console.log(`📁 Problem ID: ${problemName}`);
         } finally {
@@ -124,5 +124,5 @@ export const fetchCommand = new Command('fetch')
         console.error('Error:', error instanceof Error ? error.message : error);
         throw error;
       }
-    }
+    },
   );

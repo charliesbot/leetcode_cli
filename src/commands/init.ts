@@ -12,7 +12,7 @@ export const initCommand = new Command('init')
   .description('Initialize an empty leetkick workspace')
   .argument(
     '[directory]',
-    "Directory to initialize (creates if it doesn't exist)"
+    "Directory to initialize (creates if it doesn't exist)",
   )
   .action(async (directory?: string) => {
     try {
@@ -43,7 +43,7 @@ export const initCommand = new Command('init')
       }
 
       console.log(
-        `Creating leetkick workspace in ${directory || 'current directory'}...`
+        `Creating leetkick workspace in ${directory || 'current directory'}...`,
       );
       createWorkspace(targetDir);
       console.log('✓ Workspace initialized');

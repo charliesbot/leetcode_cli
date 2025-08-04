@@ -19,7 +19,7 @@ const SUPPORTED_LANGUAGES = [
 ];
 
 export function findWorkspaceRoot(
-  startDir: string = process.cwd()
+  startDir: string = process.cwd(),
 ): string | null {
   let currentDir = startDir;
 
@@ -113,7 +113,7 @@ build/
 }
 
 export async function getWorkspaceLanguages(
-  workspaceRoot: string
+  workspaceRoot: string,
 ): Promise<string[]> {
   try {
     const entries = await readdir(workspaceRoot, { withFileTypes: true });
@@ -127,7 +127,7 @@ export async function getWorkspaceLanguages(
 }
 
 export function readWorkspaceConfig(
-  workspaceRoot: string
+  workspaceRoot: string,
 ): WorkspaceConfig | null {
   try {
     const configPath = join(workspaceRoot, WORKSPACE_CONFIG_FILE);

@@ -56,7 +56,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
       assert.match(result, /No leetkick workspace found/);
     });
@@ -67,7 +67,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
 
       assert.match(result, /Running tests for: problem_0001/);
@@ -82,7 +82,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
 
       assert.match(result, /Running tests for: problem_0001/);
@@ -123,7 +123,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
 
       // Should not contain "not supported" error
@@ -140,7 +140,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
 
       // Should not contain "not supported" error
@@ -157,7 +157,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
 
       // Should not contain "not supported" error
@@ -177,11 +177,11 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
       assert.match(
         testResult,
-        /python workspace not found|Language 'python' not supported|Problem '1' not found in python workspace/
+        /python workspace not found|Language 'python' not supported|Problem '1' not found in python workspace/,
       );
     });
   });
@@ -193,7 +193,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
 
       assert.match(result, /Running tests for: problem_0001/);
@@ -205,7 +205,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
 
       assert.match(result, /Running tests for: problem_0001/);
@@ -217,7 +217,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
 
       assert.match(result, /Running tests for: problem_0001/);
@@ -243,7 +243,7 @@ void describe('Test Command', () => {
         {
           stdio: 'pipe',
           encoding: 'utf8',
-        }
+        },
       );
 
       assert.match(result, /Running tests for: problem_0001/);
@@ -287,7 +287,7 @@ export function twoSum(nums: number[], target: number): number[] {
   
   return [];
 }
-    `
+    `,
   );
 
   // Create test file
@@ -302,7 +302,7 @@ test('twoSum should return correct indices', () => {
   expect(twoSum([3, 2, 4], 6)).toEqual([1, 2]);
   expect(twoSum([3, 3], 6)).toEqual([0, 1]);
 });
-    `
+    `,
   );
 }
 

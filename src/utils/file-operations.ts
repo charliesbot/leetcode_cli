@@ -8,7 +8,7 @@ const TEMPLATES_DIR = join(__dirname, '../../../templates');
 
 export async function createProblemFiles(
   problem: Problem,
-  language: string
+  language: string,
 ): Promise<void> {
   const templateDir = join(TEMPLATES_DIR, language);
   const paddedId = problem.questionFrontendId.padStart(4, '0');
@@ -47,7 +47,7 @@ export async function createProblemFiles(
 
   // Find the code snippet for this language
   const codeSnippet = problem.codeSnippets.find(
-    (snippet) => snippet.langSlug === getLanguageSlug(language)
+    (snippet) => snippet.langSlug === getLanguageSlug(language),
   );
 
   let defaultCode =
@@ -90,28 +90,28 @@ export async function createProblemFiles(
       className,
       snakeCaseName,
       language,
-      paddedId
+      paddedId,
     ),
     __EXERCISE_FILE_NAME_NO_EXT__: getExerciseFileNameNoExt(
       className,
       snakeCaseName,
       language,
-      paddedId
+      paddedId,
     ),
   };
 
   // Create exercise file
   const exerciseTemplate = await readFile(
     join(templateDir, 'exercise_template.' + getFileExtension(language)),
-    'utf-8'
+    'utf-8',
   );
   const exerciseContent = replaceTemplateVars(exerciseTemplate, replacements);
   await writeFile(
     join(
       problemDir,
-      getExerciseFileName(className, snakeCaseName, language, paddedId)
+      getExerciseFileName(className, snakeCaseName, language, paddedId),
     ),
-    exerciseContent
+    exerciseContent,
   );
 
   // For Rust, add module declaration to lib.rs
@@ -125,19 +125,19 @@ export async function createProblemFiles(
   if (language !== 'rust') {
     const testTemplate = await readFile(
       join(templateDir, 'test_template.' + getFileExtension(language)),
-      'utf-8'
+      'utf-8',
     );
     const testContent = replaceTemplateVars(testTemplate, replacements);
     await writeFile(
       join(testDir, getTestFileName(className, snakeCaseName, language)),
-      testContent
+      testContent,
     );
   }
 }
 
 function replaceTemplateVars(
   template: string,
-  replacements: Record<string, string>
+  replacements: Record<string, string>,
 ): string {
   let result = template;
   for (const [key, value] of Object.entries(replacements)) {
@@ -172,7 +172,7 @@ function formatProblemName(title: string): string {
     .map((word, index) =>
       index === 0
         ? word.toLowerCase()
-        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
     )
     .join('');
 }
@@ -227,7 +227,7 @@ function getExerciseFileName(
   className: string,
   snakeCaseName: string,
   language: string,
-  paddedId?: string
+  paddedId?: string,
 ): string {
   const ext = getFileExtension(language);
   switch (language) {
@@ -255,7 +255,7 @@ function getExerciseFileNameNoExt(
   className: string,
   snakeCaseName: string,
   language: string,
-  paddedId?: string
+  paddedId?: string,
 ): string {
   switch (language) {
     case 'typescript':
@@ -281,7 +281,7 @@ function getExerciseFileNameNoExt(
 function getTestFileName(
   className: string,
   snakeCaseName: string,
-  language: string
+  language: string,
 ): string {
   const ext = getFileExtension(language);
   switch (language) {
@@ -333,7 +333,7 @@ public:
 
 async function addModuleToLibRs(
   languageDir: string,
-  moduleName: string
+  moduleName: string,
 ): Promise<void> {
   const libPath = join(languageDir, 'src', 'lib.rs');
 
@@ -361,7 +361,7 @@ function processJavaScriptCode(code: string): string {
     // Handle: var twoSum = function(nums, target) { ... };
     code = code.replace(
       /var\s+(\w+)\s*=\s*function\s*\(/g,
-      'export function $1('
+      'export function $1(',
     );
     code = code.replace(/;\s*$/, ''); // Remove trailing semicolon
   } else if (code.includes('function ')) {
@@ -384,7 +384,7 @@ function extractFunctionName(code: string): string | null {
 
   // Extract function name from Java code (public method in class)
   const javaMethodMatch = code.match(
-    /public\s+[\w<>[\]]+\s+(\w+)\s*\([^)]*\)\s*\{/
+    /public\s+[\w<>[\]]+\s+(\w+)\s*\([^)]*\)\s*\{/,
   );
   if (javaMethodMatch) {
     return javaMethodMatch[1];
