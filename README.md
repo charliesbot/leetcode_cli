@@ -50,14 +50,14 @@ Our goal is to support all languages that LeetCode offers. Here's our current pr
 
 | Language       | Status           | Testing Framework | Formatter    | Linter | Notes                           |
 | -------------- | ---------------- | ----------------- | ------------ | ------ | ------------------------------- |
-| **TypeScript** | ✅ **Supported** | Vitest            | Prettier     | —      | Full support with type checking |
+| **TypeScript** | ✅ **Supported** | Vitest            | Biome        | Biome  | Full support with type checking |
 | **C++**        | ✅ **Supported** | Catch2 (bundled)  | clang-format | —      | C++17 standard                  |
 | **Kotlin**     | ✅ **Supported** | JUnit 5 + Gradle  | —            | —      | Full Gradle integration         |
 | **Java**       | ✅ **Supported** | JUnit 5 + Gradle  | —            | —      | Full Gradle integration         |
 | **Go**         | ✅ **Supported** | Built-in testing  | —            | —      | Go 1.21+ with modules           |
 | **Rust**       | ✅ **Supported** | cargo test        | —            | —      | Rust 2021 edition               |
 | **Python**     | ✅ **Supported** | pytest            | ruff         | ruff   | Python 3.8+ with modern tooling |
-| **JavaScript** | ✅ **Supported** | Vitest            | Prettier     | —      | ES Modules with modern tooling  |
+| **JavaScript** | ✅ **Supported** | Vitest            | Biome        | Biome  | ES Modules with modern tooling  |
 | **C**          | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
 | **C#**         | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
 | **Ruby**       | 🚧 **Planned**   | —                 | —            | —      | Coming soon                     |
@@ -81,6 +81,7 @@ Each supported language workspace includes setup instructions, prerequisites, an
 | `add <lang>`                        | Add language support | `leetkick add javascript`                      |
 | `fetch <problem> --language <lang>` | Get LeetCode problem | `leetkick fetch two-sum --language javascript` |
 | `test <problem> --language <lang>`  | Run tests            | `leetkick test 1 --language javascript`        |
+| `sync [lang]`                       | Update config files  | `leetkick sync --all --dry-run`                |
 | `help [cmd]`                        | Show help            | `leetkick help fetch`                          |
 
 ### Advanced Features
@@ -91,6 +92,14 @@ Each supported language workspace includes setup instructions, prerequisites, an
 leetkick test 1 --language javascript           # By number
 leetkick test two-sum --language javascript     # By slug
 leetkick test problem_0001 --language javascript # By exact directory name
+```
+
+**Workspace Sync**
+
+```bash
+leetkick sync typescript          # Sync specific language
+leetkick sync --all              # Sync all languages  
+leetkick sync --dry-run          # Preview changes only
 ```
 
 **Works Anywhere:** Run commands from any directory in your workspace  

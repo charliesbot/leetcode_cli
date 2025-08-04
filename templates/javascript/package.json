@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "format": "prettier --write \"**/*.js\""
+    "lint": "biome check .",
+    "format": "biome format --write ."
   },
   "devDependencies": {
-    "prettier": "^3.6.2",
+    "@biomejs/biome": "^1.9.4",
     "vitest": "^1.0.0"
   }
 }

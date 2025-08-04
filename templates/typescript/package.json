@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "format": "prettier --write \"**/*.ts\""
+    "lint": "biome check .",
+    "format": "biome format --write ."
   },
   "devDependencies": {
     "@types/node": "^24.1.0",
     "typescript": "^5.8.3",
-    "prettier": "^3.6.2",
+    "@biomejs/biome": "^1.9.4",
     "vitest": "^1.0.0"
   }
 }
