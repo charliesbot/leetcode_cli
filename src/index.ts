@@ -6,6 +6,7 @@ import { initCommand } from './commands/init.js';
 import { addCommand } from './commands/add.js';
 import { testCommand } from './commands/test.js';
 import { syncCommand } from './commands/sync.js';
+import { fixCommand } from './commands/fix.js';
 
 const program = new Command();
 
@@ -19,5 +20,6 @@ program.addCommand(initCommand);
 program.addCommand(addCommand);
 program.addCommand(testCommand);
 program.addCommand(syncCommand);
+program.addCommand(fixCommand);
 
 program.parse();

@@ -17,7 +17,7 @@ A TypeScript CLI for scaffolding LeetCode exercises with language-specific testi
 
 ## Project Structure
 
-- `src/commands/`: CLI command implementations (add.ts, fetch.ts, init.ts, test.ts)
+- `src/commands/`: CLI command implementations (add.ts, fetch.ts, fix.ts, init.ts, sync.ts, test.ts)
 - `src/utils/`: Core utilities (leetcode-api.ts, templates.ts, workspace.ts, file-operations.ts)
 - `src/types/`: TypeScript type definitions
 - `templates/`: Language-specific templates (typescript/, cpp/, kotlin/)
