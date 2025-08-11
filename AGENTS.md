@@ -58,6 +58,30 @@ A TypeScript CLI for scaffolding LeetCode exercises with language-specific testi
 - Tests run against built CLI in `build/src/index.js`
 - Always run `npm run lint` after tests (automated in npm scripts)
 
+## Agent Collaboration Guidelines
+
+### Planning and Agreement Phase
+- **CRITICAL**: Do not write any code until reaching explicit agreement on the implementation plan
+- Start with understanding requirements and exploring the codebase
+- Present a clear, detailed plan before implementation
+- Wait for user confirmation and approval of the plan
+- Clarify any ambiguities or missing requirements upfront
+- Use TodoWrite tool to track agreed-upon tasks
+
+### Implementation Approach
+- Break complex tasks into smaller, manageable steps
+- Implement incrementally with frequent validation
+- Follow existing code patterns and conventions strictly
+- Test each component as you build it
+- Keep the user informed of progress and any deviations from plan
+
+### Quality Assurance
+- Run tests after each significant change
+- Use `npm run lint` to ensure code style compliance
+- Verify template generation works end-to-end
+- Test IDE compatibility for applicable languages (Kotlin, Java)
+- Validate against existing integration tests
+
 ## Development Workflow
 
 ### Template Development
