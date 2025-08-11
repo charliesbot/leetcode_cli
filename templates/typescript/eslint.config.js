@@ -23,7 +23,7 @@ export default [
       ...typescript.configs.recommended.rules,
       ...prettierConfig.rules,
       'prettier/prettier': 'error',
-      
+
       // LeetCode-specific adjustments
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'off',
@@ -31,3 +31,4 @@ export default [
     },
   },
 ];
+
