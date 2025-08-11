@@ -191,15 +191,17 @@ async function getObsoleteFiles(
 ): Promise<string[]> {
   const obsoleteFiles: string[] = [];
 
-  // Common obsolete files when migrating from Prettier to Biome
-  const prettierFiles = ['.prettierrc.json', '.prettierrc.js', '.prettierrc'];
+  // Common obsolete files when migrating from Biome to ESLint + Prettier
+  const biomeFiles = ['biome.json'];
 
-  for (const file of prettierFiles) {
+  for (const file of biomeFiles) {
     if (existsSync(join(languageDir, file))) {
-      // Only mark as obsolete if we have biome.json
+      // Only mark as obsolete if we have ESLint + Prettier configs
       if (
-        existsSync(join(languageDir, 'biome.json')) ||
-        existsSync(join(TEMPLATES_DIR, language, 'biome.json'))
+        (existsSync(join(languageDir, 'eslint.config.js')) ||
+          existsSync(join(TEMPLATES_DIR, language, 'eslint.config.js'))) &&
+        (existsSync(join(languageDir, '.prettierrc')) ||
+          existsSync(join(TEMPLATES_DIR, language, '.prettierrc')))
       ) {
         obsoleteFiles.push(file);
       }
