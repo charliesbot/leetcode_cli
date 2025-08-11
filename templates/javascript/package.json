@@ -5,11 +5,16 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "lint": "biome check .",
-    "format": "biome format --write ."
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
     "vitest": "^1.0.0"
   }
 }

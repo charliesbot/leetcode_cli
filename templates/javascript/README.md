@@ -4,7 +4,8 @@ This workspace is configured for solving LeetCode problems in JavaScript.
 
 ## Setup
 - **Vitest** for testing and test runner
-- **Biome** for fast linting and formatting  
+- **ESLint** for code quality and linting
+- **Prettier** for consistent code formatting
 - **ES Modules** for modern JavaScript features
 
 ## Prerequisites
@@ -70,6 +71,8 @@ npm test
 npx vitest
 
 # Lint and format code
-npm run lint
-npm run format
+npm run lint          # Check for linting issues
+npm run lint:fix      # Fix linting issues automatically
+npm run format        # Format code with Prettier
+npm run format:check  # Check if code is formatted
 ```
