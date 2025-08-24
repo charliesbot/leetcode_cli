@@ -1,13 +1,10 @@
-import { Command } from 'commander';
-import { fetchProblem } from '../utils/leetcode-api.js';
-import {
-  getAvailableLanguages,
-  initializeLanguage,
-} from '../utils/templates.js';
-import { createProblemFiles } from '../utils/file-operations.js';
-import { findWorkspaceRoot } from '../utils/workspace.js';
-import { existsSync } from 'fs';
-import { join } from 'path';
+import {Command} from 'commander';
+import {fetchProblem} from '../utils/leetcode-api.js';
+import {getAvailableLanguages, initializeLanguage} from '../utils/templates.js';
+import {createProblemFiles} from '../utils/file-operations.js';
+import {findWorkspaceRoot} from '../utils/workspace.js';
+import {existsSync} from 'fs';
+import {join} from 'path';
 
 export const fetchCommand = new Command('fetch')
   .description('Fetch a LeetCode problem and create exercise files')
@@ -17,7 +14,7 @@ export const fetchCommand = new Command('fetch')
   .action(
     async (
       problemSlug: string,
-      options: { language?: string; force?: boolean },
+      options: {language?: string; force?: boolean},
     ) => {
       try {
         const workspaceRoot = findWorkspaceRoot();

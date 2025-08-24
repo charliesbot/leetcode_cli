@@ -1,6 +1,6 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { readdir } from 'fs/promises';
-import { join, dirname } from 'path';
+import {existsSync, readFileSync, writeFileSync} from 'fs';
+import {readdir} from 'fs/promises';
+import {join, dirname} from 'path';
 
 export interface WorkspaceConfig {
   version: string;
@@ -116,11 +116,11 @@ export async function getWorkspaceLanguages(
   workspaceRoot: string,
 ): Promise<string[]> {
   try {
-    const entries = await readdir(workspaceRoot, { withFileTypes: true });
+    const entries = await readdir(workspaceRoot, {withFileTypes: true});
     return entries
-      .filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
-      .filter((entry) => SUPPORTED_LANGUAGES.includes(entry.name))
-      .map((entry) => entry.name);
+      .filter(entry => entry.isDirectory() && !entry.name.startsWith('.'))
+      .filter(entry => SUPPORTED_LANGUAGES.includes(entry.name))
+      .map(entry => entry.name);
   } catch (error) {
     return [];
   }

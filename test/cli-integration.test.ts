@@ -1,17 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { spawn } from 'node:child_process';
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { tmpdir } from 'os';
+import {spawn} from 'node:child_process';
+import {promises as fs} from 'fs';
+import {join} from 'path';
+import {tmpdir} from 'os';
 
 const CLI_PATH = join(process.cwd(), 'build', 'src', 'index.js');
 
-void test('CLI integration test suite', async (t) => {
+void test('CLI integration test suite', async t => {
   const testWorkspace = join(tmpdir(), 'leetcode-cli-integration-test');
 
   await t.test('should show help when no command provided', async () => {
-    const result = await runCLI([], { expectError: true });
+    const result = await runCLI([], {expectError: true});
 
     // Help is output to stderr by commander.js
     const output = result.stderr || result.stdout;
@@ -53,13 +53,13 @@ void test('CLI integration test suite', async (t) => {
     'should list available languages when no language specified',
     async () => {
       // Setup test workspace with initialized workspace
-      await fs.rm(testWorkspace, { recursive: true, force: true });
-      await fs.mkdir(testWorkspace, { recursive: true });
+      await fs.rm(testWorkspace, {recursive: true, force: true});
+      await fs.mkdir(testWorkspace, {recursive: true});
       process.chdir(testWorkspace);
       await runCLI(['init']);
       await runCLI(['add', 'typescript']);
 
-      const result = await runCLI(['fetch', 'two-sum'], { expectError: true });
+      const result = await runCLI(['fetch', 'two-sum'], {expectError: true});
 
       // Check both stdout and stderr for the error message
       const combinedOutput = result.stdout + result.stderr;
@@ -75,7 +75,7 @@ void test('CLI integration test suite', async (t) => {
     // Use the workspace from previous test
     const result = await runCLI(
       ['fetch', 'two-sum', '--language', 'invalidlang'],
-      { expectError: true },
+      {expectError: true},
     );
 
     const combinedOutput = result.stdout + result.stderr;
@@ -94,7 +94,7 @@ void test('CLI integration test suite', async (t) => {
         '--language',
         'typescript',
       ],
-      { expectError: true },
+      {expectError: true},
     );
 
     assert(result.stderr.includes('Error:'));
@@ -103,8 +103,8 @@ void test('CLI integration test suite', async (t) => {
 
   await t.test('should initialize empty workspace successfully', async () => {
     // Setup fresh test workspace
-    await fs.rm(testWorkspace, { recursive: true, force: true });
-    await fs.mkdir(testWorkspace, { recursive: true });
+    await fs.rm(testWorkspace, {recursive: true, force: true});
+    await fs.mkdir(testWorkspace, {recursive: true});
     process.chdir(testWorkspace);
 
     const result = await runCLI(['init']);
@@ -176,29 +176,29 @@ void test('CLI integration test suite', async (t) => {
   await t.test('should require workspace for add command', async () => {
     // Setup fresh directory without workspace
     const noWorkspaceDir = join(tmpdir(), 'no-workspace-test');
-    await fs.rm(noWorkspaceDir, { recursive: true, force: true });
-    await fs.mkdir(noWorkspaceDir, { recursive: true });
+    await fs.rm(noWorkspaceDir, {recursive: true, force: true});
+    await fs.mkdir(noWorkspaceDir, {recursive: true});
     process.chdir(noWorkspaceDir);
 
-    const result = await runCLI(['add', 'typescript'], { expectError: true });
+    const result = await runCLI(['add', 'typescript'], {expectError: true});
 
     const output = result.stdout || result.stderr;
     assert(output.includes('No leetkick workspace found'));
     assert(output.includes('Run "leetkick init" first'));
 
     // Cleanup
-    await fs.rm(noWorkspaceDir, { recursive: true, force: true });
+    await fs.rm(noWorkspaceDir, {recursive: true, force: true});
   });
 
   // Cleanup
-  await fs.rm(testWorkspace, { recursive: true, force: true });
+  await fs.rm(testWorkspace, {recursive: true, force: true});
 });
 
 // Helper function to run CLI commands
 async function runCLI(
   args: string[],
-  options: { expectError?: boolean; timeout?: number } = {},
-): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+  options: {expectError?: boolean; timeout?: number} = {},
+): Promise<{stdout: string; stderr: string; exitCode: number}> {
   return new Promise((resolve, reject) => {
     const child = spawn('node', [CLI_PATH, ...args], {
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -207,11 +207,11 @@ async function runCLI(
     let stdout = '';
     let stderr = '';
 
-    child.stdout?.on('data', (data) => {
+    child.stdout?.on('data', data => {
       stdout += data.toString();
     });
 
-    child.stderr?.on('data', (data) => {
+    child.stderr?.on('data', data => {
       stderr += data.toString();
     });
 
@@ -220,7 +220,7 @@ async function runCLI(
       reject(new Error('CLI command timed out'));
     }, options.timeout || 10000);
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       clearTimeout(timeout);
 
       if (!options.expectError && code !== 0) {
@@ -238,7 +238,7 @@ async function runCLI(
       }
     });
 
-    child.on('error', (error) => {
+    child.on('error', error => {
       clearTimeout(timeout);
       reject(error);
     });

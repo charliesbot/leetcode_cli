@@ -1,4 +1,4 @@
-import type { GraphQLResponse, Problem } from '../types/leetcode.js';
+import type {GraphQLResponse, Problem} from '../types/leetcode.js';
 
 const GRAPHQL_URL = 'https://leetcode.com/graphql';
 
@@ -30,7 +30,7 @@ export async function fetchProblem(titleSlug: string): Promise<Problem> {
     },
     body: JSON.stringify({
       operationName: 'questionData',
-      variables: { titleSlug },
+      variables: {titleSlug},
       query: QUESTION_QUERY,
     }),
   });

@@ -1,9 +1,9 @@
-import { describe, it, before, beforeEach, afterEach } from 'node:test';
-import { strict as assert } from 'node:assert';
-import { mkdir, rm, writeFile } from 'fs/promises';
-import { existsSync } from 'fs';
-import { join, resolve } from 'path';
-import { execSync } from 'child_process';
+import {describe, it, before, beforeEach, afterEach} from 'node:test';
+import {strict as assert} from 'node:assert';
+import {mkdir, rm, writeFile} from 'fs/promises';
+import {existsSync} from 'fs';
+import {join, resolve} from 'path';
+import {execSync} from 'child_process';
 
 const CLI_PATH = resolve('./build/src/index.js');
 const TEST_WORKSPACE = resolve('./test-workspace-temp');
@@ -13,7 +13,7 @@ void describe('Test Command', () => {
   before(async () => {
     // Ensure CLI is built
     if (!existsSync(CLI_PATH)) {
-      execSync('npm run compile', { stdio: 'inherit' });
+      execSync('npm run compile', {stdio: 'inherit'});
     }
   });
 
@@ -25,14 +25,14 @@ void describe('Test Command', () => {
     await cleanupTestWorkspace();
 
     // Create fresh test workspace
-    await mkdir(TEST_WORKSPACE, { recursive: true });
+    await mkdir(TEST_WORKSPACE, {recursive: true});
     process.chdir(TEST_WORKSPACE);
 
     // Initialize workspace
-    execSync(`node "${CLI_PATH}" init`, { stdio: 'pipe' });
+    execSync(`node "${CLI_PATH}" init`, {stdio: 'pipe'});
 
     // Add typescript workspace
-    execSync(`node "${CLI_PATH}" add typescript`, { stdio: 'pipe' });
+    execSync(`node "${CLI_PATH}" add typescript`, {stdio: 'pipe'});
 
     // Create a mock problem directory
     await createMockProblem();
@@ -48,7 +48,7 @@ void describe('Test Command', () => {
     void it('should fail when not in a leetkick workspace', async () => {
       process.chdir(ORIGINAL_CWD);
       await cleanupTestWorkspace();
-      await mkdir(TEST_WORKSPACE, { recursive: true });
+      await mkdir(TEST_WORKSPACE, {recursive: true});
       process.chdir(TEST_WORKSPACE);
 
       const result = execSync(
@@ -93,10 +93,10 @@ void describe('Test Command', () => {
   void describe('Language validation', () => {
     void it('should require language option', async () => {
       try {
-        execSync(`node "${CLI_PATH}" test 1`, { stdio: 'pipe' });
+        execSync(`node "${CLI_PATH}" test 1`, {stdio: 'pipe'});
         assert.fail('Should have thrown an error');
       } catch (error: unknown) {
-        const output = (error as { stderr?: Buffer }).stderr?.toString() || '';
+        const output = (error as {stderr?: Buffer}).stderr?.toString() || '';
         assert.match(output, /Please specify a language/);
       }
     });
@@ -108,14 +108,14 @@ void describe('Test Command', () => {
         });
         assert.fail('Should have thrown an error');
       } catch (error: unknown) {
-        const output = (error as { stderr?: Buffer }).stderr?.toString() || '';
+        const output = (error as {stderr?: Buffer}).stderr?.toString() || '';
         assert.match(output, /Language 'unsupported' not supported/);
       }
     });
 
     void it('should validate kotlin as supported language', async () => {
       // Test that kotlin is recognized as a supported language
-      execSync(`node "${CLI_PATH}" add kotlin`, { stdio: 'pipe' });
+      execSync(`node "${CLI_PATH}" add kotlin`, {stdio: 'pipe'});
 
       // Should not throw error when using kotlin language
       const result = execSync(
@@ -132,7 +132,7 @@ void describe('Test Command', () => {
 
     void it('should validate python as supported language', async () => {
       // Test that python is recognized as a supported language
-      execSync(`node "${CLI_PATH}" add python`, { stdio: 'pipe' });
+      execSync(`node "${CLI_PATH}" add python`, {stdio: 'pipe'});
 
       // Should not throw error when using python language
       const result = execSync(
@@ -149,7 +149,7 @@ void describe('Test Command', () => {
 
     void it('should validate java as supported language', async () => {
       // Test that java is recognized as a supported language
-      execSync(`node "${CLI_PATH}" add java`, { stdio: 'pipe' });
+      execSync(`node "${CLI_PATH}" add java`, {stdio: 'pipe'});
 
       // Should not throw error when using java language
       const result = execSync(
@@ -230,7 +230,7 @@ void describe('Test Command', () => {
         });
         assert.fail('Should have thrown an error');
       } catch (error: unknown) {
-        const output = (error as { stderr?: Buffer }).stderr?.toString() || '';
+        const output = (error as {stderr?: Buffer}).stderr?.toString() || '';
         assert.match(output, /Problem 'non-existent' not found/);
       }
     });
@@ -257,7 +257,7 @@ void describe('Test Command', () => {
 
 async function createMockProblem() {
   const problemDir = join(TEST_WORKSPACE, 'typescript/problem_0001');
-  await mkdir(problemDir, { recursive: true });
+  await mkdir(problemDir, {recursive: true});
 
   // Create exercise file
   await writeFile(
@@ -314,7 +314,7 @@ async function cleanupTestWorkspace() {
 
   if (existsSync(TEST_WORKSPACE)) {
     try {
-      await rm(TEST_WORKSPACE, { recursive: true, force: true });
+      await rm(TEST_WORKSPACE, {recursive: true, force: true});
     } catch (error) {
       // Ignore cleanup errors
     }

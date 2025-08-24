@@ -1,60 +1,58 @@
-import { Command } from 'commander';
-import { findWorkspaceRoot } from '../utils/workspace.js';
-import { spawn } from 'child_process';
-import { join } from 'path';
+import {Command} from 'commander';
+import {findWorkspaceRoot} from '../utils/workspace.js';
+import {spawn} from 'child_process';
+import {join} from 'path';
 
 export const fixCommand = new Command()
   .name('fix')
   .description('Fix linting and formatting issues in workspace')
   .argument('[language]', 'Language workspace to fix (omit to fix all)')
   .option('--all', 'Fix all language workspaces')
-  .action(
-    async (language?: string, options?: { all?: boolean }) => {
-      try {
-        const workspaceRoot = await findWorkspaceRoot();
-        if (!workspaceRoot) {
-          throw new Error(
-            'No leetkick workspace found. Run "leetkick init" first.',
-          );
-        }
-
-        const languages = language
-          ? [language]
-          : await getWorkspaceLanguages(workspaceRoot);
-
-        if (languages.length === 0) {
-          console.log(
-            'No languages found in workspace. Use "leetkick add <language>" first.',
-          );
-          return;
-        }
-
-        console.log(
-          `Fixing ${languages.length === 1 ? languages[0] : languages.length + ' languages'}...`,
+  .action(async (language?: string, options?: {all?: boolean}) => {
+    try {
+      const workspaceRoot = await findWorkspaceRoot();
+      if (!workspaceRoot) {
+        throw new Error(
+          'No leetkick workspace found. Run "leetkick init" first.',
         );
-
-        for (const lang of languages) {
-          await fixLanguageWorkspace(workspaceRoot, lang);
-        }
-
-        console.log('✓ All fixes completed');
-      } catch (error) {
-        console.error(
-          '❌ Fix failed:',
-          error instanceof Error ? error.message : String(error),
-        );
-        throw error;
       }
-    },
-  );
+
+      const languages = language
+        ? [language]
+        : await getWorkspaceLanguages(workspaceRoot);
+
+      if (languages.length === 0) {
+        console.log(
+          'No languages found in workspace. Use "leetkick add <language>" first.',
+        );
+        return;
+      }
+
+      console.log(
+        `Fixing ${languages.length === 1 ? languages[0] : languages.length + ' languages'}...`,
+      );
+
+      for (const lang of languages) {
+        await fixLanguageWorkspace(workspaceRoot, lang);
+      }
+
+      console.log('✓ All fixes completed');
+    } catch (error) {
+      console.error(
+        '❌ Fix failed:',
+        error instanceof Error ? error.message : String(error),
+      );
+      throw error;
+    }
+  });
 
 async function getWorkspaceLanguages(workspaceRoot: string): Promise<string[]> {
-  const { readdir } = await import('fs/promises');
-  const { existsSync } = await import('fs');
+  const {readdir} = await import('fs/promises');
+  const {existsSync} = await import('fs');
   const languages: string[] = [];
 
   try {
-    const entries = await readdir(workspaceRoot, { withFileTypes: true });
+    const entries = await readdir(workspaceRoot, {withFileTypes: true});
 
     for (const entry of entries) {
       if (
@@ -81,7 +79,7 @@ async function fixLanguageWorkspace(
   language: string,
 ): Promise<void> {
   const languageDir = join(workspaceRoot, language);
-  const { existsSync } = await import('fs');
+  const {existsSync} = await import('fs');
 
   if (!existsSync(languageDir)) {
     throw new Error(`Language workspace '${language}' not found`);
@@ -128,15 +126,15 @@ function runCommand(
     let output = '';
     let errorOutput = '';
 
-    child.stdout?.on('data', (data) => {
+    child.stdout?.on('data', data => {
       output += data.toString();
     });
 
-    child.stderr?.on('data', (data) => {
+    child.stderr?.on('data', data => {
       errorOutput += data.toString();
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       if (code === 0) {
         resolve();
       } else {
@@ -148,7 +146,7 @@ function runCommand(
       }
     });
 
-    child.on('error', (error) => {
+    child.on('error', error => {
       reject(error);
     });
   });

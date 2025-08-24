@@ -1,11 +1,8 @@
-import { Command } from 'commander';
-import {
-  getAvailableLanguages,
-  initializeLanguage,
-} from '../utils/templates.js';
-import { findWorkspaceRoot } from '../utils/workspace.js';
-import { existsSync } from 'fs';
-import { join } from 'path';
+import {Command} from 'commander';
+import {getAvailableLanguages, initializeLanguage} from '../utils/templates.js';
+import {findWorkspaceRoot} from '../utils/workspace.js';
+import {existsSync} from 'fs';
+import {join} from 'path';
 
 export const addCommand = new Command('add')
   .description('Add a language workspace to an existing leetkick workspace')

@@ -1,11 +1,11 @@
-import { Command } from 'commander';
-import { findWorkspaceRoot } from '../utils/workspace.js';
-import { getAvailableLanguages } from '../utils/templates.js';
-import { existsSync } from 'fs';
-import { join } from 'path';
-import { spawn } from 'child_process';
-import { execSync } from 'child_process';
-import { readdir, readFile } from 'fs/promises';
+import {Command} from 'commander';
+import {findWorkspaceRoot} from '../utils/workspace.js';
+import {getAvailableLanguages} from '../utils/templates.js';
+import {existsSync} from 'fs';
+import {join} from 'path';
+import {spawn} from 'child_process';
+import {execSync} from 'child_process';
+import {readdir, readFile} from 'fs/promises';
 
 function findPythonCommand(languageDir: string): string {
   // 1. Try virtual environment first
@@ -20,7 +20,7 @@ function findPythonCommand(languageDir: string): string {
 
   for (const cmd of pythonCommands) {
     try {
-      execSync(`which ${cmd}`, { stdio: 'ignore' });
+      execSync(`which ${cmd}`, {stdio: 'ignore'});
       return cmd;
     } catch {
       // Command not found, continue
@@ -38,69 +38,65 @@ export const testCommand = new Command('test')
     'Problem number (e.g., "1") or slug (e.g., "two-sum"). If not provided, runs all tests.',
   )
   .option('-l, --language <language>', 'Programming language')
-  .action(
-    async (problem: string | undefined, options: { language?: string }) => {
-      try {
-        const workspaceRoot = findWorkspaceRoot();
+  .action(async (problem: string | undefined, options: {language?: string}) => {
+    try {
+      const workspaceRoot = findWorkspaceRoot();
 
-        if (!workspaceRoot) {
-          console.log(
-            'No leetkick workspace found. Run "leetkick init" first.',
-          );
-          console.log(
-            'Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.',
-          );
-          return;
-        }
-
-        const availableLanguages = await getAvailableLanguages();
-
-        if (!options.language) {
-          console.log('Available languages:', availableLanguages.join(', '));
-          throw new Error('Please specify a language with --language <lang>');
-        }
-
-        if (!availableLanguages.includes(options.language)) {
-          console.log('Available languages:', availableLanguages.join(', '));
-          throw new Error(`Language '${options.language}' not supported.`);
-        }
-
-        const languageDir = join(workspaceRoot, options.language);
-        if (!existsSync(languageDir)) {
-          throw new Error(
-            `${options.language} workspace not found. Run "leetkick add ${options.language}" first.`,
-          );
-        }
-
-        if (problem) {
-          // Find the specific problem directory
-          const problemDir = await findProblemDirectory(languageDir, problem);
-          if (!problemDir) {
-            throw new Error(
-              `Problem '${problem}' not found in ${options.language} workspace.`,
-            );
-          }
-
-          console.log(`Running tests for: ${problemDir}...`);
-          const testPassed = await runTests(
-            languageDir,
-            problemDir,
-            options.language,
-          );
-          if (!testPassed) {
-            throw new Error('Tests failed');
-          }
-        } else {
-          // Run all tests
-          console.log(`Running all tests for ${options.language}...`);
-          await runAllTests(languageDir, options.language);
-        }
-      } catch (error) {
-        console.error('Error:', error instanceof Error ? error.message : error);
-        throw error;
+      if (!workspaceRoot) {
+        console.log('No leetkick workspace found. Run "leetkick init" first.');
+        console.log(
+          'Make sure you are in a directory that contains .leetkick.json or run the command from within a leetkick workspace.',
+        );
+        return;
       }
-    },
-  );
+
+      const availableLanguages = await getAvailableLanguages();
+
+      if (!options.language) {
+        console.log('Available languages:', availableLanguages.join(', '));
+        throw new Error('Please specify a language with --language <lang>');
+      }
+
+      if (!availableLanguages.includes(options.language)) {
+        console.log('Available languages:', availableLanguages.join(', '));
+        throw new Error(`Language '${options.language}' not supported.`);
+      }
+
+      const languageDir = join(workspaceRoot, options.language);
+      if (!existsSync(languageDir)) {
+        throw new Error(
+          `${options.language} workspace not found. Run "leetkick add ${options.language}" first.`,
+        );
+      }
+
+      if (problem) {
+        // Find the specific problem directory
+        const problemDir = await findProblemDirectory(languageDir, problem);
+        if (!problemDir) {
+          throw new Error(
+            `Problem '${problem}' not found in ${options.language} workspace.`,
+          );
+        }
+
+        console.log(`Running tests for: ${problemDir}...`);
+        const testPassed = await runTests(
+          languageDir,
+          problemDir,
+          options.language,
+        );
+        if (!testPassed) {
+          throw new Error('Tests failed');
+        }
+      } else {
+        // Run all tests
+        console.log(`Running all tests for ${options.language}...`);
+        await runAllTests(languageDir, options.language);
+      }
+    } catch (error) {
+      console.error('Error:', error instanceof Error ? error.message : error);
+      throw error;
+    }
+  });
 
 async function findProblemDirectory(
   languageDir: string,
@@ -121,7 +117,7 @@ async function findProblemDirectory(
 
       const entries = await readdir(srcDir);
       const problemFiles = entries.filter(
-        (file) => file.startsWith('problem_') && file.endsWith('.rs'),
+        file => file.startsWith('problem_') && file.endsWith('.rs'),
       );
 
       // Try to match by problem number
@@ -140,7 +136,7 @@ async function findProblemDirectory(
 
       // For numeric search
       if (/^\d+$/.test(problem)) {
-        const numericMatch = problemFiles.find((file) =>
+        const numericMatch = problemFiles.find(file =>
           file.includes(paddedProblem),
         );
         if (numericMatch) {
@@ -173,10 +169,10 @@ async function findProblemDirectory(
       return null;
     }
 
-    const entries = await readdir(searchDir, { withFileTypes: true });
+    const entries = await readdir(searchDir, {withFileTypes: true});
     const directories = entries
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => entry.name);
+      .filter(entry => entry.isDirectory())
+      .map(entry => entry.name);
 
     // Try exact match first
     if (directories.includes(problem)) {
@@ -186,7 +182,7 @@ async function findProblemDirectory(
     // Try to match by problem number (e.g., "1" matches "problem_0001" or "problem0001" for Kotlin)
     const paddedProblem = problem.padStart(4, '0');
     const byNumber = directories.find(
-      (dir) =>
+      dir =>
         dir === `problem_${paddedProblem}` || dir === `problem${paddedProblem}`,
     );
     if (byNumber) {
@@ -196,9 +192,7 @@ async function findProblemDirectory(
     // For backward compatibility and flexible matching, also check if it's a number
     // and find any directory containing that number
     if (/^\d+$/.test(problem)) {
-      const numericMatch = directories.find((dir) =>
-        dir.includes(paddedProblem),
-      );
+      const numericMatch = directories.find(dir => dir.includes(paddedProblem));
       if (numericMatch) {
         return numericMatch;
       }
@@ -224,7 +218,7 @@ async function findProblemDirectory(
 
 async function extractProblemInfoFromFile(
   filePath: string,
-): Promise<{ title: string; slug: string } | null> {
+): Promise<{title: string; slug: string} | null> {
   try {
     const content = await readFile(filePath, 'utf-8');
 
@@ -240,7 +234,7 @@ async function extractProblemInfoFromFile(
     if (titleMatch) {
       const title = titleMatch[1];
       const slug = titleToSlug(title);
-      return { title, slug };
+      return {title, slug};
     }
 
     return null;
@@ -251,7 +245,7 @@ async function extractProblemInfoFromFile(
 
 async function extractProblemInfoFromDirectory(
   problemDir: string,
-): Promise<{ title: string; slug: string } | null> {
+): Promise<{title: string; slug: string} | null> {
   try {
     const files = await readdir(problemDir);
 
@@ -276,7 +270,7 @@ async function extractProblemInfoFromDirectory(
       if (titleMatch) {
         const title = titleMatch[1];
         const slug = titleToSlug(title);
-        return { title, slug };
+        return {title, slug};
       }
     }
 
@@ -296,7 +290,7 @@ function titleToSlug(title: string): string {
 
 function matchesProblemSlug(
   searchTerm: string,
-  problemInfo: { title: string; slug: string },
+  problemInfo: {title: string; slug: string},
 ): boolean {
   const normalizedSearch = searchTerm.toLowerCase().replace(/_/g, '-');
   const normalizedSlug = problemInfo.slug.toLowerCase();
@@ -378,7 +372,7 @@ async function runTests(
         return;
     }
 
-    const env = { ...process.env };
+    const env = {...process.env};
     if (language === 'python') {
       env.PYTHONPATH = 'src';
     }
@@ -389,7 +383,7 @@ async function runTests(
       env,
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       if (code === 0) {
         console.log('✓ Tests passed!');
         resolve(true);
@@ -400,7 +394,7 @@ async function runTests(
       }
     });
 
-    child.on('error', (error) => {
+    child.on('error', error => {
       reject(new Error(`Failed to run tests: ${error.message}`));
     });
   });
@@ -468,7 +462,7 @@ async function runAllTests(
         return;
     }
 
-    const env = { ...process.env };
+    const env = {...process.env};
     if (language === 'python') {
       env.PYTHONPATH = 'src';
     }
@@ -479,7 +473,7 @@ async function runAllTests(
       env,
     });
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       if (code === 0) {
         console.log('✓ All tests passed!');
         resolve();
@@ -489,7 +483,7 @@ async function runAllTests(
       }
     });
 
-    child.on('error', (error) => {
+    child.on('error', error => {
       reject(new Error(`Failed to run tests: ${error.message}`));
     });
   });
@@ -497,12 +491,10 @@ async function runAllTests(
 
 async function runAllCppTests(languageDir: string): Promise<void> {
   try {
-    const entries = await readdir(languageDir, { withFileTypes: true });
+    const entries = await readdir(languageDir, {withFileTypes: true});
     const problemDirs = entries
-      .filter(
-        (entry) => entry.isDirectory() && entry.name.startsWith('problem'),
-      )
-      .map((entry) => entry.name);
+      .filter(entry => entry.isDirectory() && entry.name.startsWith('problem'))
+      .map(entry => entry.name);
 
     if (problemDirs.length === 0) {
       console.log('No C++ problems found to test.');

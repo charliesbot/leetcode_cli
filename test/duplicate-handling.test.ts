@@ -1,31 +1,31 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { tmpdir } from 'os';
-import { spawn } from 'node:child_process';
+import {promises as fs} from 'fs';
+import {join} from 'path';
+import {tmpdir} from 'os';
+import {spawn} from 'node:child_process';
 
 const CLI_PATH = join(process.cwd(), 'build', 'src', 'index.js');
 
-void test('duplicate exercise handling test suite', async (t) => {
+void test('duplicate exercise handling test suite', async t => {
   const testWorkspace = join(tmpdir(), 'leetcode-cli-duplicate-test');
 
   await t.beforeEach(async () => {
     // Clean up and create fresh test workspace
-    await fs.rm(testWorkspace, { recursive: true, force: true });
-    await fs.mkdir(testWorkspace, { recursive: true });
+    await fs.rm(testWorkspace, {recursive: true, force: true});
+    await fs.mkdir(testWorkspace, {recursive: true});
     process.chdir(testWorkspace);
 
     // Initialize workspace
     await fs.writeFile(join(testWorkspace, '.leetkick.json'), '{}');
 
     // Add typescript workspace
-    await fs.mkdir(join(testWorkspace, 'typescript'), { recursive: true });
+    await fs.mkdir(join(testWorkspace, 'typescript'), {recursive: true});
   });
 
   await t.test('should detect existing exercise directory', async () => {
     // First, create a TypeScript workspace with an existing problem
-    await fs.mkdir(join(testWorkspace, 'typescript'), { recursive: true });
+    await fs.mkdir(join(testWorkspace, 'typescript'), {recursive: true});
     await fs.mkdir(join(testWorkspace, 'typescript', 'problem_0001'), {
       recursive: true,
     });
@@ -43,7 +43,7 @@ void test('duplicate exercise handling test suite', async (t) => {
     // Now try to fetch the same problem again
     const result = await runCLI(
       ['fetch', 'two-sum', '--language', 'typescript'],
-      { expectError: true },
+      {expectError: true},
     );
 
     const output = result.stderr || result.stdout;
@@ -67,7 +67,7 @@ void test('duplicate exercise handling test suite', async (t) => {
 
     const result = await runCLI(
       ['fetch', 'two-sum', '--language', 'typescript'],
-      { expectError: true },
+      {expectError: true},
     );
 
     const output = result.stderr || result.stdout;
@@ -191,8 +191,8 @@ void test('duplicate exercise handling test suite', async (t) => {
   // Rust-specific tests for file-based overwrite protection
   await t.test('should detect existing Rust exercise file', async () => {
     // Setup Rust workspace structure
-    await fs.mkdir(join(testWorkspace, 'rust'), { recursive: true });
-    await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
+    await fs.mkdir(join(testWorkspace, 'rust'), {recursive: true});
+    await fs.mkdir(join(testWorkspace, 'rust', 'src'), {recursive: true});
 
     // Create Cargo.toml
     await fs.writeFile(
@@ -230,7 +230,7 @@ void test('duplicate exercise handling test suite', async (t) => {
     'should preserve existing Rust file when exercise exists without force',
     async () => {
       // Setup Rust workspace
-      await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
+      await fs.mkdir(join(testWorkspace, 'rust', 'src'), {recursive: true});
       await fs.writeFile(
         join(testWorkspace, 'rust', 'Cargo.toml'),
         '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]',
@@ -266,7 +266,7 @@ void test('duplicate exercise handling test suite', async (t) => {
     'should handle --force flag to overwrite existing Rust exercise',
     async () => {
       // Setup Rust workspace
-      await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
+      await fs.mkdir(join(testWorkspace, 'rust', 'src'), {recursive: true});
       await fs.writeFile(
         join(testWorkspace, 'rust', 'Cargo.toml'),
         '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]',
@@ -323,7 +323,7 @@ void test('duplicate exercise handling test suite', async (t) => {
     'should work normally when Rust exercise does not exist',
     async () => {
       // Setup clean Rust workspace - no existing exercise
-      await fs.mkdir(join(testWorkspace, 'rust', 'src'), { recursive: true });
+      await fs.mkdir(join(testWorkspace, 'rust', 'src'), {recursive: true});
       await fs.writeFile(
         join(testWorkspace, 'rust', 'Cargo.toml'),
         '[package]\nname = "leetkick-rust"\nversion = "0.1.0"\nedition = "2021"\n\n[dependencies]',
@@ -373,7 +373,7 @@ void test('duplicate exercise handling test suite', async (t) => {
   // Go-specific tests for directory-based overwrite protection
   await t.test('should detect existing Go exercise directory', async () => {
     // Setup Go workspace structure
-    await fs.mkdir(join(testWorkspace, 'go'), { recursive: true });
+    await fs.mkdir(join(testWorkspace, 'go'), {recursive: true});
     await fs.mkdir(join(testWorkspace, 'go', 'problem_0001'), {
       recursive: true,
     });
@@ -501,7 +501,7 @@ void test('duplicate exercise handling test suite', async (t) => {
     'should work normally when Go exercise does not exist',
     async () => {
       // Setup clean Go workspace - no existing exercise
-      await fs.mkdir(join(testWorkspace, 'go'), { recursive: true });
+      await fs.mkdir(join(testWorkspace, 'go'), {recursive: true});
       await fs.writeFile(
         join(testWorkspace, 'go', 'go.mod'),
         'module leetkick-go\n\ngo 1.21',
@@ -545,15 +545,15 @@ void test('duplicate exercise handling test suite', async (t) => {
 
   // Cleanup
   await t.afterEach(async () => {
-    await fs.rm(testWorkspace, { recursive: true, force: true });
+    await fs.rm(testWorkspace, {recursive: true, force: true});
   });
 });
 
 // Helper function to run CLI commands
 async function runCLI(
   args: string[],
-  options: { expectError?: boolean; timeout?: number } = {},
-): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+  options: {expectError?: boolean; timeout?: number} = {},
+): Promise<{stdout: string; stderr: string; exitCode: number}> {
   return new Promise((resolve, reject) => {
     const child = spawn('node', [CLI_PATH, ...args], {
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -562,11 +562,11 @@ async function runCLI(
     let stdout = '';
     let stderr = '';
 
-    child.stdout?.on('data', (data) => {
+    child.stdout?.on('data', data => {
       stdout += data.toString();
     });
 
-    child.stderr?.on('data', (data) => {
+    child.stderr?.on('data', data => {
       stderr += data.toString();
     });
 
@@ -575,7 +575,7 @@ async function runCLI(
       reject(new Error('CLI command timed out'));
     }, options.timeout || 10000);
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       clearTimeout(timeout);
 
       if (!options.expectError && code !== 0) {
@@ -593,7 +593,7 @@ async function runCLI(
       }
     });
 
-    child.on('error', (error) => {
+    child.on('error', error => {
       clearTimeout(timeout);
       reject(error);
     });

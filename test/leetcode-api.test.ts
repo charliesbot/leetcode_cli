@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import type { GraphQLResponse, Problem } from '../src/types/leetcode.js';
+import type {GraphQLResponse, Problem} from '../src/types/leetcode.js';
 
 // Mock fetch for testing - simplified to avoid Node version issues
 
-void test('LeetCode API test suite', async (t) => {
+void test('LeetCode API test suite', async t => {
   await t.test('should construct correct GraphQL query', () => {
     const expectedQuery = `
 query questionData($titleSlug: String!) {
@@ -70,7 +70,7 @@ query questionData($titleSlug: String!) {
   await t.test('should handle API errors gracefully', async () => {
     // Mock fetch to return an error response
     const mockFetch = async () => {
-      return new Response(null, { status: 404, statusText: 'Not Found' });
+      return new Response(null, {status: 404, statusText: 'Not Found'});
     };
 
     try {
@@ -118,7 +118,7 @@ query questionData($titleSlug: String!) {
 
     const actualPayload = {
       operationName: 'questionData',
-      variables: { titleSlug },
+      variables: {titleSlug},
       query: 'query questionData($titleSlug: String!) { ... }',
     };
 

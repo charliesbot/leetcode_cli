@@ -15,7 +15,7 @@
     "test:unit": "node --test test/*.test.ts",
     "test:integration": "node --test test/cli-integration.test.ts",
     "test:watch": "node --test --watch test/*.test.ts",
-    "format": "gts fix",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "gts lint",
     "clean": "gts clean",
     "compile": "tsc",

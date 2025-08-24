@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { tmpdir } from 'os';
+import {promises as fs} from 'fs';
+import {join} from 'path';
+import {tmpdir} from 'os';
 
 // Mock the file operations module
 const mockTemplateDir = join(tmpdir(), 'leetcode-cli-test-file-ops-templates');
@@ -10,10 +10,10 @@ const mockWorkingDir = join(tmpdir(), 'leetcode-cli-test-file-ops-workspace');
 
 // Setup test fixtures
 
-void test('file operations test suite', async (t) => {
+void test('file operations test suite', async t => {
   // Setup test environment
-  await fs.mkdir(mockTemplateDir, { recursive: true });
-  await fs.mkdir(mockWorkingDir, { recursive: true });
+  await fs.mkdir(mockTemplateDir, {recursive: true});
+  await fs.mkdir(mockWorkingDir, {recursive: true});
 
   await t.test('should extract function name from TypeScript code', () => {
     const code =
@@ -144,14 +144,14 @@ void test('file operations test suite', async (t) => {
 
   await t.test('should handle various quote entities', () => {
     const testCases = [
-      { input: '&quot;hello&quot;', expected: '"hello"' },
-      { input: '&#39;world&#39;', expected: "'world'" },
-      { input: '&apos;test&apos;', expected: "'test'" },
-      { input: '&ldquo;fancy&rdquo;', expected: '"fancy"' },
-      { input: '&lsquo;quote&rsquo;', expected: "'quote'" },
+      {input: '&quot;hello&quot;', expected: '"hello"'},
+      {input: '&#39;world&#39;', expected: "'world'"},
+      {input: '&apos;test&apos;', expected: "'test'"},
+      {input: '&ldquo;fancy&rdquo;', expected: '"fancy"'},
+      {input: '&lsquo;quote&rsquo;', expected: "'quote'"},
     ];
 
-    testCases.forEach(({ input, expected }) => {
+    testCases.forEach(({input, expected}) => {
       const cleaned = input
         .replace(/&quot;/g, '"')
         .replace(/&#39;/g, "'")
@@ -176,21 +176,19 @@ void test('file operations test suite', async (t) => {
 
   await t.test('should format class names correctly', () => {
     const testCases = [
-      { input: 'Two Sum', expected: 'TwoSum' },
-      { input: 'Roman to Integer', expected: 'RomanToInteger' },
+      {input: 'Two Sum', expected: 'TwoSum'},
+      {input: 'Roman to Integer', expected: 'RomanToInteger'},
       {
         input: 'Longest Substring Without Repeating Characters',
         expected: 'LongestSubstringWithoutRepeatingCharacters',
       },
     ];
 
-    testCases.forEach(({ input, expected }) => {
+    testCases.forEach(({input, expected}) => {
       const formatted = input
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .split(' ')
-        .map(
-          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
-        )
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join('');
       assert.strictEqual(formatted, expected);
     });
@@ -198,15 +196,15 @@ void test('file operations test suite', async (t) => {
 
   await t.test('should format snake case names correctly', () => {
     const testCases = [
-      { input: 'Two Sum', expected: 'two_sum' },
-      { input: 'Roman to Integer', expected: 'roman_to_integer' },
+      {input: 'Two Sum', expected: 'two_sum'},
+      {input: 'Roman to Integer', expected: 'roman_to_integer'},
       {
         input: 'Longest Substring Without Repeating Characters',
         expected: 'longest_substring_without_repeating_characters',
       },
     ];
 
-    testCases.forEach(({ input, expected }) => {
+    testCases.forEach(({input, expected}) => {
       const formatted = input
         .replace(/[^a-zA-Z0-9\s]/g, '')
         .toLowerCase()
@@ -301,6 +299,6 @@ void test('file operations test suite', async (t) => {
   });
 
   // Cleanup
-  await fs.rm(mockTemplateDir, { recursive: true, force: true });
-  await fs.rm(mockWorkingDir, { recursive: true, force: true });
+  await fs.rm(mockTemplateDir, {recursive: true, force: true});
+  await fs.rm(mockWorkingDir, {recursive: true, force: true});
 });

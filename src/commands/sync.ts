@@ -1,9 +1,9 @@
-import { Command } from 'commander';
-import { readdir, copyFile, unlink, readFile } from 'fs/promises';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { existsSync } from 'fs';
-import { findWorkspaceRoot } from '../utils/workspace.js';
+import {Command} from 'commander';
+import {readdir, copyFile, unlink, readFile} from 'fs/promises';
+import {join, dirname} from 'path';
+import {fileURLToPath} from 'url';
+import {existsSync} from 'fs';
+import {findWorkspaceRoot} from '../utils/workspace.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_DIR = join(__dirname, '../../../templates');
@@ -21,10 +21,7 @@ export const syncCommand = new Command()
   .option('--all', 'Sync all languages in workspace')
   .option('--dry-run', 'Preview changes without applying them')
   .action(
-    async (
-      language?: string,
-      options?: { all?: boolean; dryRun?: boolean },
-    ) => {
+    async (language?: string, options?: {all?: boolean; dryRun?: boolean}) => {
       try {
         const workspaceRoot = await findWorkspaceRoot();
         if (!workspaceRoot) {
@@ -70,7 +67,7 @@ async function getWorkspaceLanguages(workspaceRoot: string): Promise<string[]> {
   const languages: string[] = [];
 
   try {
-    const entries = await readdir(workspaceRoot, { withFileTypes: true });
+    const entries = await readdir(workspaceRoot, {withFileTypes: true});
 
     for (const entry of entries) {
       if (
@@ -97,7 +94,7 @@ async function syncLanguage(
   language: string,
   dryRun: boolean,
 ): Promise<SyncResult> {
-  const result: SyncResult = { updated: [], added: [], removed: [] };
+  const result: SyncResult = {updated: [], added: [], removed: []};
   const languageDir = join(workspaceRoot, language);
   const templateDir = join(TEMPLATES_DIR, language);
 
@@ -147,7 +144,7 @@ async function syncLanguage(
 
 async function getConfigFiles(templateDir: string): Promise<string[]> {
   const files: string[] = [];
-  const entries = await readdir(templateDir, { withFileTypes: true });
+  const entries = await readdir(templateDir, {withFileTypes: true});
 
   for (const entry of entries) {
     if (entry.isFile() && !isTemplateFile(entry.name)) {
@@ -216,7 +213,7 @@ function displaySyncResult(
   result: SyncResult,
   dryRun: boolean,
 ): void {
-  const { updated, added, removed } = result;
+  const {updated, added, removed} = result;
   const total = updated.length + added.length + removed.length;
 
   if (total === 0) {
@@ -228,15 +225,15 @@ function displaySyncResult(
   console.log(`${prefix}${language}:`);
 
   if (added.length > 0) {
-    added.forEach((file) => console.log(`  + Added ${file}`));
+    added.forEach(file => console.log(`  + Added ${file}`));
   }
 
   if (updated.length > 0) {
-    updated.forEach((file) => console.log(`  ✓ Updated ${file}`));
+    updated.forEach(file => console.log(`  ✓ Updated ${file}`));
   }
 
   if (removed.length > 0) {
-    removed.forEach((file) => console.log(`  - Removed ${file}`));
+    removed.forEach(file => console.log(`  - Removed ${file}`));
   }
 
   console.log(

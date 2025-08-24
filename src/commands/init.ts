@@ -1,12 +1,12 @@
-import { Command } from 'commander';
+import {Command} from 'commander';
 import {
   isWorkspaceInitialized,
   createWorkspace,
   findWorkspaceRoot,
 } from '../utils/workspace.js';
-import { mkdir } from 'fs/promises';
-import { resolve } from 'path';
-import { existsSync } from 'fs';
+import {mkdir} from 'fs/promises';
+import {resolve} from 'path';
+import {existsSync} from 'fs';
 
 export const initCommand = new Command('init')
   .description('Initialize an empty leetkick workspace')
@@ -23,7 +23,7 @@ export const initCommand = new Command('init')
 
         // Create directory if it doesn't exist
         if (!existsSync(targetDir)) {
-          await mkdir(targetDir, { recursive: true });
+          await mkdir(targetDir, {recursive: true});
           console.log(`Created directory: ${directory}`);
         }
 

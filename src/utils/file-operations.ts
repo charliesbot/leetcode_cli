@@ -1,7 +1,7 @@
-import { readFile, writeFile, mkdir } from 'fs/promises';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import type { Problem } from '../types/leetcode.js';
+import {readFile, writeFile, mkdir} from 'fs/promises';
+import {join, dirname} from 'path';
+import {fileURLToPath} from 'url';
+import type {Problem} from '../types/leetcode.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_DIR = join(__dirname, '../../../templates');
@@ -24,30 +24,30 @@ export async function createProblemFiles(
     const problemPackage = `problem${paddedId}`;
     problemDir = join(languageDir, 'src', 'main', language, problemPackage);
     testDir = join(languageDir, 'src', 'test', language, problemPackage);
-    await mkdir(problemDir, { recursive: true });
-    await mkdir(testDir, { recursive: true });
+    await mkdir(problemDir, {recursive: true});
+    await mkdir(testDir, {recursive: true});
   } else if (language === 'python') {
     problemDir = join(languageDir, 'src', problemDirName);
     testDir = join(languageDir, 'tests', problemDirName);
-    await mkdir(problemDir, { recursive: true });
-    await mkdir(testDir, { recursive: true });
+    await mkdir(problemDir, {recursive: true});
+    await mkdir(testDir, {recursive: true});
   } else if (language === 'rust') {
     problemDir = join(languageDir, 'src');
     testDir = problemDir;
-    await mkdir(problemDir, { recursive: true });
+    await mkdir(problemDir, {recursive: true});
   } else if (language === 'go') {
     problemDir = join(languageDir, problemDirName);
     testDir = problemDir;
-    await mkdir(problemDir, { recursive: true });
+    await mkdir(problemDir, {recursive: true});
   } else {
     problemDir = join(languageDir, problemDirName);
     testDir = problemDir;
-    await mkdir(problemDir, { recursive: true });
+    await mkdir(problemDir, {recursive: true});
   }
 
   // Find the code snippet for this language
   const codeSnippet = problem.codeSnippets.find(
-    (snippet) => snippet.langSlug === getLanguageSlug(language),
+    snippet => snippet.langSlug === getLanguageSlug(language),
   );
 
   let defaultCode =
@@ -182,7 +182,7 @@ function formatClassName(title: string): string {
   return title
     .replace(/[^a-zA-Z0-9\s]/g, '')
     .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join('');
 }
 

@@ -1,17 +1,17 @@
-import { readdir, copyFile, mkdir, stat, writeFile } from 'fs/promises';
-import { join, dirname } from 'path';
-import { existsSync } from 'fs';
-import { fileURLToPath } from 'url';
+import {readdir, copyFile, mkdir, stat, writeFile} from 'fs/promises';
+import {join, dirname} from 'path';
+import {existsSync} from 'fs';
+import {fileURLToPath} from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_DIR = join(__dirname, '../../templates');
 
 export async function getAvailableLanguages(): Promise<string[]> {
   try {
-    const entries = await readdir(TEMPLATES_DIR, { withFileTypes: true });
+    const entries = await readdir(TEMPLATES_DIR, {withFileTypes: true});
     return entries
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => entry.name);
+      .filter(entry => entry.isDirectory())
+      .map(entry => entry.name);
   } catch (error) {
     throw new Error(`Failed to read templates directory: ${error}`);
   }
@@ -26,23 +26,23 @@ export async function initializeLanguage(language: string): Promise<void> {
   }
 
   // Create language directory
-  await mkdir(targetDir, { recursive: true });
+  await mkdir(targetDir, {recursive: true});
 
   // For Kotlin and Java, we need to create the source directory structure
   if (language === 'kotlin' || language === 'java') {
-    await mkdir(join(targetDir, 'src', 'main', language), { recursive: true });
-    await mkdir(join(targetDir, 'src', 'test', language), { recursive: true });
+    await mkdir(join(targetDir, 'src', 'main', language), {recursive: true});
+    await mkdir(join(targetDir, 'src', 'test', language), {recursive: true});
   }
 
   // For Python, we need to create src/ and tests/ directories
   if (language === 'python') {
-    await mkdir(join(targetDir, 'src'), { recursive: true });
-    await mkdir(join(targetDir, 'tests'), { recursive: true });
+    await mkdir(join(targetDir, 'src'), {recursive: true});
+    await mkdir(join(targetDir, 'tests'), {recursive: true});
   }
 
   // For Rust, we need to create the src directory and lib.rs
   if (language === 'rust') {
-    await mkdir(join(targetDir, 'src'), { recursive: true });
+    await mkdir(join(targetDir, 'src'), {recursive: true});
 
     // Create initial lib.rs file
     const libContent = `// LeetKick Rust Workspace
@@ -85,9 +85,9 @@ async function copyDirectoryRecursive(
   src: string,
   dest: string,
 ): Promise<void> {
-  await mkdir(dest, { recursive: true });
+  await mkdir(dest, {recursive: true});
 
-  const entries = await readdir(src, { withFileTypes: true });
+  const entries = await readdir(src, {withFileTypes: true});
 
   for (const entry of entries) {
     const srcPath = join(src, entry.name);
