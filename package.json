@@ -26,7 +26,8 @@
     "posttest": "npm run lint"
   },
   "dependencies": {
-    "commander": "^11.0.0"
+    "commander": "^11.0.0",
+    "turndown": "^7.2.1"
   },
   "devDependencies": {
     "@types/node": "^22.7.5",

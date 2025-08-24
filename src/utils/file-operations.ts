@@ -2,6 +2,8 @@ import {readFile, writeFile, mkdir} from 'fs/promises';
 import {join, dirname} from 'path';
 import {fileURLToPath} from 'url';
 import type {Problem} from '../types/leetcode.js';
+// @ts-ignore
+import TurndownService from 'turndown';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const TEMPLATES_DIR = join(__dirname, '../../../templates');
@@ -70,7 +72,7 @@ export async function createProblemFiles(
   const replacements = {
     __PROBLEM_ID__: problem.questionFrontendId,
     __PROBLEM_TITLE__: problem.title,
-    __PROBLEM_DESC__: cleanDescription(problem.content),
+    __PROBLEM_DESC_MARKDOWN__: convertHtmlToMarkdown(problem.content),
     __PROBLEM_DIFFICULTY__: problem.difficulty,
     __PROBLEM_DEFAULT_CODE__: defaultCode,
     __PROBLEM_NAME_FORMATTED__: functionName,
@@ -114,6 +116,14 @@ export async function createProblemFiles(
     exerciseContent,
   );
 
+  // Create README.md file
+  const readmeTemplate = await readFile(
+    join(TEMPLATES_DIR, 'README_template.md'),
+    'utf-8',
+  );
+  const readmeContent = replaceTemplateVars(readmeTemplate, replacements);
+  await writeFile(join(problemDir, 'README.md'), readmeContent);
+
   // For Rust, add module declaration to lib.rs
   if (language === 'rust') {
     await addModuleToLibRs(languageDir, `problem_${paddedId}`);
@@ -146,22 +156,13 @@ function replaceTemplateVars(
   return result;
 }
 
-function cleanDescription(htmlContent: string): string {
-  // Remove HTML tags and clean up the description
-  return htmlContent
-    .replace(/<[^>]*>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
-    .replace(/&ldquo;/g, '"')
-    .replace(/&rdquo;/g, '"')
-    .replace(/&lsquo;/g, "'")
-    .replace(/&rsquo;/g, "'")
-    .replace(/&amp;/g, '&') // Keep this last as other entities contain &
-    .trim();
+function convertHtmlToMarkdown(htmlContent: string): string {
+  // @ts-ignore
+  const turndownService = new TurndownService({
+    headingStyle: 'atx',
+    codeBlockStyle: 'fenced',
+  });
+  return turndownService.turndown(htmlContent).trim();
 }
 
 function formatProblemName(title: string): string {
